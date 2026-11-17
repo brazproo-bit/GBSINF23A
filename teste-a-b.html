@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IHC — Testes A/B e Experimentação Controlada | Prof. Rodrigo Braz Rodrigues</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-alt: #273549;
+      --card: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --accent: #7c3aed;
+      --accent-soft: #f5f3ff;
+      --success: #059669;
+      --success-soft: #ecfdf5;
+      --warning: #d97706;
+      --warning-soft: #fffbeb;
+      --danger: #dc2626;
+      --danger-soft: #fef2f2;
+      --border: #e2e8f0;
+      --radius: 12px;
+      --shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+      background: #f1f5f9;
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    /* Header & Nav */
+    header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #4c1d95 100%);
+      color: #fff;
+      padding: 2.5rem 1.5rem 2rem;
+      border-bottom: 4px solid #38bdf8;
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .badge-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      margin-bottom: 1rem;
+    }
+
+    header h1 {
+      font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+    }
+
+    header p.subtitle {
+      font-size: 1.05rem;
+      color: #cbd5e1;
+      max-width: 820px;
+      margin-bottom: 1.5rem;
+    }
+
+    .meta-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.88rem;
+      color: #e2e8f0;
+    }
+
+    .meta-item {
+      background: rgba(15, 23, 42, 0.45);
+      padding: 0.4rem 0.85rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    /* Sticky Step Navigator */
+    nav.step-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    }
+
+    .nav-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      overflow-x: auto;
+      gap: 0.35rem;
+      padding: 0.65rem 1rem;
+    }
+
+    .nav-btn {
+      white-space: nowrap;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.86rem;
+      padding: 0.5rem 0.9rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .nav-btn:hover {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .nav-btn.highlight {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid #ddd6fe;
+    }
+
+    /* Main Content */
+    main {
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    section.module {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 2px solid #f1f5f9;
+    }
+
+    .step-num {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 1.05rem;
+    }
+
+    .step-num.hands-on {
+      background: var(--accent);
+    }
+
+    .step-header h2 {
+      font-size: 1.45rem;
+      color: #0f172a;
+    }
+
+    .step-header span.tag {
+      margin-left: auto;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .step-header span.tag.lab {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    p {
+      margin-bottom: 1rem;
+    }
+
+    /* Callouts & References */
+    .ref-box {
+      background: #f8fafc;
+      border-left: 4px solid var(--primary);
+      padding: 1rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1.25rem 0;
+      font-size: 0.94rem;
+    }
+
+    .ref-box strong.ref-title {
+      display: block;
+      color: var(--primary-dark);
+      margin-bottom: 0.25rem;
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .hippo-alert {
+      background: var(--warning-soft);
+      border: 1px solid #fde68a;
+      border-left: 4px solid var(--warning);
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      margin: 1.25rem 0;
+    }
+
+    /* Comparison Table */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 1.25rem 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.94rem;
+    }
+
+    th, td {
+      padding: 0.85rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: #f8fafc;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    tr:hover td {
+      background: #fafcff;
+    }
+
+    /* Grid Cards */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.25rem;
+      margin: 1.25rem 0;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.15rem;
+      margin: 1.25rem 0;
+    }
+
+    .card-box {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      background: #fff;
+    }
+
+    .card-box.bad {
+      background: var(--danger-soft);
+      border-color: #fecaca;
+    }
+
+    .card-box.good {
+      background: var(--success-soft);
+      border-color: #a7f3d0;
+    }
+
+    .card-box h4 {
+      margin-bottom: 0.5rem;
+      font-size: 1.02rem;
+    }
+
+    .formula-banner {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 1.25rem 1.5rem;
+      border-radius: 10px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.98rem;
+      margin: 1.25rem 0;
+      border-left: 5px solid #38bdf8;
+    }
+
+    .formula-banner span.hl-blue { color: #38bdf8; font-weight: bold; }
+    .formula-banner span.hl-green { color: #34d399; font-weight: bold; }
+    .formula-banner span.hl-purple { color: #c084fc; font-weight: bold; }
+
+    /* Interactive Tabs */
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .tab-btn {
+      padding: 0.55rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* Quiz Styling */
+    .quiz-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+      background: #f8fafc;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .quiz-opt {
+      text-align: left;
+      padding: 0.65rem 0.9rem;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      cursor: pointer;
+      font-size: 0.92rem;
+      transition: all 0.15s;
+    }
+
+    .quiz-opt:hover {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .quiz-opt.correct {
+      background: var(--success-soft);
+      border-color: var(--success);
+      color: #065f46;
+      font-weight: 600;
+    }
+
+    .quiz-opt.wrong {
+      background: var(--danger-soft);
+      border-color: var(--danger);
+      color: #991b1b;
+    }
+
+    .feedback-msg {
+      margin-top: 0.65rem;
+      font-size: 0.9rem;
+      padding: 0.6rem 0.85rem;
+      border-radius: 6px;
+      display: none;
+    }
+
+    /* Sandbox & Canvas Forms */
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.88rem;
+      margin-bottom: 0.35rem;
+      color: #334155;
+    }
+
+    input[type="text"], input[type="number"], select, textarea {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.93rem;
+      margin-bottom: 0.85rem;
+      background: #fff;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.65rem 1.15rem;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      font-size: 0.92rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-accent:hover {
+      background: #6d28d9;
+    }
+
+    .btn-outline {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+    }
+
+    .btn-outline:hover {
+      background: #f1f5f9;
+    }
+
+    /* Live Prototype Preview */
+    .proto-stage {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+      background: #e2e8f0;
+      padding: 1.25rem;
+      border-radius: 12px;
+      margin-top: 1rem;
+    }
+
+    .mockup-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 1.25rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border: 2px solid transparent;
+    }
+
+    .mockup-card.control {
+      border-color: #94a3b8;
+    }
+
+    .mockup-card.variant {
+      border-color: var(--accent);
+    }
+
+    .mockup-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .mockup-cta {
+      width: 100%;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #fff;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+
+    /* Statistical Simulator */
+    .sim-results {
+      background: #0f172a;
+      color: #f8fafc;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .sim-metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .metric-tile {
+      background: #1e293b;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #334155;
+    }
+
+    .metric-tile .m-label {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+    }
+
+    .metric-tile .m-val {
+      font-size: 1.45rem;
+      font-weight: 800;
+      margin-top: 0.2rem;
+    }
+
+    .verdict-box {
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      border-top: 1px solid var(--border);
+      background: #fff;
+    }
+
+    @media print {
+      nav.step-nav, .no-print { display: none !important; }
+      section.module { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <div class="badge-top">📘 Interface Humano-Computador (IHC) • Guia Passo a Passo + Oficina Prática</div>
+      <h1>Testes A/B e Experimentação Controlada em IHC</h1>
+      <p class="subtitle">
+        Como sair do "achismo" e das discussões de opinião para validar decisões de interface com usuários reais em escala, combinando princípios cognitivos com rigor experimental.
+      </p>
+      <div class="meta-bar">
+        <div class="meta-item">👨‍🏫 <strong>Prof. Rodrigo Braz Rodrigues</strong> (UNASP EC)</div>
+        <div class="meta-item">🎯 <strong>Pré-requisito:</strong> Testes de Usabilidade Empíricos</div>
+        <div class="meta-item">🛠️ <strong>Formato:</strong> Teoria Aplicada + Laboratório Hands-On</div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="step-nav">
+    <div class="nav-inner">
+      <a href="#passo1" class="nav-btn">1. Por que Testes A/B?</a>
+      <a href="#passo2" class="nav-btn">2. Quali vs. Quanti</a>
+      <a href="#passo3" class="nav-btn">3. Anatomia & Hipóteses</a>
+      <a href="#passo4" class="nav-btn">4. Métricas & Armadilhas</a>
+      <a href="#passo5" class="nav-btn">5. Estatística Visual</a>
+      <a href="#handson" class="nav-btn highlight">🧪 Oficina Hands-On (3 Etapas)</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- PASSO 1 -->
+    <section id="passo1" class="module">
+      <div class="step-header">
+        <div class="step-num">1</div>
+        <h2>O Problema do "Achismo" e o Efeito HiPPO</h2>
+        <span class="tag">Fundamentos</span>
+      </div>
+
+      <p>
+        Imagine que sua equipe redesenhou a tela de matrícula ou o carrinho de compras de um sistema. O designer acha que o botão verde converte mais; o gerente prefere um formulário menor; o desenvolvedor sugere mudar o texto do título. <strong>Quem está certo?</strong>
+      </p>
+
+      <div class="hippo-alert">
+        <strong>🦛 O Efeito HiPPO (Highest Paid Person's Opinion):</strong><br>
+        Termo popularizado por <strong>Avinash Kaushik</strong> e <strong>Ron Kohavi</strong> para descrever o fenômeno em que, na ausência de dados empíricos, prevalece a opinião da pessoa com maior cargo hierárquico na sala — e não necessariamente a solução que melhor atende ao modelo mental do usuário.
+      </div>
+
+      <p>
+        Um <strong>Teste A/B</strong> (ou <em>Split Testing</em> / Experimento Controlado Online) resolve esse impasse dividindo o tráfego real de usuários aleatoriamente entre duas versões de uma mesma interface:
+      </p>
+
+      <div class="grid-2">
+        <div class="card-box">
+          <h4>🅰️ Versão A — Controle (Control)</h4>
+          <p style="margin-bottom:0;">É a interface atual em produção (a linha de base). Serve como referência para medir se a mudança realmente trouxe ganho ou apenas acompanhou uma variação natural do dia.</p>
+        </div>
+        <div class="card-box" style="border-color: #c4b5fd; background: #faf5ff;">
+          <h4>🅱️ Versão B — Tratamento (Variant)</h4>
+          <p style="margin-bottom:0;">É a interface modificada com <strong>uma alteração específica</strong> (ex.: rótulo mais claro, redução de etapas, destaque visual) baseada em uma hipótese de IHC.</p>
+        </div>
+      </div>
+
+      <div class="ref-box">
+        <strong class="ref-title">📚 Referência Fundamental</strong>
+        <strong>KOHAVI, R.; TANG, D.; XU, Y.</strong> <em>Trustworthy Online Controlled Experiments: A Practical Guide to A/B Testing.</em> Cambridge University Press, 2020.<br>
+        Os autores (ex-líderes de experimentação na Microsoft, Google e LinkedIn) demonstram que <strong>apenas 1/3 das ideias</strong> que equipes de produto acreditam ser melhorias realmente geram impacto positivo quando submetidas a testes A/B controlados.
+      </div>
+    </section>
+
+    <!-- PASSO 2 -->
+    <section id="passo2" class="module">
+      <div class="step-header">
+        <div class="step-num">2</div>
+        <h2>Ponte com a Aula Anterior: Teste de Usabilidade vs. Teste A/B</h2>
+        <span class="tag">Comparativo</span>
+      </div>
+
+      <p>
+        Um erro muito comum de iniciantes é achar que o Teste A/B substitui o Teste de Usabilidade Empírico visto na aula passada. Na prática, eles são <strong>complementares</strong> e respondem a perguntas diferentes:
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Dimensão</th>
+              <th>Teste de Usabilidade Empírico (Aula Anterior)</th>
+              <th>Teste A/B Controlado (Aula Atual)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Pergunta central</strong></td>
+              <td><em>"Por que os usuários travam ou erram nesta tela?"</em></td>
+              <td><em>"Qual das duas soluções gera melhor resultado em escala?"</em></td>
+            </tr>
+            <tr>
+              <td><strong>Natureza dos dados</strong></td>
+              <td>Qualitativa e comportamental (observação direta, <em>Think-Aloud</em>)</td>
+              <td>Quantitativa e estatística (cliques, conversões, tempo, abandono)</td>
+            </tr>
+            <tr>
+              <td><strong>Tamanho da amostra</strong></td>
+              <td>Pequena (5 a 8 participantes por perfil — <em>Jakob Nielsen</em>)</td>
+              <td>Grande (centenas a milhares de usuários simultâneos)</td>
+            </tr>
+            <tr>
+              <td><strong>Ambiente</strong></td>
+              <td>Moderado (laboratório ou videoconferência com tarefas guiadas)</td>
+              <td>Não moderado, em produção real, sem o usuário saber do teste</td>
+            </tr>
+            <tr>
+              <td><strong>Quando usar</strong></td>
+              <td>Antes de lançar ou para diagnosticar problemas profundos de fluxo</td>
+              <td>Para otimizar interfaces existentes e validar impacto de redesigns</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ref-box">
+        <strong class="ref-title">📚 Referência em IHC</strong>
+        <strong>NIELSEN, Jakob.</strong> <em>Putting A/B Testing in Its Place.</em> Nielsen Norman Group (NN/g), 2005.<br>
+        Nielsen destaca que testes A/B são excelentes para otimização local (o "pico da montanha" atual), mas não substituem a pesquisa qualitativa quando você precisa descobrir um modelo mental totalmente novo.
+      </div>
+    </section>
+
+    <!-- PASSO 3 -->
+    <section id="passo3" class="module">
+      <div class="step-header">
+        <div class="step-num">3</div>
+        <h2>Passo a Passo: Como Formular uma Hipótese Falsificável</h2>
+        <span class="tag">Método Científico</span>
+      </div>
+
+      <p>
+        Nunca comece um Teste A/B dizendo <em>"vamos testar um botão vermelho para ver o que acontece"</em>. Todo experimento em IHC precisa nascer de uma <strong>observação prévia</strong> (heurística, mapa de calor ou teste de usabilidade) e seguir uma estrutura científica:
+      </p>
+
+      <div class="formula-banner">
+        "Se alterarmos <span class="hl-blue">[VARIÁVEL DE INTERFACE X]</span> para o segmento <span class="hl-blue">[USUÁRIOS Y]</span>,<br>
+        então a métrica <span class="hl-green">[OEC / INDICADOR Z]</span> irá <span class="hl-green">[AUMENTAR / DIMINUIR]</span>,<br>
+        porque <span class="hl-purple">[JUSTIFICATIVA COGNITIVA OU DE USABILIDADE]</span>."
+      </div>
+
+      <div class="grid-2">
+        <div class="card-box bad">
+          <h4>❌ Exemplo Ruim (Sem hipótese de IHC)</h4>
+          <p>"Vamos mudar o formulário de cadastro para ver se mais gente preenche."</p>
+          <small><strong>Por que falha?</strong> Não especifica qual mudança será feita, não define métrica de sucesso e não explica o mecanismo psicológico esperado.</small>
+        </div>
+        <div class="card-box good">
+          <h4>✅ Exemplo Bem Estruturado (Com fundamento)</h4>
+          <p>"Se reduzirmos o formulário de cadastro de 9 para 4 campos essenciais (removendo CPF e endereço inicial) para novos visitantes mobile, então a taxa de conclusão do cadastro aumentará, porque reduziremos a carga cognitiva e o esforço motor de digitação em telas pequenas."</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PASSO 4 -->
+    <section id="passo4" class="module">
+      <div class="step-header">
+        <div class="step-num">4</div>
+        <h2>Métricas (OEC vs. Guardrails) e Armadilhas Clássicas</h2>
+        <span class="tag">Rigor Experimental</span>
+      </div>
+
+      <p>
+        Um erro fatal em produtos digitais é olhar apenas para uma métrica isolada. Por exemplo: colocar um banner enganoso ("Clique aqui e ganhe") pode aumentar os cliques em 40%, mas derrubar a retenção e lotar o suporte de reclamações. Por isso dividimos as métricas em dois grupos:
+      </p>
+
+      <div class="grid-2">
+        <div class="card-box">
+          <h4>🎯 OEC (Overall Evaluation Criterion)</h4>
+          <p>É a <strong>métrica primária de sucesso</strong> do experimento. Deve refletir valor real para o usuário e para o sistema (ex.: taxa de conclusão de tarefa, conversão de checkout, ativação no 1º dia).</p>
+        </div>
+        <div class="card-box">
+          <h4>🛡️ Métricas de Guarda (Guardrail Metrics)</h4>
+          <p>São métricas de proteção que <strong>não podem piorar</strong> durante o teste (ex.: tempo de carregamento da página, taxa de erros HTTP, taxa de cancelamento/reembolso, tickets de suporte).</p>
+        </div>
+      </div>
+
+      <h3 style="margin: 1.5rem 0 0.75rem; font-size: 1.15rem;">⚠️ As 3 Armadilhas que Invalidam um Teste A/B</h3>
+      <div class="grid-3">
+        <div class="card-box">
+          <h4>1. Mudar tudo ao mesmo tempo</h4>
+          <p style="font-size:0.9rem;">Se você altera cor, texto, layout e preço na Versão B e a conversão sobe, você nunca saberá qual elemento causou o efeito (ou se um elemento bom compensou outro ruim). <em>Isole uma variável por vez!</em></p>
+        </div>
+        <div class="card-box">
+          <h4>2. O "Peeking Problem" (Espiar cedo)</h4>
+          <p style="font-size:0.9rem;">Nos primeiros dias, amostras pequenas oscilam muito. Encerrar o teste assim que o gráfico mostra 95% de confiança no 2º dia infla drasticamente a taxa de <strong>falsos positivos</strong>.</p>
+        </div>
+        <div class="card-box">
+          <h4>3. Sazonalidade e Efeito Novidade</h4>
+          <p style="font-size:0.9rem;">Rodar um teste apenas na sexta-feira ou durante uma semana de prova/Black Friday distorce o comportamento. O padrão da indústria é rodar por <strong>ciclos completos de 7 ou 14 dias</strong>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PASSO 5 -->
+    <section id="passo5" class="module">
+      <div class="step-header">
+        <div class="step-num">5</div>
+        <h2>O Mínimo de Estatística Aplicada (Sem Assustar)</h2>
+        <span class="tag">Análise de Dados</span>
+      </div>
+
+      <p>
+        Para decidir se a diferença entre A e B é real ou fruto do acaso (como jogar uma moeda 10 vezes e dar 7 caras), precisamos entender três conceitos essenciais:
+      </p>
+
+      <div class="grid-3">
+        <div class="card-box">
+          <h4>📊 Tamanho da Amostra (Sample Size)</h4>
+          <p style="font-size:0.9rem;">Quantidade mínima de usuários em cada variante calculada <strong>antes</strong> do teste iniciar. Em sistemas internos com 40 usuários, Teste A/B não tem poder estatístico — prefira Testes de Usabilidade!</p>
+        </div>
+        <div class="card-box">
+          <h4>🎯 Significância Estatística ($p < 0,05$)</h4>
+          <p style="font-size:0.9rem;">Indica que há menos de <strong>5% de chance</strong> da diferença observada ter ocorrido por puro acaso (equivalente a <strong>95% de nível de confiança</strong>).</p>
+        </div>
+        <div class="card-box">
+          <h4>🔍 MDE (Minimum Detectable Effect)</h4>
+          <p style="font-size:0.9rem;">O menor ganho relativo que vale o esforço de engenharia. Detectar um ganho sutil de +0,5% exige milhões de usuários; detectar um salto de +15% exige uma amostra bem menor.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- OFICINA HANDS-ON -->
+    <section id="handson" class="module" style="border-top: 5px solid var(--accent);">
+      <div class="step-header">
+        <div class="step-num hands-on">🧪</div>
+        <h2>Oficina Hands-On: Do Diagnóstico à Decisão Estatística</h2>
+        <span class="tag lab">Prática em Sala</span>
+      </div>
+
+      <p>
+        Navegue pelas <strong>3 etapas práticas</strong> abaixo para aplicar tudo o que vimos: primeiro diagnostique falhas metodológicas, depois prototipe ao vivo uma Variante B e gere o Canvas do seu grupo, e por fim tome decisões no simulador estatístico.
+      </p>
+
+      <div class="tabs no-print">
+        <button class="tab-btn active" onclick="openTab(event, 'lab1')">Etapa 1: Clínica de Hipóteses</button>
+        <button class="tab-btn" onclick="openTab(event, 'lab2')">Etapa 2: Sandbox A/B & Canvas</button>
+        <button class="tab-btn" onclick="openTab(event, 'lab3')">Etapa 3: Simulador Estatístico</button>
+      </div>
+
+      <!-- LAB 1 -->
+      <div id="lab1" class="tab-panel active">
+        <h3 style="margin-bottom: 0.75rem;">🩺 Clínica de Diagnóstico Experimental</h3>
+        <p style="font-size:0.94rem; color: var(--text-muted);">Analise os casos reais abaixo e identifique o erro de planejamento antes de rodar o experimento:</p>
+
+        <div class="quiz-item">
+          <strong>Caso 1:</strong> Uma equipe de e-commerce quer aumentar as vendas. Na Versão B, eles mudaram simultaneamente a cor do botão de compra, ofereceram frete grátis acima de R$ 99 e trocaram as fotos dos produtos. A Versão B venceu com +18% de conversão. Qual é o problema metodológico?
+          <div class="quiz-options">
+            <button class="quiz-opt" onclick="checkQuiz(this, false, 'fb1')">A) Nenhum problema: como a Versão B venceu, basta publicar e comemorar.</button>
+            <button class="quiz-opt" onclick="checkQuiz(this, true, 'fb1')">B) Confusão de variáveis: não é possível saber se o ganho veio do frete grátis (custo financeiro) ou do design, nem se o botão novo até atrapalhou.</button>
+            <button class="quiz-opt" onclick="checkQuiz(this, false, 'fb1')">C) Testes A/B não podem ser usados em e-commerce.</button>
+          </div>
+          <div id="fb1" class="feedback-msg"></div>
+        </div>
+
+        <div class="quiz-item">
+          <strong>Caso 2:</strong> Uma startup B2B com apenas 60 clientes ativos quer fazer um Teste A/B durante 3 dias para decidir entre dois ícones no menu lateral. Por que essa abordagem é inadequada?
+          <div class="quiz-options">
+            <button class="quiz-opt" onclick="checkQuiz(this, false, 'fb2')">A) Porque ícones de menu nunca afetam a usabilidade.</button>
+            <button class="quiz-opt" onclick="checkQuiz(this, true, 'fb2')">B) Baixo poder estatístico (amostra minúscula) e duração menor que um ciclo semanal. Para 60 usuários, um Teste de Usabilidade moderado ou entrevista traz muito mais insight.</button>
+            <button class="quiz-opt" onclick="checkQuiz(this, false, 'fb2')">C) Porque testes A/B exigem obrigatoriamente 1 milhão de usuários por hora.</button>
+          </div>
+          <div id="fb2" class="feedback-msg"></div>
+        </div>
+
+        <div class="quiz-item">
+          <strong>Caso 3:</strong> Um portal de notícias alterou os títulos para versões sensacionalistas ("clickbait") na Versão B. Os cliques na home subiram 35% ($p = 0,001$), mas o tempo médio de leitura caiu de 3 minutos para 12 segundos e a taxa de rejeição dobrou. O que faltou definir?
+          <div class="quiz-options">
+            <button class="quiz-opt" onclick="checkQuiz(this, true, 'fb3')">A) Métricas de Guarda (Guardrail Metrics), como tempo de permanência e taxa de rejeição, para impedir que uma vitória superficial destrua a experiência e confiança do usuário.</button>
+            <button class="quiz-opt" onclick="checkQuiz(this, false, 'fb3')">B) Aumentar o tamanho da fonte do título na Versão A.</button>
+            <button class="quiz-opt" onclick="checkQuiz(this, false, 'fb3')">C) Encerrar o teste com 1 hora de duração.</button>
+          </div>
+          <div id="fb3" class="feedback-msg"></div>
+        </div>
+      </div>
+
+      <!-- LAB 2 -->
+      <div id="lab2" class="tab-panel">
+        <h3 style="margin-bottom: 0.5rem;">🎨 Sandbox Interativo: Prototipação de Variante B + Canvas do Grupo</h3>
+        <p style="font-size:0.93rem; color: var(--text-muted);">
+          Experimente modificar os atributos da <strong>Variante B</strong> abaixo e observe o contraste visual com o <strong>Controle A</strong>. Em seguida, preencha o Canvas de Experimento do seu grupo.
+        </p>
+
+        <div class="grid-2" style="background:#f8fafc; padding:1.25rem; border-radius:10px; border:1px solid var(--border);">
+          <div>
+            <h4 style="margin-bottom:0.75rem;">🎛️ Controles da Variante B</h4>
+            <label for="sb-title">Título do Card (Clareza / Proposta de Valor)</label>
+            <input type="text" id="sb-title" value="Conclua sua inscrição em 1 minuto" oninput="updateSandbox()" />
+
+            <label for="sb-cta">Texto do Botão (Microcopy orientada à ação)</label>
+            <input type="text" id="sb-cta" value="Garantir minha vaga gratuita →" oninput="updateSandbox()" />
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+              <div>
+                <label for="sb-color">Cor do CTA (Contraste)</label>
+                <select id="sb-color" onchange="updateSandbox()">
+                  <option value="#059669">Verde Esmeralda (Ação Positiva)</option>
+                  <option value="#2563eb">Azul Primário</option>
+                  <option value="#ea580c">Laranja Vibrante</option>
+                  <option value="#64748b">Cinza Neutro (Baixo contraste)</option>
+                </select>
+              </div>
+              <div>
+                <label for="sb-fields">Redução de Carga Cognitiva</label>
+                <select id="sb-fields" onchange="updateSandbox()">
+                  <option value="2">2 campos (Nome + E-mail)</option>
+                  <option value="4">4 campos (Padrão original)</option>
+                </select>
+              </div>
+            </div>
+
+            <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; margin-top:0.25rem;">
+              <input type="checkbox" id="sb-trust" checked onchange="updateSandbox()" style="width:auto; margin:0;" />
+              Exibir microtexto de segurança / prova social (Redução de ansiedade)
+            </label>
+          </div>
+
+          <div>
+            <h4 style="margin-bottom:0.5rem;">👀 Comparação Visual em Tempo Real</h4>
+            <div class="proto-stage" style="margin-top:0;">
+              <!-- Controle A -->
+              <div class="mockup-card control">
+                <span class="mockup-tag" style="background:#e2e8f0; color:#334155;">🅰️ Controle (Atual)</span>
+                <h5 style="font-size:1rem; margin-bottom:0.65rem; color:#1e293b;">Formulário de Cadastro</h5>
+                <input type="text" disabled placeholder="Nome completo" style="padding:0.4rem; font-size:0.8rem; margin-bottom:0.4rem; background:#f8fafc;" />
+                <input type="text" disabled placeholder="E-mail institucional" style="padding:0.4rem; font-size:0.8rem; margin-bottom:0.4rem; background:#f8fafc;" />
+                <input type="text" disabled placeholder="CPF (somente números)" style="padding:0.4rem; font-size:0.8rem; margin-bottom:0.4rem; background:#f8fafc;" />
+                <input type="text" disabled placeholder="Telefone com DDD" style="padding:0.4rem; font-size:0.8rem; margin-bottom:0.4rem; background:#f8fafc;" />
+                <button class="mockup-cta" style="background:#64748b;">Enviar</button>
+              </div>
+
+              <!-- Variante B -->
+              <div class="mockup-card variant">
+                <span class="mockup-tag" style="background:#ede9fe; color:#6d28d9;">🅱️ Variante B (Proposta)</span>
+                <h5 id="prev-title" style="font-size:1rem; margin-bottom:0.65rem; color:#0f172a;">Conclua sua inscrição em 1 minuto</h5>
+                <input type="text" disabled placeholder="Seu primeiro nome" style="padding:0.4rem; font-size:0.8rem; margin-bottom:0.4rem;" />
+                <input type="text" disabled placeholder="Seu melhor e-mail" style="padding:0.4rem; font-size:0.8rem; margin-bottom:0.4rem;" />
+                <div id="prev-extra-fields" style="display:none;">
+                  <input type="text" disabled placeholder="CPF (somente números)" style="padding:0.4rem; font-size:0.8rem; margin-bottom:0.4rem;" />
+                  <input type="text" disabled placeholder="Telefone com DDD" style="padding:0.4rem; font-size:0.8rem; margin-bottom:0.4rem;" />
+                </div>
+                <button id="prev-cta" class="mockup-cta" style="background:#059669;">Garantir minha vaga gratuita →</button>
+                <p id="prev-trust" style="font-size:0.75rem; color:#059669; text-align:center; margin:0.5rem 0 0; font-weight:600;">🔒 Sem spam • Mais de 1.200 alunos inscritos</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr style="margin: 1.75rem 0; border:none; border-top: 1px solid var(--border);" />
+
+        <h4 style="margin-bottom: 0.75rem;">📋 Canvas de Planejamento de Experimento A/B (Entregável do Grupo)</h4>
+        <div class="grid-2">
+          <div>
+            <label for="cv-team">Integrantes do Grupo & Sistema Analisado</label>
+            <input type="text" id="cv-team" placeholder="Ex.: Grupo 3 — Portal do Aluno UNASP" />
+
+            <label for="cv-problem">1. Diagnóstico Prévio (Qual dor de IHC motivou o teste?)</label>
+            <textarea id="cv-problem" rows="2" placeholder="Ex.: No teste de usabilidade anterior, 4 de 5 alunos hesitaram no passo de pagamento por falta de clareza nas taxas."></textarea>
+
+            <label for="cv-var">2. Variável Única Isolada (O que muda exatamente de A para B?)</label>
+            <input type="text" id="cv-var" placeholder="Ex.: Inclusão de resumo transparente de parcelas antes do botão de confirmar." />
+          </div>
+
+          <div>
+            <label for="cv-hyp">3. Hipótese Estruturada (Se... Então... Porque...)</label>
+            <textarea id="cv-hyp" rows="3" placeholder="Se exibirmos o valor final parcelado antes do clique final para alunos pagantes, então a taxa de conclusão aumentará, porque eliminaremos a incerteza e o medo de cobrança oculta."></textarea>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+              <div>
+                <label for="cv-oec">4. Métrica Primária (OEC)</label>
+                <input type="text" id="cv-oec" placeholder="Ex.: Taxa de conclusão (%)" />
+              </div>
+              <div>
+                <label for="cv-guard">5. Métrica de Guarda</label>
+                <input type="text" id="cv-guard" placeholder="Ex.: Taxa de estorno / suporte" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:0.5rem;">
+          <button class="btn btn-accent" onclick="copyCanvas()">📋 Copiar Canvas Formatado</button>
+          <button class="btn btn-outline" onclick="window.print()">🖨️ Salvar / Imprimir PDF</button>
+        </div>
+        <div id="copy-status" style="margin-top:0.65rem; font-size:0.88rem; color:var(--success); font-weight:600;"></div>
+      </div>
+
+      <!-- LAB 3 -->
+      <div id="lab3" class="tab-panel">
+        <h3 style="margin-bottom: 0.5rem;">📈 Simulador de Significância Estatística & Tomada de Decisão</h3>
+        <p style="font-size:0.93rem; color: var(--text-muted);">
+          Teste os cenários pré-configurados abaixo ou insira seus próprios números para calcular o ganho relativo (<em>Uplift</em>), o <em>p-value</em> (teste Z bicaudal de duas proporções) e tomar a decisão de produto.
+        </p>
+
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1rem;">
+          <button class="btn btn-outline" onclick="loadPreset(1)">Cenário 1: Amostra Pequena (Falso Alarme)</button>
+          <button class="btn btn-outline" onclick="loadPreset(2)">Cenário 2: Vitória Estatística Clara</button>
+          <button class="btn btn-outline" onclick="loadPreset(3)">Cenário 3: Ganho Marginal sem Significância</button>
+        </div>
+
+        <div class="grid-2">
+          <div class="card-box">
+            <h4>🅰️ Grupo Controle (A)</h4>
+            <label for="vis-a">Visitantes / Sessões (A)</label>
+            <input type="number" id="vis-a" value="5000" min="10" oninput="calcAB()" />
+            <label for="conv-a">Conversões / Tarefas Concluídas (A)</label>
+            <input type="number" id="conv-a" value="500" min="0" oninput="calcAB()" />
+          </div>
+
+          <div class="card-box" style="border-color:#c4b5fd;">
+            <h4>🅱️ Grupo Tratamento (B)</h4>
+            <label for="vis-b">Visitantes / Sessões (B)</label>
+            <input type="number" id="vis-b" value="5000" min="10" oninput="calcAB()" />
+            <label for="conv-b">Conversões / Tarefas Concluídas (B)</label>
+            <input type="number" id="conv-b" value="585" min="0" oninput="calcAB()" />
+          </div>
+        </div>
+
+        <div class="sim-results">
+          <div class="sim-metrics">
+            <div class="metric-tile">
+              <div class="m-label">Taxa de Conversão (A)</div>
+              <div class="m-val" id="res-rate-a">10.00%</div>
+            </div>
+            <div class="metric-tile">
+              <div class="m-label">Taxa de Conversão (B)</div>
+              <div class="m-val" id="res-rate-b">11.70%</div>
+            </div>
+            <div class="metric-tile">
+              <div class="m-label">Ganho Relativo (Uplift)</div>
+              <div class="m-val" id="res-uplift" style="color:#34d399;">+17.00%</div>
+            </div>
+            <div class="metric-tile">
+              <div class="m-label">p-value / Confiança</div>
+              <div class="m-val" id="res-pval">p = 0.0063</div>
+            </div>
+          </div>
+          <div id="res-verdict" class="verdict-box" style="background: rgba(5, 150, 105, 0.25); border: 1px solid #34d399; color: #a7f3d0;">
+            ✅ Resultado Estatisticamente Significativo (Confiança &gt; 95%): Se as métricas de guarda estiverem estáveis, faça o rollout da Variante B!
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer>
+    Material Didático Interativo — Disciplina de Interface Humano-Computador (IHC) • Prof. Rodrigo Braz Rodrigues
+  </footer>
+
+  <script>
+    // Tabs controller
+    function openTab(evt, tabId) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      evt.currentTarget.classList.add('active');
+    }
+
+    // Quiz controller
+    function checkQuiz(btn, isCorrect, feedbackId) {
+      const parent = btn.parentElement;
+      parent.querySelectorAll('.quiz-opt').forEach(opt => {
+        opt.classList.remove('correct', 'wrong');
+      });
+      const fb = document.getElementById(feedbackId);
+      fb.style.display = 'block';
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        fb.style.background = '#ecfdf5';
+        fb.style.color = '#065f46';
+        fb.innerHTML = '<strong>Correto!</strong> Excelente leitura metodológica.';
+      } else {
+        btn.classList.add('wrong');
+        fb.style.background = '#fef2f2';
+        fb.style.color = '#991b1b';
+        fb.innerHTML = '<strong>Não exatamente.</strong> Revise os passos 3 e 4 sobre isolamento de variáveis, tamanho de amostra e métricas de guarda.';
+      }
+    }
+
+    // Live Sandbox controller
+    function updateSandbox() {
+      const title = document.getElementById('sb-title').value || 'Título da Variante B';
+      const cta = document.getElementById('sb-cta').value || 'Continuar';
+      const color = document.getElementById('sb-color').value;
+      const fields = document.getElementById('sb-fields').value;
+      const trust = document.getElementById('sb-trust').checked;
+
+      document.getElementById('prev-title').textContent = title;
+      const ctaBtn = document.getElementById('prev-cta');
+      ctaBtn.textContent = cta;
+      ctaBtn.style.background = color;
+
+      document.getElementById('prev-extra-fields').style.display = (fields === '4') ? 'block' : 'none';
+      document.getElementById('prev-trust').style.display = trust ? 'block' : 'none';
+    }
+
+    // Copy Canvas
+    function copyCanvas() {
+      const team = document.getElementById('cv-team').value || '[Não preenchido]';
+      const problem = document.getElementById('cv-problem').value || '[Não preenchido]';
+      const variable = document.getElementById('cv-var').value || '[Não preenchido]';
+      const hyp = document.getElementById('cv-hyp').value || '[Não preenchido]';
+      const oec = document.getElementById('cv-oec').value || '[Não preenchido]';
+      const guard = document.getElementById('cv-guard').value || '[Não preenchido]';
+
+      const text = `=== CANVAS DE EXPERIMENTO A/B (IHC) ===
+Grupo / Sistema: ${team}
+1. Diagnóstico Prévio: ${problem}
+2. Variável Única Isolada (A -> B): ${variable}
+3. Hipótese Estruturada: ${hyp}
+4. Métrica Primária (OEC): ${oec}
+5. Métrica de Guarda (Guardrail): ${guard}`;
+
+      navigator.clipboard.writeText(text).then(() => {
+        document.getElementById('copy-status').textContent = '✅ Canvas copiado para a área de transferência! Cole no ambiente de entrega da disciplina.';
+      });
+    }
+
+    // Normal CDF approximation for two-tailed p-value
+    function normalCDF(x) {
+      const t = 1 / (1 + 0.2316419 * Math.abs(x));
+      const d = 0.3989423 * Math.exp(-x * x / 2);
+      let prob = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+      if (x > 0) prob = 1 - prob;
+      return prob;
+    }
+
+    function calcAB() {
+      const nA = parseFloat(document.getElementById('vis-a').value) || 0;
+      const cA = parseFloat(document.getElementById('conv-a').value) || 0;
+      const nB = parseFloat(document.getElementById('vis-b').value) || 0;
+      const cB = parseFloat(document.getElementById('conv-b').value) || 0;
+
+      const verdictBox = document.getElementById('res-verdict');
+
+      if (nA <= 0 || nB <= 0 || cA > nA || cB > nB || cA < 0 || cB < 0) {
+        verdictBox.style.background = 'rgba(220, 38, 38, 0.25)';
+        verdictBox.style.borderColor = '#f87171';
+        verdictBox.style.color = '#fecaca';
+        verdictBox.textContent = '⚠️ Valores inválidos: o número de conversões não pode exceder o total de visitantes.';
+        return;
+      }
+
+      const pA = cA / nA;
+      const pB = cB / nB;
+      const uplift = pA > 0 ? ((pB - pA) / pA) * 100 : 0;
+
+      const pPool = (cA + cB) / (nA + nB);
+      const se = Math.sqrt(pPool * (1 - pPool) * (1 / nA + 1 / nB));
+      const z = se > 0 ? Math.abs(pB - pA) / se : 0;
+      const pVal = 2 * (1 - normalCDF(z));
+      const conf = (1 - pVal) * 100;
+
+      document.getElementById('res-rate-a').textContent = (pA * 100).toFixed(2) + '%';
+      document.getElementById('res-rate-b').textContent = (pB * 100).toFixed(2) + '%';
+
+      const upEl = document.getElementById('res-uplift');
+      upEl.textContent = (uplift >= 0 ? '+' : '') + uplift.toFixed(2) + '%';
+      upEl.style.color = uplift >= 0 ? '#34d399' : '#f87171';
+
+      document.getElementById('res-pval').textContent = `p = ${pVal.toFixed(4)} (${conf.toFixed(1)}%)`;
+
+      if (pVal < 0.05 && pB > pA) {
+        verdictBox.style.background = 'rgba(5, 150, 105, 0.25)';
+        verdictBox.style.borderColor = '#34d399';
+        verdictBox.style.color = '#a7f3d0';
+        verdictBox.textContent = '✅ Vitória Estatística da Variante B (p < 0,05): Confiança acima de 95%. Verifique as métricas de guarda antes do lançamento definitivo.';
+      } else if (pVal < 0.05 && pB < pA) {
+        verdictBox.style.background = 'rgba(220, 38, 38, 0.25)';
+        verdictBox.style.borderColor = '#f87171';
+        verdictBox.style.color = '#fecaca';
+        verdictBox.textContent = '🛑 Regressão Estatística (p < 0,05): A Variante B piorou significativamente a conversão. Descarte a mudança e mantenha o Controle A.';
+      } else {
+        verdictBox.style.background = 'rgba(217, 119, 6, 0.25)';
+        verdictBox.style.borderColor = '#fbbf24';
+        verdictBox.style.color = '#fde68a';
+        verdictBox.textContent = '⏳ Inconclusivo (p ≥ 0,05): A diferença observada pode ser apenas ruído aleatório. Não faça rollout ainda — colete mais amostra ou revise a hipótese.';
+      }
+    }
+
+    function loadPreset(num) {
+      if (num === 1) {
+        document.getElementById('vis-a').value = 80;
+        document.getElementById('conv-a').value = 8;
+        document.getElementById('vis-b').value = 80;
+        document.getElementById('conv-b').value = 13;
+      } else if (num === 2) {
+        document.getElementById('vis-a').value = 5000;
+        document.getElementById('conv-a').value = 500;
+        document.getElementById('vis-b').value = 5000;
+        document.getElementById('conv-b').value = 585;
+      } else if (num === 3) {
+        document.getElementById('vis-a').value = 3000;
+        document.getElementById('conv-a').value = 300;
+        document.getElementById('vis-b').value = 3000;
+        document.getElementById('conv-b').value = 318;
+      }
+      calcAB();
+    }
+
+    // Initialize default calculation
+    calcAB();
+  </script>
+</body>
+</html>

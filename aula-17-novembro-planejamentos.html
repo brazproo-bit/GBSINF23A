@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IHC — Planejamento de Testes de Usabilidade Empíricos | UNASP EC</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#0f172a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos de suporte e impressão */
+        body {
+            font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+        }
+        .script-box {
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 16px 16px;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            #print-area {
+                display: block !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-blue-200 selection:text-blue-900">
+
+    <!-- Barra de Progresso Superior Fixa -->
+    <div class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                    IHC
+                </div>
+                <div class="hidden sm:block">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">Sistemas de Informação • UNASP EC</p>
+                    <p class="text-sm font-bold text-slate-900 leading-tight">Testes de Usabilidade Empíricos</p>
+                </div>
+            </div>
+
+            <!-- Navegação Rápida Desktop -->
+            <nav class="hidden lg:flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
+                <a href="#modulo-1" class="nav-pill px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-white transition-all">1. Fundamentos</a>
+                <a href="#modulo-2" class="nav-pill px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-white transition-all">2. Roteiros & Cenários</a>
+                <a href="#modulo-3" class="nav-pill px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-white transition-all">3. Recrutamento</a>
+                <a href="#modulo-4" class="nav-pill px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-white transition-all">4. Lab vs Remoto</a>
+                <a href="#modulo-5" class="nav-pill px-3 py-1.5 rounded-lg text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-all">5. Oficina Hands-On</a>
+            </nav>
+
+            <!-- Indicador de Progresso -->
+            <div class="flex items-center gap-3">
+                <div class="text-right">
+                    <span class="text-[11px] font-medium text-slate-500 block">Progresso da Aula</span>
+                    <span id="progress-text" class="text-xs font-bold text-slate-900">0% concluído</span>
+                </div>
+                <div class="w-24 sm:w-28 h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-gradient-to-r from-blue-600 to-emerald-500 transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cabeçalho / Hero Didático -->
+    <header class="pt-28 pb-14 bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950 text-white no-print">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-200 text-xs font-semibold mb-6">
+                <i data-lucide="compass" class="w-3.5 h-3.5"></i>
+                Guia Completo Step-by-Step • Prof. Rodrigo Braz Rodrigues
+            </div>
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-5">
+                Planejamento e Execução de <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Testes de Usabilidade Empíricos</span>
+            </h1>
+            <p class="text-base sm:text-lg text-slate-300 max-w-3xl leading-relaxed mb-8">
+                Um roteiro didático construído do zero para você aprender como validar interfaces com usuários reais: desde a definição científica e redação de cenários sem viés, até o recrutamento, montagem de laboratório e condução prática em sala.
+            </p>
+
+            <!-- Mapa de Aprendizagem -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-4 border-t border-slate-700/80">
+                <a href="#modulo-1" class="p-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition group">
+                    <span class="text-[11px] font-mono text-blue-400 block mb-1">PASSO 00 • BASE</span>
+                    <span class="text-sm font-semibold text-white group-hover:text-blue-200">O que é Teste Empírico?</span>
+                </a>
+                <a href="#modulo-2" class="p-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition group">
+                    <span class="text-[11px] font-mono text-blue-400 block mb-1">PASSO 01 • ROTEIRO</span>
+                    <span class="text-sm font-semibold text-white group-hover:text-blue-200">Cenários & Tarefas Reais</span>
+                </a>
+                <a href="#modulo-3" class="p-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition group">
+                    <span class="text-[11px] font-mono text-blue-400 block mb-1">PASSO 02 • PESSOAS</span>
+                    <span class="text-sm font-semibold text-white group-hover:text-blue-200">Recrutamento & Screener</span>
+                </a>
+                <a href="#modulo-4" class="p-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition group">
+                    <span class="text-[11px] font-mono text-blue-400 block mb-1">PASSO 03 • AMBIENTE</span>
+                    <span class="text-sm font-semibold text-white group-hover:text-blue-200">Laboratório vs. Remoto</span>
+                </a>
+                <a href="#modulo-5" class="p-3.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/40 transition group">
+                    <span class="text-[11px] font-mono text-emerald-300 block mb-1">PASSO 04 • PRÁTICA</span>
+                    <span class="text-sm font-bold text-emerald-200">Oficina Hands-On</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20">
+
+        <!-- ===================================================================== -->
+        <!-- MÓDULO 1: FUNDAMENTOS DO ZERO                                         -->
+        <!-- ===================================================================== -->
+        <section id="modulo-1" class="scroll-mt-24 space-y-8 no-print">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+                <div>
+                    <span class="inline-block px-2.5 py-1 rounded-md bg-blue-100 text-blue-800 font-mono text-xs font-bold mb-2">MÓDULO 01 • FUNDAMENTOS DO ZERO</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">O que é um Teste de Usabilidade Empírico?</h2>
+                </div>
+                <label class="inline-flex items-center gap-2 cursor-pointer bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm hover:bg-slate-50 transition">
+                    <input type="checkbox" class="module-check w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500" data-module="1">
+                    <span class="text-xs font-semibold text-slate-700">Marcar módulo como estudado</span>
+                </label>
+            </div>
+
+            <!-- Explicação Inicial Acessível -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5">
+                <p class="text-base sm:text-lg text-slate-700 leading-relaxed">
+                    Quando desenvolvemos um sistema ou aplicativo, sofremos da chamada <strong>"maldição do conhecimento"</strong>: como nós criamos as telas, sabemos exatamente onde cada botão está e o que cada ícone significa. Para nós, tudo parece "óbvio e intuitivo".
+                </p>
+                <div class="bg-blue-50 border-l-4 border-blue-600 p-5 rounded-r-xl">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-blue-900 mb-1 flex items-center gap-2">
+                        <i data-lucide="book-open" class="w-4 h-4"></i> Definição Conceitual
+                    </h3>
+                    <p class="text-slate-800 text-sm sm:text-base leading-relaxed">
+                        A palavra <strong>empírico</strong> vem da ciência e significa <em>"baseado na observação direta e na experiência prática, e não apenas na teoria ou opinião"</em>. Portanto, um <strong>Teste de Usabilidade Empírico</strong> é um método de pesquisa no qual <strong>usuários reais</strong> tentam realizar <strong>tarefas realistas</strong> no seu sistema enquanto um observador assiste, ouve e anota onde eles têm facilidade ou dificuldade.
+                    </p>
+                </div>
+
+                <!-- Referências Científicas e da Indústria -->
+                <div class="pt-3">
+                    <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <i data-lucide="library" class="w-5 h-5 text-blue-600"></i> Base Teórica e Referências Clássicas da Área
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                            <span class="text-xs font-mono font-bold text-blue-700">NORMA INTERNACIONAL • ISO 9241-11 (2018)</span>
+                            <h4 class="font-bold text-slate-900 mt-1">Os 3 Pilares da Usabilidade</h4>
+                            <p class="text-sm text-slate-600 mt-1.5 leading-relaxed">
+                                Define usabilidade como o grau em que um produto pode ser usado por usuários específicos para alcançar objetivos com <strong>Eficácia</strong> (conseguiu completar?), <strong>Eficiência</strong> (quanto tempo/esforço gastou?) e <strong>Satisfação</strong> (como se sentiu durante o uso?).
+                            </p>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                            <span class="text-xs font-mono font-bold text-blue-700">JAKOB NIELSEN • Nielsen Norman Group (1993 / 2000)</span>
+                            <h4 class="font-bold text-slate-900 mt-1">5 Componentes & A Regra dos 5 Usuários</h4>
+                            <p class="text-sm text-slate-600 mt-1.5 leading-relaxed">
+                                Estabelece que usabilidade envolve: <em>Facilidade de aprendizado, Eficiência, Memorabilidade, Prevenção de erros e Satisfação</em>. Além disso, provou matematicamente que testar com apenas <strong>5 usuários</strong> por perfil já revela cerca de <strong>85% dos problemas graves</strong> de interface.
+                            </p>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                            <span class="text-xs font-mono font-bold text-blue-700">STEVE KRUG • "Rocket Surgery Made Easy" (2010)</span>
+                            <h4 class="font-bold text-slate-900 mt-1">Testes Ágeis e Contínuos ("Do-It-Yourself")</h4>
+                            <p class="text-sm text-slate-600 mt-1.5 leading-relaxed">
+                                Autor de <em>"Não me faça pensar"</em>. Defende que testar um usuário no início do projeto vale mais do que testar cinquenta no final, e que o teste deve focar nos problemas mais críticos que impedem o uso real.
+                            </p>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                            <span class="text-xs font-mono font-bold text-blue-700">RUBIN & CHISNELL • "Handbook of Usability Testing" (2008)</span>
+                            <h4 class="font-bold text-slate-900 mt-1">Rigor Metodológico e Planejamento</h4>
+                            <p class="text-sm text-slate-600 mt-1.5 leading-relaxed">
+                                Referência fundamental na estruturação do <strong>Plano de Teste</strong>, garantindo que o moderador não influencie o participante e que os dados coletados sejam confiáveis e reproduzíveis.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparação Visual: Avaliação Heurística vs Teste Empírico -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Não confunda! Inspeção vs. Teste Empírico</h3>
+                <p class="text-sm text-slate-600 mb-5">Na disciplina de IHC existem duas grandes famílias de avaliação. Veja a diferença fundamental entre elas:</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="rounded-xl border-2 border-slate-200 p-5 bg-slate-50/70">
+                        <div class="flex items-center gap-2.5 mb-3">
+                            <span class="w-8 h-8 rounded-lg bg-slate-200 text-slate-700 flex items-center justify-center">
+                                <i data-lucide="search-check" class="w-4 h-4"></i>
+                            </span>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-base">Avaliação Heurística (Inspeção)</h4>
+                                <span class="text-xs text-slate-500">Sem usuários finais</span>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm text-slate-700">
+                            <li class="flex items-start gap-2"><span class="text-slate-400 font-bold">•</span> <strong>Quem executa:</strong> Especialistas em UX/IHC ou os próprios engenheiros de software.</li>
+                            <li class="flex items-start gap-2"><span class="text-slate-400 font-bold">•</span> <strong>Como funciona:</strong> O especialista inspeciona as telas comparando-as com uma lista de boas práticas (ex: as 10 Heurísticas de Nielsen).</li>
+                            <li class="flex items-start gap-2"><span class="text-slate-400 font-bold">•</span> <strong>Limitação:</strong> Encontra problemas técnicos de interface, mas não descobre se o fluxo faz sentido para o público real.</li>
+                        </ul>
+                    </div>
+
+                    <div class="rounded-xl border-2 border-blue-600 p-5 bg-blue-50/40 relative">
+                        <span class="absolute -top-3 right-4 bg-blue-600 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full">Foco desta Aula</span>
+                        <div class="flex items-center gap-2.5 mb-3">
+                            <span class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center">
+                                <i data-lucide="users" class="w-4 h-4"></i>
+                            </span>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-base">Teste de Usabilidade Empírico</h4>
+                                <span class="text-xs text-blue-700 font-medium">Com usuários reais</span>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm text-slate-800">
+                            <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span> <strong>Quem executa:</strong> Pessoas representativas do público-alvo real do sistema.</li>
+                            <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span> <strong>Como funciona:</strong> O usuário recebe objetivos práticos e tenta utilizá-lo sozinho enquanto é observado.</li>
+                            <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span> <strong>Vantagem:</strong> Revela a realidade nua e crua: onde o usuário real trava, hesita ou desiste.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- O que medimos + Ética/LGPD -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Métricas Quantitativas -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center mb-4">
+                        <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-lg mb-2">Métricas Quantitativas</h3>
+                    <p class="text-xs text-slate-500 mb-3">Números objetivos que medem Eficácia e Eficiência:</p>
+                    <ul class="space-y-2.5 text-sm text-slate-700">
+                        <li><strong>Taxa de Sucesso (%):</strong> Quantos usuários completaram a tarefa sem ajuda?</li>
+                        <li><strong>Tempo na Tarefa:</strong> Quantos segundos/minutos levou para concluir?</li>
+                        <li><strong>Taxa de Erro:</strong> Quantos cliques errados ou caminhos sem saída ocorreram?</li>
+                        <li><strong>SEQ (Single Ease Question):</strong> Pergunta única após cada tarefa: <em>"De 1 a 7, quão fácil ou difícil foi esta tarefa?"</em></li>
+                    </ul>
+                </div>
+
+                <!-- Dados Qualitativos & Think-Aloud -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-4">
+                        <i data-lucide="message-square-quote" class="w-5 h-5"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-lg mb-2">Dados Qualitativos</h3>
+                    <p class="text-xs text-slate-500 mb-3">O "porquê" por trás dos números:</p>
+                    <ul class="space-y-2.5 text-sm text-slate-700">
+                        <li><strong>Protocolo Think-Aloud (Pensar em Voz Alta):</strong> Técnica criada por Clayton Lewis onde pedimos ao usuário que narre tudo o que está pensando enquanto navega (<em>"Agora estou procurando onde fica o carrinho..."</em>).</li>
+                        <li><strong>Modelo Mental:</strong> Onde o usuário esperava encontrar uma função versus onde ela realmente está.</li>
+                        <li><strong>Sinais Não-Verbais:</strong> Suspiros, hesitação com o cursor, franzir a testa.</li>
+                    </ul>
+                </div>
+
+                <!-- Ética e LGPD -->
+                <div class="bg-amber-50/70 rounded-2xl p-6 border border-amber-200 shadow-sm">
+                    <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center mb-4">
+                        <i data-lucide="shield-check" class="w-5 h-5"></i>
+                    </div>
+                    <h3 class="font-bold text-amber-950 text-lg mb-2">Ética & LGPD na Prática</h3>
+                    <p class="text-xs text-amber-800 mb-3">Obrigatório antes de iniciar qualquer gravação:</p>
+                    <ul class="space-y-2.5 text-sm text-amber-950">
+                        <li><strong>TCLE (Termo de Consentimento Livre e Esclarecido):</strong> Documento assinado (ou aceito digitalmente) explicando o objetivo do teste.</li>
+                        <li><strong>Autorização de Imagem/Voz:</strong> Permissão explícita para gravar tela, áudio e rosto apenas para fins acadêmicos/de melhoria do produto.</li>
+                        <li><strong>Direito de Desistência:</strong> O participante pode interromper o teste a qualquer momento sem prejuízo.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Quiz Rápido Módulo 1 -->
+            <div class="bg-slate-900 text-white rounded-2xl p-6 sm:p-7 shadow-md">
+                <div class="flex items-center gap-2 text-blue-400 text-xs font-mono font-bold uppercase mb-2">
+                    <i data-lucide="help-circle" class="w-4 h-4"></i> Checagem Rápida • Módulo 1
+                </div>
+                <p class="font-semibold text-base sm:text-lg mb-4">
+                    Um desenvolvedor pede para 3 colegas da própria equipe de programação olharem as telas do sistema e apontarem problemas com base nas Heurísticas de Nielsen. Isso é um Teste de Usabilidade Empírico?
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="quiz-m1">
+                    <button onclick="checkQuiz('m1', false, this)" class="quiz-btn text-left p-3.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-sm transition">
+                        A) Sim, pois 3 a 5 pessoas já são suficientes segundo Jakob Nielsen.
+                    </button>
+                    <button onclick="checkQuiz('m1', true, this)" class="quiz-btn text-left p-3.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-sm transition">
+                        B) Não. Isso é uma Avaliação Heurística (inspeção por especialistas/equipe), não um teste empírico com usuários reais.
+                    </button>
+                </div>
+                <div id="feedback-m1" class="hidden mt-4 p-4 rounded-xl text-sm"></div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- MÓDULO 2: PASSO 1 - ENGENHARIA DE TAREFAS E ROTEIROS                  -->
+        <!-- ===================================================================== -->
+        <section id="modulo-2" class="scroll-mt-24 space-y-8 no-print">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+                <div>
+                    <span class="inline-block px-2.5 py-1 rounded-md bg-blue-100 text-blue-800 font-mono text-xs font-bold mb-2">MÓDULO 02 • PASSO 1 DO PLANEJAMENTO</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Engenharia de Tarefas e Roteiros com Cenários Reais</h2>
+                </div>
+                <label class="inline-flex items-center gap-2 cursor-pointer bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm hover:bg-slate-50 transition">
+                    <input type="checkbox" class="module-check w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500" data-module="2">
+                    <span class="text-xs font-semibold text-slate-700">Marcar módulo como estudado</span>
+                </label>
+            </div>
+
+            <!-- Explicação Step-by-Step: De Funcionalidade para Cenário -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">O Maior Erro dos Iniciantes: Dar "Ordens" em vez de "Cenários"</h3>
+                    <p class="text-sm sm:text-base text-slate-700 leading-relaxed">
+                        Se você disser ao usuário: <em>"Clique no menu Configurações, vá em Privacidade e ative a autenticação em dois fatores"</em>, você <strong>não testou a usabilidade</strong> — você apenas testou se o usuário sabe ler e obedecer ordens! Na vida real, ninguém fica do lado do usuário dando instruções.
+                    </p>
+                </div>
+
+                <!-- A Regra de Ouro -->
+                <div class="bg-rose-50 border border-rose-200 rounded-xl p-5 flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0 mt-0.5">
+                        <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-rose-950 text-base">A Regra de Ouro da Redação de Cenários</h4>
+                        <p class="text-sm text-rose-900 mt-1 leading-relaxed">
+                            <strong>NUNCA use as palavras exatas dos botões, abas ou menus da interface no enunciado da tarefa.</strong> Se o botão na tela se chama <em>"Meus Agendamentos"</em>, no cenário escreva algo como <em>"você precisa verificar o horário da consulta que marcou semana passada"</em>. Isso força o usuário a procurar visualmente pelo significado, revelando se os rótulos da sua interface são claros!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Passo a Passo para Criar um Cenário -->
+                <div>
+                    <h4 class="font-bold text-slate-900 text-base mb-3">Receita em 3 Passos para Criar um Bom Cenário (Rubin & Chisnell):</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                            <span class="w-7 h-7 rounded-full bg-slate-900 text-white text-xs font-bold flex items-center justify-center mb-2">1</span>
+                            <h5 class="font-bold text-slate-900 text-sm">Dê Contexto e Motivação</h5>
+                            <p class="text-xs text-slate-600 mt-1 leading-relaxed">Explique <em>por que</em> o usuário está ali (ex: "Imagine que você vai viajar amanhã e precisa...").</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                            <span class="w-7 h-7 rounded-full bg-slate-900 text-white text-xs font-bold flex items-center justify-center mb-2">2</span>
+                            <h5 class="font-bold text-slate-900 text-sm">Defina o Objetivo Final</h5>
+                            <p class="text-xs text-slate-600 mt-1 leading-relaxed">Deixe claro qual é o resultado esperado sem dizer <em>como</em> clicar (ex: "...encontre uma opção que custe até R$ 150").</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                            <span class="w-7 h-7 rounded-full bg-slate-900 text-white text-xs font-bold flex items-center justify-center mb-2">3</span>
+                            <h5 class="font-bold text-slate-900 text-sm">Use Dados Realistas</h5>
+                            <p class="text-xs text-slate-600 mt-1 leading-relaxed">Forneça dados fictícios concretos (CPF de teste, CEP, nome de produto) para o usuário não travar inventando dados.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comparativo Interativo: Como NÃO fazer vs Como FAZER -->
+                <div class="pt-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                        <h4 class="font-bold text-slate-900 text-base">Exemplos Práticos: ❌ Como NÃO fazer vs. ✅ Como FAZER</h4>
+                        <div class="flex gap-1.5 bg-slate-100 p-1 rounded-lg">
+                            <button onclick="switchExample(0)" class="ex-tab px-3 py-1 rounded-md text-xs font-semibold bg-white text-slate-900 shadow-sm">E-commerce</button>
+                            <button onclick="switchExample(1)" class="ex-tab px-3 py-1 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900">App Bancário</button>
+                            <button onclick="switchExample(2)" class="ex-tab px-3 py-1 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900">Portal Acadêmico</button>
+                        </div>
+                    </div>
+
+                    <div id="example-display" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Preenchido via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Anatomia Completa do Roteiro do Moderador -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">Anatomia do Roteiro do Moderador (Script Passo a Passo)</h3>
+                        <p class="text-sm text-slate-600">O que você deve falar exatamente em cada minuto da sessão para garantir imparcialidade.</p>
+                    </div>
+                    <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-mono text-xs font-semibold">
+                        <i data-lucide="clock" class="w-3.5 h-3.5"></i> Duração padrão: 30 a 45 min
+                    </span>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- Etapa 1 -->
+                    <div class="border border-slate-200 rounded-xl overflow-hidden">
+                        <div class="bg-slate-100 px-4 py-2.5 flex items-center justify-between">
+                            <span class="font-bold text-slate-800 text-sm">1. Boas-vindas, TCLE e Warm-Up (5 min)</span>
+                            <span class="text-xs font-mono text-slate-500">Objetivo: Reduzir a ansiedade do usuário</span>
+                        </div>
+                        <div class="p-4 script-box bg-slate-50 font-mono text-xs sm:text-sm text-slate-800 leading-relaxed">
+                            "Olá [Nome], obrigado por participar! Antes de começarmos, quero deixar algo muito claro: <strong>hoje estamos testando o sistema, e não você</strong>. Não existe resposta certa ou errada. Se algo for difícil de encontrar, a culpa é do nosso design, e é exatamente isso que queremos descobrir. Peço que você pense em voz alta enquanto usa, dizendo o que está procurando e o que espera que aconteça. Tudo bem se começarmos a gravação agora?"
+                        </div>
+                    </div>
+
+                    <!-- Etapa 2 -->
+                    <div class="border border-slate-200 rounded-xl overflow-hidden">
+                        <div class="bg-slate-100 px-4 py-2.5 flex items-center justify-between">
+                            <span class="font-bold text-slate-800 text-sm">2. Execução dos Cenários e Sondagem Neutra (20–30 min)</span>
+                            <span class="text-xs font-mono text-slate-500">Objetivo: Observar sem interferir</span>
+                        </div>
+                        <div class="p-4 space-y-3">
+                            <p class="text-sm text-slate-700">Entregue um cenário por vez (por escrito no chat ou em um cartão impresso). Quando o usuário travar ou perguntar <em>"É aqui que eu clico?"</em>, <strong>não responda sim nem não</strong>. Use frases de sondagem neutra (<em>nudges</em> sem viés):</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                                <div class="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-950">
+                                    <strong class="block mb-1 text-emerald-800">✅ O que dizer (Neutro):</strong>
+                                    • "O que você faria se estivesse sozinho em casa agora?"<br>
+                                    • "O que você esperava que acontecesse ao clicar aí?"<br>
+                                    • "Percebi que você hesitou. O que passou pela sua cabeça?"
+                                </div>
+                                <div class="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-950">
+                                    <strong class="block mb-1 text-rose-800">❌ O que NUNCA dizer (Enviesado):</strong>
+                                    • "Isso, agora olha lá no canto superior direito."<br>
+                                    • "É só clicar no ícone da engrenagem."<br>
+                                    • "Você não viu o botão azul bem no meio da tela?"
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Etapa 3 -->
+                    <div class="border border-slate-200 rounded-xl overflow-hidden">
+                        <div class="bg-slate-100 px-4 py-2.5 flex items-center justify-between">
+                            <span class="font-bold text-slate-800 text-sm">3. Debriefing e Encerramento (5 min)</span>
+                            <span class="text-xs font-mono text-slate-500">Objetivo: Impressões gerais e agradecimento</span>
+                        </div>
+                        <div class="p-4 script-box bg-slate-50 font-mono text-xs sm:text-sm text-slate-800 leading-relaxed">
+                            "Concluímos todas as tarefas! No geral, como foi a sua experiência usando o sistema hoje? Qual parte você achou mais confusa e qual achou mais tranquila? Muito obrigado pelo seu tempo, sua ajuda vai melhorar muito o projeto."
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- MÓDULO 3: PASSO 2 - RECRUTAMENTO E TRIAGEM (SCREENER)                 -->
+        <!-- ===================================================================== -->
+        <section id="modulo-3" class="scroll-mt-24 space-y-8 no-print">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+                <div>
+                    <span class="inline-block px-2.5 py-1 rounded-md bg-blue-100 text-blue-800 font-mono text-xs font-bold mb-2">MÓDULO 03 • PASSO 2 DO PLANEJAMENTO</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Recrutamento e Triagem de Perfis (Screener)</h2>
+                </div>
+                <label class="inline-flex items-center gap-2 cursor-pointer bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm hover:bg-slate-50 transition">
+                    <input type="checkbox" class="module-check w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500" data-module="3">
+                    <span class="text-xs font-semibold text-slate-700">Marcar módulo como estudado</span>
+                </label>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Por que não posso testar só com meus colegas da faculdade?</h3>
+                    <p class="text-sm sm:text-base text-slate-700 leading-relaxed">
+                        Alunos de Sistemas de Informação possuem alta fluência digital: eles sabem o que é um menu hambúrguer, entendem ícones abstratos e contornam bugs intuitivamente. Se você está desenvolvendo um <strong>aplicativo de agendamento de exames para idosos</strong> ou um <strong>sistema de controle de estoque para mecânicos</strong>, testar com seus colegas de turma gera o <strong>Viés de Amostra por Conveniência</strong> — o teste vai passar com 100% de sucesso na faculdade e fracassar no mundo real.
+                    </p>
+                </div>
+
+                <!-- Critérios Comportamentais vs Demográficos -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="p-5 rounded-xl bg-slate-50 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 text-sm uppercase tracking-wider mb-2 flex items-center gap-2">
+                            <i data-lucide="user-check" class="w-4 h-4 text-blue-600"></i> Critérios de Inclusão (Quem queremos)
+                        </h4>
+                        <p class="text-xs text-slate-600 mb-3">Foque em <strong>comportamento e contexto de uso</strong>, não apenas idade e gênero:</p>
+                        <ul class="space-y-1.5 text-sm text-slate-700">
+                            <li>• Usa transporte público pelo menos 3x por semana;</li>
+                            <li>• Já realizou compras online pelo celular nos últimos 3 meses;</li>
+                            <li>• Possui smartphone Android ou iOS básico/intermediário.</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-5 rounded-xl bg-slate-50 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 text-sm uppercase tracking-wider mb-2 flex items-center gap-2">
+                            <i data-lucide="user-x" class="w-4 h-4 text-rose-600"></i> Critérios de Exclusão (Quem filtramos fora)
+                        </h4>
+                        <p class="text-xs text-slate-600 mb-3">Pessoas que contaminariam os resultados do teste:</p>
+                        <ul class="space-y-1.5 text-sm text-slate-700">
+                            <li>• Profissionais ou estudantes de TI, Design ou UX;</li>
+                            <li>• Pessoas que já participaram de pesquisas de usabilidade nos últimos 6 meses ("testadores profissionais");</li>
+                            <li>• Funcionários da empresa concorrente ou da própria equipe.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Como construir um Screener sem revelar a resposta -->
+                <div class="border-t border-slate-200 pt-6 space-y-4">
+                    <h3 class="text-lg font-bold text-slate-900">Como Criar um Questionário de Triagem (Screener) Inteligente</h3>
+                    <p class="text-sm text-slate-700 leading-relaxed">
+                        Quando divulgamos um formulário de recrutamento (especialmente se houver algum brinde ou recompensa), muitas pessoas tentam adivinhar a resposta "certa" para serem escolhidas. Para evitar isso, usamos <strong>perguntas fechadas com distratores</strong> (opções falsas misturadas).
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-xl bg-rose-50/70 border border-rose-200">
+                            <span class="text-xs font-bold text-rose-700 uppercase">❌ Pergunta de Screener Ruim (Indutiva)</span>
+                            <p class="text-sm font-semibold text-slate-900 mt-2">"Você costuma pedir comida por aplicativos de delivery?"</p>
+                            <p class="text-xs text-slate-600 mt-1">( ) Sim &nbsp;&nbsp; ( ) Não</p>
+                            <p class="text-xs text-rose-800 mt-3 italic">Problema: Qualquer pessoa percebe que se marcar "Sim" será selecionada para o teste.</p>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200">
+                            <span class="text-xs font-bold text-emerald-700 uppercase">✅ Pergunta de Screener Boa (Com Distratores)</span>
+                            <p class="text-sm font-semibold text-slate-900 mt-2">"Quais destas atividades você realizou pelo celular nos últimos 30 dias? (Marque todas)"</p>
+                            <p class="text-xs text-slate-700 mt-1 leading-relaxed">
+                                [ ] Pagou um boleto bancário<br>
+                                [ ] Pediu comida por aplicativo de delivery <em>(Critério alvo!)</em><br>
+                                [ ] Editou um vídeo para redes sociais<br>
+                                [ ] Comprou ingresso de cinema
+                            </p>
+                            <p class="text-xs text-emerald-800 mt-2 italic">Vantagem: O candidato não sabe qual das 4 opções é o critério real de seleção.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Regra Logística de Agendamento -->
+                <div class="bg-slate-900 text-white rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="space-y-1">
+                        <h4 class="font-bold text-base text-blue-300 flex items-center gap-2">
+                            <i data-lucide="calendar-clock" class="w-5 h-5"></i> Regra de Ouro da Logística: Buffer + Overbooking
+                        </h4>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            1. Nunca agende sessões coladas (ex: 14:00 e 14:30). Deixe sempre um <strong>intervalo (buffer) de 15 a 20 minutos</strong> entre participantes para salvar vídeos, organizar anotações e respirar.<br>
+                            2. Se você precisa de <strong>5 participantes</strong>, agende <strong>6 ou 7</strong> (overbooking), pois a taxa média de faltas (<em>no-shows</em>) em testes remotos e presenciais gira em torno de 20%.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- MÓDULO 4: PASSO 3 - LABORATÓRIO PRESENCIAL VS. AMBIENTE REMOTO        -->
+        <!-- ===================================================================== -->
+        <section id="modulo-4" class="scroll-mt-24 space-y-8 no-print">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+                <div>
+                    <span class="inline-block px-2.5 py-1 rounded-md bg-blue-100 text-blue-800 font-mono text-xs font-bold mb-2">MÓDULO 04 • PASSO 3 DO PLANEJAMENTO</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Organização Prática: Laboratório vs. Ambiente Remoto</h2>
+                </div>
+                <label class="inline-flex items-center gap-2 cursor-pointer bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm hover:bg-slate-50 transition">
+                    <input type="checkbox" class="module-check w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500" data-module="4">
+                    <span class="text-xs font-semibold text-slate-700">Marcar módulo como estudado</span>
+                </label>
+            </div>
+
+            <!-- Os 3 Papéis na Sala de Teste -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5">
+                <h3 class="text-lg font-bold text-slate-900">Os 3 Papéis Essenciais na Execução do Teste</h3>
+                <p class="text-sm text-slate-600">Para que o teste funcione sem caos, cada membro da equipe tem uma responsabilidade estrita:</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="p-5 rounded-xl border border-blue-200 bg-blue-50/40">
+                        <div class="flex items-center gap-2 font-bold text-blue-950 mb-2">
+                            <i data-lucide="mic" class="w-5 h-5 text-blue-600"></i> 1. Moderador (Facilitador)
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                            É a única pessoa da equipe que conversa com o participante. Lê o roteiro, entrega os cenários, incentiva o <em>Think-Aloud</em> e faz perguntas neutras. <strong>Não anota detalhes longos</strong> para manter contato visual e atenção total no usuário.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-xl border border-emerald-200 bg-emerald-50/40">
+                        <div class="flex items-center gap-2 font-bold text-emerald-950 mb-2">
+                            <i data-lucide="clipboard-edit" class="w-5 h-5 text-emerald-600"></i> 2. Anotador / Observador
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                            Fica em silêncio absoluto (câmera e mic desligados no remoto, ou sentado ao fundo no laboratório). Cronometra o tempo de cada tarefa, anota o minuto exato (<em>timestamp</em>) dos travamentos e classifica se a tarefa teve sucesso ou falha.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-xl border border-slate-200 bg-slate-50">
+                        <div class="flex items-center gap-2 font-bold text-slate-900 mb-2">
+                            <i data-lucide="user" class="w-5 h-5 text-slate-700"></i> 3. Participante (Usuário)
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                            O protagonista do teste. Interage com o sistema ou protótipo navegável tentando resolver os cenários apresentados enquanto verbaliza suas dúvidas e expectativas.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Checklists Interativos de Setup (Presencial vs Remoto) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Setup Remoto -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-9 h-9 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">
+                                <i data-lucide="laptop" class="w-5 h-5"></i>
+                            </span>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-base">Checklist: Teste Remoto Moderado</h4>
+                                <span class="text-xs text-slate-500">Via Zoom, Google Meet ou Microsoft Teams</span>
+                            </div>
+                        </div>
+                        <span class="text-[11px] font-mono bg-blue-50 text-blue-700 px-2 py-1 rounded font-semibold">Interativo</span>
+                    </div>
+
+                    <div class="space-y-2.5 text-sm text-slate-700">
+                        <label class="flex items-start gap-2.5 cursor-pointer hover:bg-slate-50 p-1.5 rounded-lg">
+                            <input type="checkbox" class="mt-1 rounded text-blue-600">
+                            <span><strong>Link do Protótipo / Ambiente Testado:</strong> Verificar se o link do Figma está em modo "Apresentação" sem pedir login ao usuário.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 cursor-pointer hover:bg-slate-50 p-1.5 rounded-lg">
+                            <input type="checkbox" class="mt-1 rounded text-blue-600">
+                            <span><strong>Permissão de Compartilhamento de Tela:</strong> Testar antes se o participante sabe compartilhar a tela (no celular ou PC).</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 cursor-pointer hover:bg-slate-50 p-1.5 rounded-lg">
+                            <input type="checkbox" class="mt-1 rounded text-blue-600">
+                            <span><strong>Modo "Não Perturbe":</strong> Pedir ao usuário para silenciar notificações do WhatsApp/celular antes de compartilhar a tela (privacidade).</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 cursor-pointer hover:bg-slate-50 p-1.5 rounded-lg">
+                            <input type="checkbox" class="mt-1 rounded text-blue-600">
+                            <span><strong>Cenários Prontos para Copiar/Colar:</strong> Deixar cada cenário separado em um bloco de notas para colar no chat um de cada vez.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 cursor-pointer hover:bg-slate-50 p-1.5 rounded-lg">
+                            <input type="checkbox" class="mt-1 rounded text-blue-600">
+                            <span><strong>Gravação em Nuvem / Local (OBS):</strong> Conferir espaço em disco e áudio de ambos os lados.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Setup Presencial -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-9 h-9 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                                <i data-lucide="monitor-speaker" class="w-5 h-5"></i>
+                            </span>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-base">Checklist: Teste Presencial / Laboratório</h4>
+                                <span class="text-xs text-slate-500">Em sala controlada ou laboratório de IHC</span>
+                            </div>
+                        </div>
+                        <span class="text-[11px] font-mono bg-emerald-50 text-emerald-700 px-2 py-1 rounded font-semibold">Interativo</span>
+                    </div>
+
+                    <div class="space-y-2.5 text-sm text-slate-700">
+                        <label class="flex items-start gap-2.5 cursor-pointer hover:bg-slate-50 p-1.5 rounded-lg">
+                            <input type="checkbox" class="mt-1 rounded text-emerald-600">
+                            <span><strong>Estação Limpa e Mouse Externo:</strong> Fechar abas pessoais e conectar um mouse físico (trackpads de notebooks desconhecidos atrapalham o usuário).</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 cursor-pointer hover:bg-slate-50 p-1.5 rounded-lg">
+                            <input type="checkbox" class="mt-1 rounded text-emerald-600">
+                            <span><strong>Captura de Tela + Webcam (OBS Studio):</strong> Configurar cena gravando a tela inteira e uma miniatura da webcam no canto para capturar expressões faciais.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 cursor-pointer hover:bg-slate-50 p-1.5 rounded-lg">
+                            <input type="checkbox" class="mt-1 rounded text-emerald-600">
+                            <span><strong>Cartões Impressos com os Cenários:</strong> Imprimir cada tarefa em uma folha/cartão separado com fonte grande (14pt+) para o usuário ler sem precisar decorar.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 cursor-pointer hover:bg-slate-50 p-1.5 rounded-lg">
+                            <input type="checkbox" class="mt-1 rounded text-emerald-600">
+                            <span><strong>TCLE Impresso + Caneta:</strong> Deixar duas vias do termo de consentimento sobre a mesa.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 cursor-pointer hover:bg-slate-50 p-1.5 rounded-lg">
+                            <input type="checkbox" class="mt-1 rounded text-emerald-600">
+                            <span><strong>Posicionamento da Equipe:</strong> Moderador ao lado em ângulo de 45°; anotador fora do campo de visão direta para não intimidar.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerta Teste Piloto -->
+            <div class="bg-blue-50 border border-blue-200 rounded-2xl p-5 flex items-start gap-4">
+                <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0">
+                    <i data-lucide="flask-conical" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-blue-950 text-base">Passo Obrigatório Antes do Dia D: O Teste Piloto (Dry-Run)</h4>
+                    <p class="text-sm text-blue-900 mt-1 leading-relaxed">
+                        Nunca estreie um roteiro diretamente com um usuário real! Faça um <strong>Teste Piloto</strong> com um colega da equipe 24 horas antes. O piloto serve para descobrir se algum cenário ficou ambíguo, se o tempo total estourou os 40 minutos ou se o protótipo trava em alguma tela.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- MÓDULO 5: OFICINA HANDS-ON (LABORATÓRIO PRÁTICO GUIADO EM SALA)       -->
+        <!-- ===================================================================== -->
+        <section id="modulo-5" class="scroll-mt-24 space-y-8">
+            <div class="bg-gradient-to-r from-emerald-700 to-teal-800 text-white rounded-2xl p-6 sm:p-8 shadow-lg no-print">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 text-emerald-100 font-mono text-xs font-bold mb-3">
+                            <i data-lucide="wrench" class="w-3.5 h-3.5"></i> MÓDULO 05 • MÃO NA MASSA (HANDS-ON)
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold">Laboratório Prático Guiado em Sala</h2>
+                        <p class="text-emerald-100 text-sm sm:text-base mt-2 max-w-2xl">
+                            Chegou a hora de aplicar tudo o que você aprendeu! Complete as 3 etapas práticas abaixo: primeiro calibre seu olhar corrigindo cenários com viés, depois construa o plano de teste da sua equipe e, por fim, execute um teste real em trio.
+                        </p>
+                    </div>
+                    <label class="inline-flex items-center gap-2 cursor-pointer bg-white/10 hover:bg-white/20 px-4 py-2.5 rounded-xl border border-white/20 transition shrink-0">
+                        <input type="checkbox" class="module-check w-4 h-4 rounded text-emerald-400" data-module="5">
+                        <span class="text-xs font-bold text-white">Concluir Oficina</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- ETAPA HANDS-ON 1: VALIDADOR DE CENÁRIOS -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6 no-print">
+                <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+                    <span class="w-8 h-8 rounded-lg bg-emerald-600 text-white font-bold text-sm flex items-center justify-center">1</span>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">Etapa Hands-On 1: Treinando o Olhar (Eliminando Vieses)</h3>
+                        <p class="text-xs sm:text-sm text-slate-600">Analise os cenários mal escritos abaixo e selecione a reescrita correta sem entregar o caminho da interface.</p>
+                    </div>
+                </div>
+
+                <!-- Desafio 1 -->
+                <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono font-bold text-slate-500">CASO 01 • APLICATIVO DE AGENDAMENTO MÉDICO</span>
+                        <span class="text-xs bg-rose-100 text-rose-800 px-2 py-0.5 rounded font-semibold">Enunciado Ruim: "Clique em 'Especialidades', escolha 'Cardiologia' e agende uma teleconsulta."</span>
+                    </div>
+                    <p class="text-sm font-semibold text-slate-900">Qual opção transforma essa ordem em um cenário empírico realista e sem viés?</p>
+                    <div class="space-y-2">
+                        <button onclick="validateScenario(1, false, this)" class="sc-btn-1 w-full text-left p-3 rounded-lg bg-white border border-slate-200 hover:border-blue-400 text-xs sm:text-sm transition">
+                            A) "Entre na aba Especialidades e marque uma consulta online com um cardiologista para amanhã."
+                        </button>
+                        <button onclick="validateScenario(1, true, this)" class="sc-btn-1 w-full text-left p-3 rounded-lg bg-white border border-slate-200 hover:border-blue-400 text-xs sm:text-sm transition">
+                            B) "Você sentiu um desconforto no peito ontem e precisa marcar um atendimento por vídeo com um médico do coração ainda para esta semana."
+                        </button>
+                        <button onclick="validateScenario(1, false, this)" class="sc-btn-1 w-full text-left p-3 rounded-lg bg-white border border-slate-200 hover:border-blue-400 text-xs sm:text-sm transition">
+                            C) "Teste o fluxo de teleconsulta da área de Cardiologia para ver se o botão de confirmar funciona."
+                        </button>
+                    </div>
+                    <div id="sc-fb-1" class="hidden p-3 rounded-lg text-xs leading-relaxed"></div>
+                </div>
+
+                <!-- Desafio 2 -->
+                <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono font-bold text-slate-500">CASO 02 • APLICATIVO DE MOBILIDADE URBANA (ÔNIBUS)</span>
+                        <span class="text-xs bg-rose-100 text-rose-800 px-2 py-0.5 rounded font-semibold">Enunciado Ruim: "Use a barra de pesquisa para digitar 'Terminal Central' e veja o itinerário da linha 402."</span>
+                    </div>
+                    <p class="text-sm font-semibold text-slate-900">Qual opção evita entregar os componentes da interface?</p>
+                    <div class="space-y-2">
+                        <button onclick="validateScenario(2, true, this)" class="sc-btn-2 w-full text-left p-3 rounded-lg bg-white border border-slate-200 hover:border-blue-400 text-xs sm:text-sm transition">
+                            A) "Você está saindo da faculdade agora e precisa descobrir qual ônibus passa pelo Terminal Central e que horas ele chega no seu ponto."
+                        </button>
+                        <button onclick="validateScenario(2, false, this)" class="sc-btn-2 w-full text-left p-3 rounded-lg bg-white border border-slate-200 hover:border-blue-400 text-xs sm:text-sm transition">
+                            B) "Abra o mapa, clique no ícone de lupa e pesquise o horário da linha 402 até o Terminal Central."
+                        </button>
+                    </div>
+                    <div id="sc-fb-2" class="hidden p-3 rounded-lg text-xs leading-relaxed"></div>
+                </div>
+            </div>
+
+            <!-- ETAPA HANDS-ON 2: CONSTRUTOR DE PLANO DE TESTE -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4 no-print">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-600 text-white font-bold text-sm flex items-center justify-center">2</span>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900">Etapa Hands-On 2: Construtor do Plano de Teste da Equipe</h3>
+                            <p class="text-xs sm:text-sm text-slate-600">Escolha um sistema real (ex: SIGAA/Portal UNASP, App do SUS, iFood, Spotify, Nubank) e preencha o planejamento.</p>
+                        </div>
+                    </div>
+                    <button onclick="fillSamplePlan()" class="text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg border border-blue-200 transition self-start sm:self-auto">
+                        Preencher com exemplo guia
+                    </button>
+                </div>
+
+                <form id="plan-form" class="space-y-5 no-print" onsubmit="event.preventDefault(); generateTestPlan();">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">1. Integrantes do Trio / Equipe</label>
+                            <input type="text" id="plan-team" placeholder="Ex: Ana Silva, Carlos Souza, João Pedro" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">2. Sistema / App que será Testado</label>
+                            <input type="text" id="plan-system" placeholder="Ex: Portal do Aluno UNASP / App Conecte SUS / App Moovit" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" required>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">3. Modalidade do Teste</label>
+                            <select id="plan-mode" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option value="Presencial (Laboratório de IHC / Sala de Aula)">Presencial (Laboratório de IHC / Sala de Aula)</option>
+                                <option value="Remoto Moderado (Videoconferência + Compartilhamento de Tela)">Remoto Moderado (Videoconferência + Compartilhamento)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">4. Perfil Alvo (Critérios de Inclusão)</label>
+                            <input type="text" id="plan-profile" placeholder="Ex: Estudantes calouros que nunca acessaram o histórico escolar" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">5. Pergunta de Triagem (Screener) com Distratores</label>
+                        <textarea id="plan-screener" rows="2" placeholder="Escreva 1 pergunta de múltipla escolha com opções distratoras para filtrar o perfil acima sem revelar a resposta..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none" required></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">6. Cenário Realista 01 (Sem nomes de botões!)</label>
+                            <textarea id="plan-scenario1" rows="3" placeholder="Dê contexto, motivação e objetivo final para a primeira tarefa..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none" required></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">7. Cenário Realista 02 (Sem nomes de botões!)</label>
+                            <textarea id="plan-scenario2" rows="3" placeholder="Dê contexto, motivação e objetivo final para a segunda tarefa..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-3 pt-2">
+                        <button type="submit" class="px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-sm flex items-center gap-2 transition">
+                            <i data-lucide="file-check-2" class="w-4 h-4"></i> Gerar Documento do Plano de Teste
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Documento Gerado (Pronto para Copiar ou Imprimir) -->
+                <div id="print-area" class="hidden mt-6 p-6 rounded-2xl bg-slate-50 border-2 border-slate-300 space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-300 pb-4">
+                        <div>
+                            <span class="text-xs font-mono font-bold text-blue-700">DISCIPLINA DE IHC • PLANO DE TESTE EMPÍRICO</span>
+                            <h4 id="out-title" class="text-xl font-extrabold text-slate-900">Plano de Teste</h4>
+                        </div>
+                        <div class="flex gap-2 no-print">
+                            <button onclick="copyPlanText()" class="px-3.5 py-2 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-xs font-bold text-slate-800 flex items-center gap-1.5 transition">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i> <span id="copy-label">Copiar Texto</span>
+                            </button>
+                            <button onclick="window.print()" class="px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-xs font-bold text-white flex items-center gap-1.5 transition">
+                                <i data-lucide="printer" class="w-3.5 h-3.5"></i> Imprimir / Salvar PDF
+                            </button>
+                        </div>
+                    </div>
+                    <div id="out-content" class="text-sm text-slate-800 space-y-3 leading-relaxed"></div>
+                </div>
+            </div>
+
+            <!-- ETAPA HANDS-ON 3: ROLE-PLAY EM TRIO + RAINBOW SPREADSHEET -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6 no-print">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-600 text-white font-bold text-sm flex items-center justify-center">3</span>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900">Etapa Hands-On 3: Simulação Real em Trio (Role-Play) & Coleta</h3>
+                            <p class="text-xs sm:text-sm text-slate-600">Formem trios na sala (1 Moderador, 1 Anotador, 1 Usuário) e executem os 2 cenários criados acima no celular ou notebook.</p>
+                        </div>
+                    </div>
+
+                    <!-- Cronômetro Embutido para o Anotador -->
+                    <div class="flex items-center gap-2 bg-slate-900 text-white px-3.5 py-2 rounded-xl self-start sm:self-auto">
+                        <i data-lucide="timer" class="w-4 h-4 text-emerald-400"></i>
+                        <span id="timer-display" class="font-mono text-sm font-bold">00:00</span>
+                        <button onclick="toggleTimer()" id="timer-btn" class="ml-2 px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-xs font-bold">Iniciar</button>
+                        <button onclick="resetTimer()" class="px-2 py-1 rounded bg-white/10 hover:bg-white/20 text-xs">Zerar</button>
+                    </div>
+                </div>
+
+                <!-- Regras Rápidas do Role-Play -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                    <div class="p-3.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-950">
+                        <strong class="block text-blue-800 mb-1">🎙️ Moderador:</strong>
+                        Faça o <em>warm-up</em>, leia o Cenário 1 e <strong>segure a língua</strong>! Não dê dicas se o colega travar.
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950">
+                        <strong class="block text-emerald-800 mb-1">⏱️ Anotador:</strong>
+                        Use o cronômetro acima e preencha a tabela de observações abaixo em silêncio absoluto.
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-950">
+                        <strong class="block text-amber-800 mb-1">🗣️ Usuário:</strong>
+                        Pratique o <em>Think-Aloud</em>: fale em voz alta tudo o que estiver procurando na tela.
+                    </div>
+                </div>
+
+                <!-- Tabela Interativa de Registro de Observações (Rainbow Spreadsheet Simplificada) -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-bold text-slate-900 text-sm">Planilha de Registro Empírico (Preencha durante o teste)</h4>
+                        <button onclick="addObservationRow()" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-800 flex items-center gap-1 transition">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Adicionar Linha
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                        <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                                    <th class="p-3 font-bold">Cenário / Tarefa</th>
+                                    <th class="p-3 font-bold">Resultado</th>
+                                    <th class="p-3 font-bold">Tempo</th>
+                                    <th class="p-3 font-bold">SEQ (1-7)</th>
+                                    <th class="p-3 font-bold">O que aconteceu / Onde travou (Observação)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="obs-tbody" class="divide-y divide-slate-200">
+                                <tr>
+                                    <td class="p-2.5"><input type="text" value="Cenário 01" class="w-full px-2 py-1.5 rounded border border-slate-200 text-xs"></td>
+                                    <td class="p-2.5">
+                                        <select class="px-2 py-1.5 rounded border border-slate-200 text-xs bg-white font-semibold">
+                                            <option value="Sucesso Direto">✅ Sucesso Direto</option>
+                                            <option value="Sucesso com Dificuldade">⚠️ Sucesso c/ Dificuldade</option>
+                                            <option value="Falha / Desistência">❌ Falha / Desistência</option>
+                                        </select>
+                                    </td>
+                                    <td class="p-2.5"><input type="text" placeholder="01:15" class="w-20 px-2 py-1.5 rounded border border-slate-200 font-mono text-xs"></td>
+                                    <td class="p-2.5">
+                                        <select class="px-2 py-1.5 rounded border border-slate-200 text-xs bg-white">
+                                            <option>7 (Muito fácil)</option>
+                                            <option>6</option>
+                                            <option>5</option>
+                                            <option selected>4 (Neutro)</option>
+                                            <option>3</option>
+                                            <option>2</option>
+                                            <option>1 (Muito difícil)</option>
+                                        </select>
+                                    </td>
+                                    <td class="p-2.5"><input type="text" placeholder="Ex: Clicou 2x no menu errado antes de achar..." class="w-full min-w-[200px] px-2 py-1.5 rounded border border-slate-200 text-xs"></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2.5"><input type="text" value="Cenário 02" class="w-full px-2 py-1.5 rounded border border-slate-200 text-xs"></td>
+                                    <td class="p-2.5">
+                                        <select class="px-2 py-1.5 rounded border border-slate-200 text-xs bg-white font-semibold">
+                                            <option value="Sucesso Direto">✅ Sucesso Direto</option>
+                                            <option value="Sucesso com Dificuldade" selected>⚠️ Sucesso c/ Dificuldade</option>
+                                            <option value="Falha / Desistência">❌ Falha / Desistência</option>
+                                        </select>
+                                    </td>
+                                    <td class="p-2.5"><input type="text" placeholder="02:40" class="w-20 px-2 py-1.5 rounded border border-slate-200 font-mono text-xs"></td>
+                                    <td class="p-2.5">
+                                        <select class="px-2 py-1.5 rounded border border-slate-200 text-xs bg-white">
+                                            <option>7 (Muito fácil)</option>
+                                            <option>6</option>
+                                            <option>5</option>
+                                            <option>4 (Neutro)</option>
+                                            <option selected>3</option>
+                                            <option>2</option>
+                                            <option>1 (Muito difícil)</option>
+                                        </select>
+                                    </td>
+                                    <td class="p-2.5"><input type="text" placeholder="Ex: Não entendeu o ícone de filtro..." class="w-full min-w-[200px] px-2 py-1.5 rounded border border-slate-200 text-xs"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Rodapé Acadêmico -->
+    <footer class="bg-slate-900 text-slate-400 py-10 mt-16 border-t border-slate-800 no-print">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+            <div>
+                <p class="font-bold text-white text-sm">Interface Humano-Computador (IHC)</p>
+                <p class="mt-1">Curso de Sistemas de Informação • UNASP Campus Engenheiro Coelho • Prof. Rodrigo Braz Rodrigues</p>
+            </div>
+            <div class="text-center sm:text-right">
+                <p>Referências: ISO 9241-11 • Jakob Nielsen (NN/g) • Steve Krug • Rubin & Chisnell</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Lógica Interativa da Aula -->
+    <script>
+        // Inicializar ícones Lucide
+        lucide.createIcons();
+
+        // 1. Controle de Progresso dos Módulos
+        const checkboxes = document.querySelectorAll('.module-check');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+
+        function updateProgress() {
+            const total = checkboxes.length;
+            const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const pct = Math.round((checked / total) * 100);
+            progressBar.style.width = pct + '%';
+            progressText.textContent = `${pct}% concluído (${checked}/${total})`;
+        }
+
+        checkboxes.forEach(cb => cb.addEventListener('change', updateProgress));
+
+        // 2. Quiz Rápido Módulo 1
+        function checkQuiz(mod, isCorrect, btn) {
+            const fb = document.getElementById(`feedback-${mod}`);
+            const buttons = document.querySelectorAll(`#quiz-${mod} .quiz-btn`);
+            buttons.forEach(b => {
+                b.classList.remove('ring-2', 'ring-emerald-400', 'ring-rose-400', 'bg-emerald-950/60', 'bg-rose-950/60');
+            });
+
+            fb.classList.remove('hidden', 'bg-emerald-950/80', 'border-emerald-500/40', 'text-emerald-200', 'bg-rose-950/80', 'border-rose-500/40', 'text-rose-200');
+            if (isCorrect) {
+                btn.classList.add('ring-2', 'ring-emerald-400', 'bg-emerald-950/60');
+                fb.classList.add('bg-emerald-950/80', 'border', 'border-emerald-500/40', 'text-emerald-200');
+                fb.innerHTML = '<strong>✅ Exato!</strong> Como os colegas pertencem à própria equipe de desenvolvimento e usam heurísticas, trata-se de uma <em>Avaliação Heurística</em>. Para ser um <strong>Teste Empírico</strong>, precisamos observar usuários reais externos tentando executar tarefas práticas.';
+            } else {
+                btn.classList.add('ring-2', 'ring-rose-400', 'bg-rose-950/60');
+                fb.classList.add('bg-rose-950/80', 'border', 'border-rose-500/40', 'text-rose-200');
+                fb.innerHTML = '<strong>❌ Quase lá!</strong> A regra dos 5 usuários de Nielsen refere-se a <em>usuários reais externos</em> do público-alvo. Quando membros da própria equipe avaliam telas usando heurísticas, chamamos isso de <em>Avaliação Heurística</em> (inspeção).';
+            }
+        }
+
+        // 3. Comparativo Interativo de Cenários (Módulo 2)
+        const scenarioExamples = [
+            {
+                bad: 'Clique no menu "Categorias", selecione "Eletrônicos", use o filtro "Menor Preço" e adicione um fone Bluetooth ao carrinho.',
+                badWhy: 'Entrega todos os rótulos dos botões ("Categorias", "Eletrônicos", "Menor Preço") e transforma o usuário em um robô seguindo ordens.',
+                good: 'Você precisa comprar um fone de ouvido sem fio para correr, mas seu orçamento máximo é de R$ 150,00. Encontre uma opção dentro desse valor e prepare-a para finalizar a compra.',
+                goodWhy: 'Dá motivação real, restrição clara (R$ 150) e objetivo final sem citar nenhuma palavra da interface.'
+            },
+            {
+                bad: 'Acesse a área "Pix", clique em "Transferir", digite a chave CPF 123.456.789-00 e envie R$ 50,00.',
+                badWhy: 'Induz o usuário diretamente ao botão "Pix" e "Transferir", escondendo se o usuário saberia encontrar a função sozinho.',
+                good: 'Você dividiu um almoço com seu amigo João (CPF 123.456.789-00) e precisa transferir sua parte de R$ 50,00 agora mesmo para a conta dele.',
+                goodWhy: 'Simula uma situação cotidiana real com dados concretos, deixando o usuário escolher qual meio de transferência usar.'
+            },
+            {
+                bad: 'Vá em "Secretaria Digital" > "Documentos" > "Emitir Atestado de Matrícula" e baixe o PDF.',
+                badWhy: 'Se o aluno não souber que o atestado fica dentro de "Secretaria Digital", esse enunciado mascara um grave problema de arquitetura da informação.',
+                good: 'A empresa onde você vai estagiar pediu um comprovante oficial de que você está matriculado neste semestre. Obtenha esse documento pelo portal.',
+                goodWhy: 'Testa se o aluno consegue navegar pela estrutura de menus do portal usando apenas o próprio modelo mental.'
+            }
+        ];
+
+        function switchExample(index) {
+            const tabs = document.querySelectorAll('.ex-tab');
+            tabs.forEach((t, i) => {
+                if (i === index) {
+                    t.className = 'ex-tab px-3 py-1 rounded-md text-xs font-semibold bg-white text-slate-900 shadow-sm';
+                } else {
+                    t.className = 'ex-tab px-3 py-1 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900';
+                }
+            });
+
+            const item = scenarioExamples[index];
+            document.getElementById('example-display').innerHTML = `
+                <div class="p-4 rounded-xl bg-rose-50/70 border border-rose-200 flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-bold text-rose-700 uppercase">❌ Erro de Iniciante (Ordem Direta)</span>
+                        <p class="text-sm font-medium text-slate-900 mt-2">"${item.bad}"</p>
+                    </div>
+                    <p class="text-xs text-rose-800 mt-3 pt-2 border-t border-rose-200/70"><strong>Por que falha:</strong> ${item.badWhy}</p>
+                </div>
+                <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-bold text-emerald-700 uppercase">✅ Cenário Bem Escrito (Empírico)</span>
+                        <p class="text-sm font-medium text-slate-900 mt-2">"${item.good}"</p>
+                    </div>
+                    <p class="text-xs text-emerald-800 mt-3 pt-2 border-t border-emerald-200/70"><strong>Por que funciona:</strong> ${item.goodWhy}</p>
+                </div>
+            `;
+        }
+        switchExample(0);
+
+        // 4. Validador Hands-On Etapa 1
+        function validateScenario(caseNum, isCorrect, btn) {
+            const buttons = document.querySelectorAll(`.sc-btn-${caseNum}`);
+            buttons.forEach(b => b.classList.remove('ring-2', 'ring-emerald-500', 'bg-emerald-50', 'ring-rose-500', 'bg-rose-50'));
+            const fb = document.getElementById(`sc-fb-${caseNum}`);
+            fb.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-900', 'bg-rose-100', 'text-rose-900');
+
+            if (isCorrect) {
+                btn.classList.add('ring-2', 'ring-emerald-500', 'bg-emerald-50');
+                fb.classList.add('bg-emerald-100', 'text-emerald-900');
+                fb.innerHTML = '<strong>✅ Excelente!</strong> Este cenário apresenta uma motivação real, define o objetivo e não entrega nenhuma palavra exata dos botões ou abas da interface.';
+            } else {
+                btn.classList.add('ring-2', 'ring-rose-500', 'bg-rose-50');
+                fb.classList.add('bg-rose-100', 'text-rose-900');
+                fb.innerHTML = '<strong>❌ Atenção ao viés:</strong> Essa alternativa ainda usa termos técnicos ou nomes exatos de elementos da tela ("Especialidades", "ícone de lupa", "fluxo"), o que guia o usuário artificialmente.';
+            }
+        }
+
+        // 5. Construtor do Plano de Teste Hands-On Etapa 2
+        function fillSamplePlan() {
+            document.getElementById('plan-team').value = 'Lucas Mendes, Beatriz Lima, Gabriel Santos';
+            document.getElementById('plan-system').value = 'Portal Acadêmico / App da Biblioteca UNASP';
+            document.getElementById('plan-mode').value = 'Presencial (Laboratório de IHC / Sala de Aula)';
+            document.getElementById('plan-profile').value = 'Alunos ingressantes (1º semestre) que precisam consultar livros e prazos acadêmicos';
+            document.getElementById('plan-screener').value = 'Quais destas ferramentas digitais você utilizou na última semana? [ ] Streaming de música [ ] Sistema acadêmico da faculdade (Alvo) [ ] Editor de planilhas [ ] App de banco';
+            document.getElementById('plan-scenario1').value = 'Você precisa estudar para a prova de Algoritmos usando o livro "Introdução à Programação com Python". Descubra se há algum exemplar disponível para empréstimo físico na biblioteca do campus.';
+            document.getElementById('plan-scenario2').value = 'Você faltou na aula de terça-feira passada e quer verificar se ainda está dentro do limite permitido de faltas nesta disciplina neste semestre.';
+        }
+
+        function generateTestPlan() {
+            const team = document.getElementById('plan-team').value;
+            const system = document.getElementById('plan-system').value;
+            const mode = document.getElementById('plan-mode').value;
+            const profile = document.getElementById('plan-profile').value;
+            const screener = document.getElementById('plan-screener').value;
+            const sc1 = document.getElementById('plan-scenario1').value;
+            const sc2 = document.getElementById('plan-scenario2').value;
+
+            document.getElementById('out-title').textContent = `Plano de Teste Empírico — ${system}`;
+            document.getElementById('out-content').innerHTML = `
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white p-4 rounded-xl border border-slate-200">
+                    <p><strong>Equipe Responsável:</strong> ${team}</p>
+                    <p><strong>Modalidade:</strong> ${mode}</p>
+                    <p class="sm:col-span-2"><strong>Perfil Alvo (Critério de Inclusão):</strong> ${profile}</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-1">Pergunta de Triagem (Screener):</p>
+                    <p class="text-slate-700">${screener}</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+                    <p class="font-bold text-slate-900">Roteiro de Cenários Reais (Para leitura do participante):</p>
+                    <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                        <span class="text-xs font-mono font-bold text-blue-700 block mb-1">CENÁRIO 01</span>
+                        <p>${sc1}</p>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                        <span class="text-xs font-mono font-bold text-blue-700 block mb-1">CENÁRIO 02</span>
+                        <p>${sc2}</p>
+                    </div>
+                </div>
+                <div class="text-xs text-slate-500 pt-1">
+                    <strong>Lembrete de Moderação:</strong> Aplicar TCLE antes de iniciar • Reforçar que "estamos testando o sistema, não você" • Utilizar protocolo Think-Aloud e sondagem neutra.
+                </div>
+            `;
+
+            const printArea = document.getElementById('print-area');
+            printArea.classList.remove('hidden');
+            printArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function copyPlanText() {
+            const title = document.getElementById('out-title').innerText;
+            const content = document.getElementById('out-content').innerText;
+            const fullText = `${title}\n====================================\n${content}`;
+
+            const tempArea = document.createElement('textarea');
+            tempArea.value = fullText;
+            document.body.appendChild(tempArea);
+            tempArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempArea);
+
+            const label = document.getElementById('copy-label');
+            label.textContent = 'Copiado!';
+            setTimeout(() => label.textContent = 'Copiar Texto', 2000);
+        }
+
+        // 6. Cronômetro para o Anotador no Role-Play
+        let timerSeconds = 0;
+        let timerInterval = null;
+
+        function updateTimerDisplay() {
+            const mins = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+            const secs = String(timerSeconds % 60).padStart(2, '0');
+            document.getElementById('timer-display').textContent = `${mins}:${secs}`;
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('timer-btn');
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                btn.textContent = 'Retomar';
+                btn.classList.replace('bg-amber-600', 'bg-emerald-600');
+            } else {
+                timerInterval = setInterval(() => {
+                    timerSeconds++;
+                    updateTimerDisplay();
+                }, 1000);
+                btn.textContent = 'Pausar';
+                btn.classList.replace('bg-emerald-600', 'bg-amber-600');
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            timerSeconds = 0;
+            updateTimerDisplay();
+            const btn = document.getElementById('timer-btn');
+            btn.textContent = 'Iniciar';
+            btn.classList.remove('bg-amber-600');
+            btn.classList.add('bg-emerald-600');
+        }
+
+        // 7. Adicionar Linha na Tabela de Observações
+        function addObservationRow() {
+            const tbody = document.getElementById('obs-tbody');
+            const rowCount = tbody.rows.length + 1;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="p-2.5"><input type="text" value="Cenário 0${rowCount}" class="w-full px-2 py-1.5 rounded border border-slate-200 text-xs"></td>
+                <td class="p-2.5">
+                    <select class="px-2 py-1.5 rounded border border-slate-200 text-xs bg-white font-semibold">
+                        <option value="Sucesso Direto">✅ Sucesso Direto</option>
+                        <option value="Sucesso com Dificuldade">⚠️ Sucesso c/ Dificuldade</option>
+                        <option value="Falha / Desistência">❌ Falha / Desistência</option>
+                    </select>
+                </td>
+                <td class="p-2.5"><input type="text" placeholder="00:00" class="w-20 px-2 py-1.5 rounded border border-slate-200 font-mono text-xs"></td>
+                <td class="p-2.5">
+                    <select class="px-2 py-1.5 rounded border border-slate-200 text-xs bg-white">
+                        <option>7 (Muito fácil)</option>
+                        <option>6</option>
+                        <option>5</option>
+                        <option selected>4 (Neutro)</option>
+                        <option>3</option>
+                        <option>2</option>
+                        <option>1 (Muito difícil)</option>
+                    </select>
+                </td>
+                <td class="p-2.5"><input type="text" placeholder="Descreva o comportamento observado..." class="w-full min-w-[200px] px-2 py-1.5 rounded border border-slate-200 text-xs"></td>
+            `;
+            tbody.appendChild(tr);
+        }
+    </script>
+</body>
+</html>

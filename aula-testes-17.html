@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação em IHC e a Norma ISO 9241-11 | Sistemas de Informação - UNASP</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Plus Jakarta Sans para legibilidade em projetores -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            800: '#1e3a5f',
+                            900: '#0f233c',
+                            950: '#091526',
+                        },
+                        teal: {
+                            600: '#0d9488',
+                            700: '#0f766e',
+                        },
+                        amber: {
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Estilos customizados para transições suaves e foco em acessibilidade/projeção */
+        body {
+            background-color: #f8fafc;
+            color: #0f172a;
+            overflow-x: hidden;
+        }
+
+        .slide-section {
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .slide-hidden {
+            display: none;
+            opacity: 0;
+            transform: translateY(12px);
+        }
+
+        .slide-active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            animation: fadeInSlide 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeInSlide {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Modo Visão Completa (para impressão ou revisão geral) */
+        body.view-all-mode .slide-section {
+            display: block !important;
+            opacity: 1 !important;
+            transform: none !important;
+            margin-bottom: 3rem;
+            border-bottom: 2px dashed #cbd5e1;
+            padding-bottom: 3rem;
+        }
+
+        body.view-all-mode .slide-section:last-of-type {
+            border-bottom: none;
+        }
+
+        /* Destaque interativo nos cards e infográfico */
+        .method-pill {
+            transition: all 0.2s ease;
+        }
+        .method-pill:hover {
+            transform: translateY(-2px);
+        }
+
+        .infographic-row {
+            transition: all 0.25s ease;
+        }
+        .infographic-row:hover {
+            transform: scale(1.01);
+        }
+
+        /* Estilo de impressão limpo */
+        @media print {
+            header, footer, .no-print {
+                display: none !important;
+            }
+            .slide-section {
+                display: block !important;
+                opacity: 1 !important;
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-teal-600 selection:text-white">
+
+    <!-- BARRA SUPERIOR FIXA DE CONTROLE DA AULA -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+            <!-- Identificação Institucional -->
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-9 h-9 rounded-lg bg-navy-900 text-white flex items-center justify-center font-display font-bold text-sm shrink-0 shadow-sm">
+                    IHC
+                </div>
+                <div class="truncate">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-teal-700 truncate">Sistemas de Informação • UNASP</p>
+                    <p class="text-sm font-medium text-slate-700 truncate">Prof. Rodrigo Braz Rodrigues</p>
+                </div>
+            </div>
+
+            <!-- Indicador de Etapas (Pills clicáveis) -->
+            <nav aria-label="Etapas da Aula" class="hidden md:flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-xl">
+                <button onclick="goToStep(0)" data-nav-step="0" class="nav-dot px-3 py-1.5 rounded-lg text-xs font-semibold transition-all">Início</button>
+                <button onclick="goToStep(1)" data-nav-step="1" class="nav-dot px-3 py-1.5 rounded-lg text-xs font-semibold transition-all">1. Funcionalidade vs. IHC</button>
+                <button onclick="goToStep(2)" data-nav-step="2" class="nav-dot px-3 py-1.5 rounded-lg text-xs font-semibold transition-all">2. Os 3 Grupos</button>
+                <button onclick="goToStep(3)" data-nav-step="3" class="nav-dot px-3 py-1.5 rounded-lg text-xs font-semibold transition-all">3. Norma ISO 9241-11</button>
+                <button onclick="goToStep(4)" data-nav-step="4" class="nav-dot px-3 py-1.5 rounded-lg text-xs font-semibold transition-all">4. Infográfico Síntese</button>
+            </nav>
+
+            <!-- Botão Alternar Modo (Passo a Passo vs Visão Completa) -->
+            <div class="flex items-center gap-2 shrink-0">
+                <button id="toggleViewBtn" onclick="toggleViewMode()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition-all shadow-sm" title="Alternar entre apresentação por slides e página corrida">
+                    <svg id="viewIcon" class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                    <span id="viewBtnText">Ver Tudo</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Barra de Progresso Contínua -->
+        <div class="w-full h-1.5 bg-slate-200 overflow-hidden">
+            <div id="progressBar" class="h-full bg-gradient-to-r from-navy-800 via-teal-600 to-amber-500 transition-all duration-500 ease-out" style="width: 20%;"></div>
+        </div>
+    </header>
+
+    <!-- ÁREA PRINCIPAL DE CONTEÚDO -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex flex-col justify-center">
+
+        <!-- =====================================================================
+             SLIDE 0: CAPA DA AULA
+             ===================================================================== -->
+        <section id="step-0" class="slide-section slide-active">
+            <div class="bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 rounded-3xl p-8 sm:p-12 lg:p-16 text-white shadow-2xl relative overflow-hidden border border-navy-800">
+                <!-- Elementos decorativos sutis -->
+                <div class="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-teal-600/15 blur-3xl pointer-events-none"></div>
+                <div class="absolute -left-20 -bottom-20 w-80 h-80 rounded-full bg-amber-500/15 blur-3xl pointer-events-none"></div>
+
+                <div class="relative z-10 max-w-4xl">
+                    <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/10 border border-white/15 text-amber-400 text-xs sm:text-sm font-semibold tracking-wide uppercase mb-6">
+                        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                        Curso de Graduação em Sistemas de Informação • UNASP
+                    </div>
+
+                    <h1 class="font-display text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight mb-6">
+                        Avaliação em IHC e a <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-amber-300">Norma ISO 9241-11</span>
+                    </h1>
+
+                    <p class="text-lg sm:text-xl text-slate-300 leading-relaxed max-w-3xl mb-10">
+                        Da verificação técnica de código à experiência real de uso: como estruturar testes de usabilidade e conectar métodos de avaliação aos pilares internacionais de qualidade.
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10 pt-6 border-t border-white/15">
+                        <div class="bg-white/5 rounded-2xl p-4 border border-white/10">
+                            <span class="text-xs font-bold uppercase tracking-wider text-teal-300 block mb-1">Etapa 01</span>
+                            <span class="font-semibold text-white text-base">Funcionalidade vs. IHC</span>
+                        </div>
+                        <div class="bg-white/5 rounded-2xl p-4 border border-white/10">
+                            <span class="text-xs font-bold uppercase tracking-wider text-teal-300 block mb-1">Etapa 02</span>
+                            <span class="font-semibold text-white text-base">Os 3 Grupos de Avaliação</span>
+                        </div>
+                        <div class="bg-white/5 rounded-2xl p-4 border border-white/10">
+                            <span class="text-xs font-bold uppercase tracking-wider text-amber-300 block mb-1">Etapa 03 & 04</span>
+                            <span class="font-semibold text-white text-base">Matriz ISO 9241-11 & Síntese</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-12 h-12 rounded-2xl bg-teal-600/30 border border-teal-400/40 flex items-center justify-center text-teal-200 font-display font-bold text-lg">
+                                RB
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400 uppercase tracking-wider">Docente Responsável</p>
+                                <p class="text-base sm:text-lg font-bold text-white">Prof. Rodrigo Braz Rodrigues</p>
+                            </div>
+                        </div>
+
+                        <button onclick="nextStep()" class="inline-flex items-center gap-3 px-7 py-4 rounded-2xl bg-amber-500 hover:bg-amber-600 text-navy-950 font-bold text-base sm:text-lg shadow-lg shadow-amber-500/25 transition-all transform hover:scale-[1.02] active:scale-[0.99]">
+                            Iniciar Apresentação
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             SLIDE 1: FUNCIONALIDADE VS. USABILIDADE (IHC)
+             ===================================================================== -->
+        <section id="step-1" class="slide-section slide-hidden">
+            <div class="mb-8">
+                <span class="inline-block px-3.5 py-1 rounded-full bg-navy-900 text-white text-xs font-bold uppercase tracking-wider mb-3">
+                    Passo 1 de 4 • Fundamentos
+                </span>
+                <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-navy-950 tracking-tight">
+                    Testes de Funcionalidade vs. Testes em IHC
+                </h2>
+                <p class="text-lg text-slate-600 mt-2 max-w-3xl">
+                    Um sistema pode estar 100% livre de <em>bugs</em> no código e, ainda assim, fracassar completamente nas mãos do usuário final.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8">
+                <!-- Card Esquerdo: Teste de Funcionalidade (Engenharia de Software) -->
+                <div class="bg-white rounded-3xl p-7 sm:p-8 border-2 border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <span class="px-3.5 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs uppercase tracking-wider">
+                                Engenharia de Software / QA
+                            </span>
+                            <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <h3 class="font-display text-2xl font-bold text-slate-900 mb-3">
+                            Testes de Funcionalidade
+                        </h3>
+                        <p class="text-slate-600 text-base leading-relaxed mb-6">
+                            Verificam se o sistema <strong>opera sem erros técnicos</strong> e se atende às especificações lógicas de entrada e saída programadas.
+                        </p>
+
+                        <ul class="space-y-3 text-slate-700">
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-800 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">✓</span>
+                                <span>O botão envia a requisição para o banco de dados?</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-800 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">✓</span>
+                                <span>O cálculo do carrinho de compras retorna o valor exato?</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-800 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">✓</span>
+                                <span>Foco na validação de <strong>requisitos técnicos</strong>.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-8 pt-5 border-t border-slate-100">
+                        <p class="text-sm font-semibold text-slate-500">
+                            Pergunta-chave: <span class="text-slate-900">"O sistema funciona?"</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card Direito: Testes de IHC (Experiência e Usabilidade) -->
+                <div class="bg-gradient-to-br from-navy-900 to-navy-800 text-white rounded-3xl p-7 sm:p-8 border-2 border-teal-500/40 shadow-xl flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute right-0 top-0 w-40 h-40 bg-teal-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                    
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <span class="px-3.5 py-1.5 rounded-xl bg-teal-500/20 text-teal-300 border border-teal-400/30 font-bold text-xs uppercase tracking-wider">
+                                Interação Humano-Computador
+                            </span>
+                            <div class="w-12 h-12 rounded-2xl bg-teal-500/20 text-teal-300 flex items-center justify-center">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <h3 class="font-display text-2xl font-bold text-white mb-3">
+                            Testes de Usabilidade em IHC
+                        </h3>
+                        <p class="text-slate-200 text-base leading-relaxed mb-6">
+                            Avaliam se <strong>pessoas reais</strong> conseguem utilizar essas funcionalidades com <strong>eficácia, eficiência e satisfação</strong> em contextos reais.
+                        </p>
+
+                        <ul class="space-y-3 text-slate-100">
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-teal-500 text-navy-950 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">★</span>
+                                <span>O usuário consegue encontrar o botão sem ajuda?</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-teal-500 text-navy-950 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">★</span>
+                                <span>Quanto tempo e quantos erros ele comete até concluir a tarefa?</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-teal-500 text-navy-950 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">★</span>
+                                <span>Foco na observação do <strong>comportamento humano</strong>.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-8 pt-5 border-t border-white/15">
+                        <p class="text-sm font-semibold text-teal-300">
+                            Pergunta-chave: <span class="text-white">"As pessoas conseguem e gostam de usar?"</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Caixa de Síntese Pedagógica -->
+            <div class="bg-amber-50 border-l-4 border-amber-500 rounded-r-2xl p-5 sm:p-6 flex items-start gap-4">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-700 flex items-center justify-center shrink-0 mt-0.5">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="font-bold text-amber-950 text-base">Nota para Projetos de Sistemas de Informação:</h4>
+                    <p class="text-amber-900 text-sm sm:text-base mt-1 leading-relaxed">
+                        Na prática profissional, validamos a qualidade de uso mensurando <strong>taxa de sucesso</strong> (concluiu?), <strong>tempo de execução</strong> (foi rápido?) e <strong>taxa de erros</strong> (travou ou clicou errado?) diante de cenários realistas.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             SLIDE 2: OS 3 GRANDES GRUPOS DE AVALIAÇÃO EM IHC
+             ===================================================================== -->
+        <section id="step-2" class="slide-section slide-hidden">
+            <div class="mb-8">
+                <span class="inline-block px-3.5 py-1 rounded-full bg-teal-700 text-white text-xs font-bold uppercase tracking-wider mb-3">
+                    Passo 2 de 4 • Taxonomia de Métodos
+                </span>
+                <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-navy-950 tracking-tight">
+                    Os 3 Grandes Grupos de Avaliação em IHC
+                </h2>
+                <p class="text-lg text-slate-600 mt-2 max-w-3xl">
+                    A literatura de IHC organiza os métodos conforme a participação do usuário e a natureza dos dados coletados. Clique nos métodos para explorar detalhes.
+                </p>
+            </div>
+
+            <!-- Grid dos 3 Pilares -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                
+                <!-- GRUPO 1: MÉTODOS DE INSPEÇÃO -->
+                <div class="bg-white rounded-3xl border-2 border-navy-800/15 shadow-md overflow-hidden flex flex-col">
+                    <div class="bg-navy-900 text-white p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="px-3 py-1 rounded-lg bg-white/15 text-xs font-bold uppercase tracking-wider">Grupo 01 • Analítico</span>
+                            <span class="text-xs font-semibold text-amber-300 bg-amber-500/20 px-2.5 py-1 rounded-md">Sem Usuários</span>
+                        </div>
+                        <h3 class="font-display text-2xl font-bold">Métodos de Inspeção</h3>
+                        <p class="text-slate-300 text-sm mt-2">
+                            Especialistas avaliam a interface antecipando problemas antes mesmo de recrutar o público-alvo.
+                        </p>
+                    </div>
+
+                    <div class="p-6 flex-grow flex flex-col justify-between space-y-6">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Principais Técnicas:</p>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="showMethodDetail('heuristica')" class="method-pill px-3.5 py-2 rounded-xl bg-navy-800/10 hover:bg-navy-900 hover:text-white text-navy-900 text-sm font-semibold text-left">
+                                    Avaliação Heurística
+                                </button>
+                                <button onclick="showMethodDetail('percurso')" class="method-pill px-3.5 py-2 rounded-xl bg-navy-800/10 hover:bg-navy-900 hover:text-white text-navy-900 text-sm font-semibold text-left">
+                                    Percurso Cognitivo
+                                </button>
+                                <button onclick="showMethodDetail('padroes')" class="method-pill px-3.5 py-2 rounded-xl bg-navy-800/10 hover:bg-navy-900 hover:text-white text-navy-900 text-sm font-semibold text-left">
+                                    Inspeção de Padrões
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80">
+                            <span class="text-xs font-bold text-navy-900 uppercase block mb-1">🎯 Objetivo Central:</span>
+                            <p class="text-sm text-slate-700 leading-relaxed">
+                                <strong>Prevenir erros óbvios</strong> de design de forma rápida e barata, limpando a interface antes de gastar recursos com testes reais.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GRUPO 2: TESTES EMPÍRICOS -->
+                <div class="bg-white rounded-3xl border-2 border-teal-600/25 shadow-md overflow-hidden flex flex-col">
+                    <div class="bg-teal-700 text-white p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="px-3 py-1 rounded-lg bg-white/15 text-xs font-bold uppercase tracking-wider">Grupo 02 • Observação</span>
+                            <span class="text-xs font-semibold text-white bg-navy-950/30 px-2.5 py-1 rounded-md">Com Usuários Reais</span>
+                        </div>
+                        <h3 class="font-display text-2xl font-bold">Testes Empíricos</h3>
+                        <p class="text-teal-50 text-sm mt-2">
+                            Pessoas reais interagem com o sistema executando tarefas práticas sob observação estruturada.
+                        </p>
+                    </div>
+
+                    <div class="p-6 flex-grow flex flex-col justify-between space-y-6">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Principais Técnicas:</p>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="showMethodDetail('usabilidade')" class="method-pill px-3 py-1.5 rounded-xl bg-teal-600/10 hover:bg-teal-700 hover:text-white text-teal-800 text-xs sm:text-sm font-semibold">
+                                    Teste de Usabilidade
+                                </button>
+                                <button onclick="showMethodDetail('thinkaloud')" class="method-pill px-3 py-1.5 rounded-xl bg-teal-600/10 hover:bg-teal-700 hover:text-white text-teal-800 text-xs sm:text-sm font-semibold">
+                                    Pensar em Voz Alta
+                                </button>
+                                <button onclick="showMethodDetail('guerrilha')" class="method-pill px-3 py-1.5 rounded-xl bg-teal-600/10 hover:bg-teal-700 hover:text-white text-teal-800 text-xs sm:text-sm font-semibold">
+                                    Teste de Guerrilha
+                                </button>
+                                <button onclick="showMethodDetail('cardsorting')" class="method-pill px-3 py-1.5 rounded-xl bg-teal-600/10 hover:bg-teal-700 hover:text-white text-teal-800 text-xs sm:text-sm font-semibold">
+                                    Card Sorting & Tree Testing
+                                </button>
+                                <button onclick="showMethodDetail('ab')" class="method-pill px-3 py-1.5 rounded-xl bg-teal-600/10 hover:bg-teal-700 hover:text-white text-teal-800 text-xs sm:text-sm font-semibold">
+                                    Testes A/B
+                                </button>
+                                <button onclick="showMethodDetail('eyetracking')" class="method-pill px-3 py-1.5 rounded-xl bg-teal-600/10 hover:bg-teal-700 hover:text-white text-teal-800 text-xs sm:text-sm font-semibold">
+                                    Eye Tracking & Acessibilidade
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-teal-50/70 rounded-2xl p-4 border border-teal-200/80">
+                            <span class="text-xs font-bold text-teal-900 uppercase block mb-1">📸 Objetivo Central ("A Foto"):</span>
+                            <p class="text-sm text-slate-700 leading-relaxed">
+                                <strong>Validar a realidade</strong> e descobrir onde usuários genuínos travam ou erram na tela — mostrando <em>o que</em> acontece na prática.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GRUPO 3: MÉTODOS DE INVESTIGAÇÃO -->
+                <div class="bg-white rounded-3xl border-2 border-amber-500/30 shadow-md overflow-hidden flex flex-col">
+                    <div class="bg-amber-600 text-white p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="px-3 py-1 rounded-lg bg-white/20 text-xs font-bold uppercase tracking-wider">Grupo 03 • Percepção</span>
+                            <span class="text-xs font-semibold text-white bg-navy-950/30 px-2.5 py-1 rounded-md">Opinião Subjetiva</span>
+                        </div>
+                        <h3 class="font-display text-2xl font-bold">Métodos de Investigação</h3>
+                        <p class="text-amber-50 text-sm mt-2">
+                            Coleta direta da opinião, expectativas, sentimentos e relatos dos usuários antes ou após o uso.
+                        </p>
+                    </div>
+
+                    <div class="p-6 flex-grow flex flex-col justify-between space-y-6">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Principais Técnicas:</p>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="showMethodDetail('entrevistas')" class="method-pill px-3.5 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-600 hover:text-white text-amber-900 text-sm font-semibold">
+                                    Entrevistas em Profundidade
+                                </button>
+                                <button onclick="showMethodDetail('questionarios')" class="method-pill px-3.5 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-600 hover:text-white text-amber-900 text-sm font-semibold">
+                                    Questionários (ex: SUS)
+                                </button>
+                                <button onclick="showMethodDetail('gruposfocais')" class="method-pill px-3.5 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-600 hover:text-white text-amber-900 text-sm font-semibold">
+                                    Grupos Focais
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-amber-50/80 rounded-2xl p-4 border border-amber-200/80">
+                            <span class="text-xs font-bold text-amber-950 uppercase block mb-1">📖 Objetivo Central ("A História"):</span>
+                            <p class="text-sm text-slate-700 leading-relaxed">
+                                <strong>Entender o porquê</strong> das ações observadas e medir a percepção subjetiva — revelando <em>o que o usuário pensa e sente</em>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Painel Interativo de Detalhamento de Técnica (Feedback imediato ao clicar) -->
+            <div id="methodDetailBox" class="bg-navy-950 text-white rounded-2xl p-5 sm:p-6 shadow-lg border border-navy-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-300 flex items-center justify-center shrink-0 font-bold">
+                        ?
+                    </div>
+                    <div>
+                        <span id="methodDetailTag" class="text-xs font-bold uppercase tracking-wider text-amber-400">Dica Interativa para a Aula</span>
+                        <h4 id="methodDetailTitle" class="font-display text-lg font-bold text-white mt-0.5">Clique em qualquer técnica acima para exibir sua definição</h4>
+                        <p id="methodDetailDesc" class="text-sm sm:text-base text-slate-300 mt-1">
+                            Explore com os alunos como cada método específico funciona na prática dentro dos projetos de Sistemas de Informação.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             SLIDE 3: CRUZAMENTO COM A NORMA ISO 9241-11
+             ===================================================================== -->
+        <section id="step-3" class="slide-section slide-hidden">
+            <div class="mb-8">
+                <span class="inline-block px-3.5 py-1 rounded-full bg-amber-600 text-white text-xs font-bold uppercase tracking-wider mb-3">
+                    Passo 3 de 4 • Padronização Internacional
+                </span>
+                <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-navy-950 tracking-tight">
+                    Cruzando os 3 Grupos com a Norma ISO 9241-11
+                </h2>
+                <p class="text-lg text-slate-600 mt-2 max-w-4xl">
+                    A norma <strong>ISO 9241-11</strong> define usabilidade como o grau em que um produto pode ser usado por usuários específicos para alcançar objetivos específicos com <strong>eficácia, eficiência e satisfação</strong>. Veja como cada grupo de avaliação responde a esses pilares:
+                </p>
+            </div>
+
+            <!-- Cards de Mapeamento 1-para-1 -->
+            <div class="space-y-5">
+                
+                <!-- Linha 1: Inspeção -> Conformidade -->
+                <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200 shadow-sm hover:shadow-md transition-all grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                    <div class="lg:col-span-4 flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-2xl bg-navy-900 text-white flex items-center justify-center shrink-0 shadow-sm">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-navy-800">Grupo 01</span>
+                            <h3 class="font-display text-xl font-bold text-slate-900">Métodos de Inspeção</h3>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-1 flex justify-center">
+                        <div class="w-10 h-10 rounded-full bg-slate-100 text-navy-900 flex items-center justify-center font-bold">
+                            <svg class="w-5 h-5 rotate-90 lg:rotate-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-7 bg-slate-50 rounded-2xl p-5 border border-slate-200/70">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <span class="px-3 py-1 rounded-lg bg-navy-900 text-white text-xs font-bold uppercase">
+                                Conformidade e Boas Práticas (Prevenção)
+                            </span>
+                        </div>
+                        <p class="text-slate-700 text-base leading-relaxed">
+                            Atuam de forma <strong>preventiva</strong>, permitindo que especialistas identifiquem violações de heurísticas e garantam que a interface siga as diretrizes ergonômicas da norma antes mesmo de envolver usuários reais.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Linha 2: Testes Empíricos -> Eficácia e Eficiência -->
+                <div class="bg-white rounded-3xl p-6 sm:p-7 border-2 border-teal-600/30 shadow-sm hover:shadow-md transition-all grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                    <div class="lg:col-span-4 flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-2xl bg-teal-700 text-white flex items-center justify-center shrink-0 shadow-sm">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-teal-700">Grupo 02</span>
+                            <h3 class="font-display text-xl font-bold text-slate-900">Testes Empíricos</h3>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-1 flex justify-center">
+                        <div class="w-10 h-10 rounded-full bg-teal-50 text-teal-700 flex items-center justify-center font-bold">
+                            <svg class="w-5 h-5 rotate-90 lg:rotate-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-7 bg-teal-50/60 rounded-2xl p-5 border border-teal-200/80">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <span class="px-3 py-1 rounded-lg bg-teal-700 text-white text-xs font-bold uppercase">
+                                Eficácia & Eficiência (Métricas Objetivas)
+                            </span>
+                        </div>
+                        <p class="text-slate-700 text-base leading-relaxed">
+                            Colocam pessoas reais diante de tarefas práticas para medir objetivamente a <strong>Eficácia</strong> (acurácia e completude com que o usuário alcança o objetivo) e a <strong>Eficiência</strong> (recursos como tempo, cliques e esforço cognitivo gastos).
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Linha 3: Métodos de Investigação -> Satisfação -->
+                <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200 shadow-sm hover:shadow-md transition-all grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                    <div class="lg:col-span-4 flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-2xl bg-amber-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Grupo 03</span>
+                            <h3 class="font-display text-xl font-bold text-slate-900">Métodos de Investigação</h3>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-1 flex justify-center">
+                        <div class="w-10 h-10 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center font-bold">
+                            <svg class="w-5 h-5 rotate-90 lg:rotate-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-7 bg-amber-50/70 rounded-2xl p-5 border border-amber-200/80">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <span class="px-3 py-1 rounded-lg bg-amber-600 text-white text-xs font-bold uppercase">
+                                Satisfação (Percepção Subjetiva)
+                            </span>
+                        </div>
+                        <p class="text-slate-700 text-base leading-relaxed">
+                            Capturam a resposta subjetiva de quem interagiu com o sistema, revelando o nível de <strong>Satisfação</strong>, conforto, ausência de frustração e aceitação geral do produto digital.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             SLIDE 4: INFOGRÁFICO INTERATIVO INTEGRADO (SÍNTESE VISUAL)
+             ===================================================================== -->
+        <section id="step-4" class="slide-section slide-hidden">
+            <div class="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                <div>
+                    <span class="inline-block px-3.5 py-1 rounded-full bg-navy-900 text-amber-300 text-xs font-bold uppercase tracking-wider mb-3">
+                        Passo 4 de 4 • Síntese Visual da Aula
+                    </span>
+                    <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-navy-950 tracking-tight">
+                        Infográfico: Avaliação em IHC & ISO 9241-11
+                    </h2>
+                </div>
+                <button onclick="window.print()" class="no-print inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold text-sm transition-colors self-start sm:self-auto">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                    </svg>
+                    Imprimir / Salvar PDF
+                </button>
+            </div>
+
+            <!-- CONTAINER DO INFOGRÁFICO VETORIAL RESPONSIVO -->
+            <div class="bg-white rounded-3xl border-2 border-slate-200 shadow-xl p-6 sm:p-10 relative overflow-hidden">
+                <!-- Cabeçalho do Infográfico -->
+                <div class="text-center max-w-3xl mx-auto mb-10 pb-6 border-b border-slate-200">
+                    <p class="text-xs font-bold uppercase tracking-widest text-teal-700 mb-1">
+                        Arquitetura de Qualidade de Uso • Sistemas de Informação
+                    </p>
+                    <h3 class="font-display text-2xl sm:text-3xl font-extrabold text-navy-950">
+                        Como os Métodos de IHC Garantem os Pilares da ISO 9241-11
+                    </h3>
+                </div>
+
+                <!-- Títulos das Colunas (Desktop) -->
+                <div class="hidden lg:grid lg:grid-cols-11 gap-4 mb-4 px-2">
+                    <div class="col-span-5 text-center">
+                        <span class="inline-block px-4 py-1.5 rounded-full bg-slate-100 text-slate-700 font-bold text-xs uppercase tracking-wider">
+                            Grupos de Avaliação em IHC (O Como)
+                        </span>
+                    </div>
+                    <div class="col-span-1"></div>
+                    <div class="col-span-5 text-center">
+                        <span class="inline-block px-4 py-1.5 rounded-full bg-slate-100 text-slate-700 font-bold text-xs uppercase tracking-wider">
+                            Pilares da Norma ISO 9241-11 (O Resultado)
+                        </span>
+                    </div>
+                </div>
+
+                <!-- LINHAS DE CONEXÃO DO INFOGRÁFICO -->
+                <div class="space-y-6">
+
+                    <!-- CONEXÃO 1: INSPEÇÃO -> CONFORMIDADE -->
+                    <div class="infographic-row grid grid-cols-1 lg:grid-cols-11 gap-4 items-center">
+                        <!-- Bloco Esquerdo -->
+                        <div class="lg:col-span-5 bg-navy-900 text-white rounded-2xl p-5 shadow-md flex items-center gap-4 border-l-8 border-navy-800">
+                            <!-- Ícone SVG Prancheta / Lupa -->
+                            <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">
+                                <svg class="w-8 h-8 text-sky-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                    <circle cx="11" cy="13" r="3"/>
+                                    <path stroke-linecap="round" d="M13.5 15.5L16 18"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-sky-300 block">1. Sem Usuários • Especialistas</span>
+                                <h4 class="font-display text-lg sm:text-xl font-bold">Métodos de Inspeção</h4>
+                                <p class="text-xs sm:text-sm text-slate-300 mt-0.5">Heurísticas, Percurso Cognitivo, Padrões</p>
+                            </div>
+                        </div>
+
+                        <!-- Conector SVG Animado -->
+                        <div class="lg:col-span-1 flex items-center justify-center py-1">
+                            <svg class="w-10 h-10 text-navy-800 rotate-90 lg:rotate-0" viewBox="0 0 40 24" fill="none">
+                                <path d="M2 12H34M34 12L26 4M34 12L26 20" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+
+                        <!-- Bloco Direito -->
+                        <div class="lg:col-span-5 bg-slate-100 rounded-2xl p-5 border-2 border-navy-900/20 flex items-center gap-4">
+                            <!-- Ícone SVG Escudo Check -->
+                            <div class="w-14 h-14 rounded-2xl bg-navy-900 text-white flex items-center justify-center shrink-0">
+                                <svg class="w-8 h-8 text-sky-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-navy-800 block">Base Preventiva</span>
+                                <h4 class="font-display text-lg sm:text-xl font-bold text-navy-950">Conformidade e Boas Práticas</h4>
+                                <p class="text-xs sm:text-sm text-slate-600 mt-0.5">Elimina falhas óbvias antes dos testes reais</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CONEXÃO 2: EMPÍRICOS -> EFICÁCIA E EFICIÊNCIA -->
+                    <div class="infographic-row grid grid-cols-1 lg:grid-cols-11 gap-4 items-center">
+                        <!-- Bloco Esquerdo -->
+                        <div class="lg:col-span-5 bg-teal-700 text-white rounded-2xl p-5 shadow-md flex items-center gap-4 border-l-8 border-teal-900">
+                            <!-- Ícone SVG Usuário no Computador / Cronômetro -->
+                            <div class="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center shrink-0">
+                                <svg class="w-8 h-8 text-teal-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                    <line x1="8" y1="21" x2="16" y2="21"/>
+                                    <line x1="12" y1="17" x2="12" y2="21"/>
+                                    <path stroke-linecap="round" d="M9 10l2 2 4-4"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-teal-200 block">2. Com Usuários • Observação</span>
+                                <h4 class="font-display text-lg sm:text-xl font-bold">Testes Empíricos</h4>
+                                <p class="text-xs sm:text-sm text-teal-50 mt-0.5">Usabilidade, Pensar em Voz Alta, A/B, Eye Tracking</p>
+                            </div>
+                        </div>
+
+                        <!-- Conector SVG -->
+                        <div class="lg:col-span-1 flex items-center justify-center py-1">
+                            <svg class="w-10 h-10 text-teal-700 rotate-90 lg:rotate-0" viewBox="0 0 40 24" fill="none">
+                                <path d="M2 12H34M34 12L26 4M34 12L26 20" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+
+                        <!-- Bloco Direito -->
+                        <div class="lg:col-span-5 bg-teal-50 rounded-2xl p-5 border-2 border-teal-600/30 flex items-center gap-4">
+                            <!-- Ícone SVG Alvo e Velocímetro -->
+                            <div class="w-14 h-14 rounded-2xl bg-teal-700 text-white flex items-center justify-center shrink-0">
+                                <svg class="w-8 h-8 text-teal-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <circle cx="12" cy="12" r="6"/>
+                                    <circle cx="12" cy="12" r="2"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-teal-800 block">Pilar ISO 9241-11 (Objetivo)</span>
+                                <h4 class="font-display text-lg sm:text-xl font-bold text-navy-950">Eficácia e Eficiência</h4>
+                                <p class="text-xs sm:text-sm text-slate-700 mt-0.5">Completa a tarefa (acerto) com menor tempo/esforço</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CONEXÃO 3: INVESTIGAÇÃO -> SATISFAÇÃO -->
+                    <div class="infographic-row grid grid-cols-1 lg:grid-cols-11 gap-4 items-center">
+                        <!-- Bloco Esquerdo -->
+                        <div class="lg:col-span-5 bg-amber-600 text-white rounded-2xl p-5 shadow-md flex items-center gap-4 border-l-8 border-amber-800">
+                            <!-- Ícone SVG Diálogo / Questionário -->
+                            <div class="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center shrink-0">
+                                <svg class="w-8 h-8 text-amber-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-amber-100 block">3. Com Usuários • Percepção</span>
+                                <h4 class="font-display text-lg sm:text-xl font-bold">Métodos de Investigação</h4>
+                                <p class="text-xs sm:text-sm text-amber-50 mt-0.5">Entrevistas, Questionários (SUS), Grupos Focais</p>
+                            </div>
+                        </div>
+
+                        <!-- Conector SVG -->
+                        <div class="lg:col-span-1 flex items-center justify-center py-1">
+                            <svg class="w-10 h-10 text-amber-600 rotate-90 lg:rotate-0" viewBox="0 0 40 24" fill="none">
+                                <path d="M2 12H34M34 12L26 4M34 12L26 20" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+
+                        <!-- Bloco Direito -->
+                        <div class="lg:col-span-5 bg-amber-50 rounded-2xl p-5 border-2 border-amber-500/30 flex items-center gap-4">
+                            <!-- Ícone SVG Coração / Satisfação -->
+                            <div class="w-14 h-14 rounded-2xl bg-amber-600 text-white flex items-center justify-center shrink-0">
+                                <svg class="w-8 h-8 text-amber-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-amber-800 block">Pilar ISO 9241-11 (Subjetivo)</span>
+                                <h4 class="font-display text-lg sm:text-xl font-bold text-navy-950">Satisfação</h4>
+                                <p class="text-xs sm:text-sm text-slate-700 mt-0.5">Conforto, aceitação e experiência positiva de uso</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Rodapé Resumo do Infográfico -->
+                <div class="mt-10 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-600">
+                    <p class="font-medium text-center sm:text-left">
+                        <strong class="text-navy-900">Síntese:</strong> A combinação dos três grupos assegura uma avaliação completa da qualidade de uso segundo a ISO 9241-11.
+                    </p>
+                    <span class="text-xs font-semibold text-slate-400 shrink-0">
+                        Prof. Rodrigo Braz Rodrigues • UNASP
+                    </span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- RODAPÉ FIXO DE NAVEGAÇÃO PASSO A PASSO -->
+    <footer id="slideFooter" class="sticky bottom-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 py-3.5 px-4 sm:px-6 lg:px-8 no-print">
+        <div class="max-w-6xl mx-auto flex items-center justify-between gap-4">
+            <button id="prevBtn" onclick="prevStep()" class="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl font-semibold text-sm sm:text-base border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition-all">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                <span>Anterior</span>
+            </button>
+
+            <div class="text-center">
+                <span id="stepCounter" class="text-xs sm:text-sm font-bold text-navy-900 bg-slate-100 px-4 py-1.5 rounded-full">
+                    Capa • 1 / 5
+                </span>
+                <p class="hidden sm:block text-[11px] text-slate-400 mt-1">
+                    Use as setas <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded text-slate-600">←</kbd> <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded text-slate-600">→</kbd> do teclado para navegar
+                </p>
+            </div>
+
+            <button id="nextBtn" onclick="nextStep()" class="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 rounded-xl font-semibold text-sm sm:text-base bg-navy-900 hover:bg-navy-800 text-white shadow-sm disabled:opacity-40 disabled:pointer-events-none transition-all">
+                <span id="nextBtnLabel">Próximo</span>
+                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+        </div>
+    </footer>
+
+    <!-- LÓGICA INTERATIVA DA APRESENTAÇÃO -->
+    <script>
+        // Estado atual da apresentação
+        let currentStep = 0;
+        const totalSteps = 5; // Índices 0 a 4
+        let isViewAll = false;
+
+        const stepTitles = [
+            "Capa • 1 / 5",
+            "Passo 1: Funcionalidade vs. IHC • 2 / 5",
+            "Passo 2: Os 3 Grupos de Avaliação • 3 / 5",
+            "Passo 3: Cruzamento ISO 9241-11 • 4 / 5",
+            "Passo 4: Infográfico Síntese • 5 / 5"
+        ];
+
+        // Dicionário didático para os métodos do Passo 2
+        const methodDetails = {
+            heuristica: {
+                tag: "Método de Inspeção (Sem Usuários)",
+                title: "Avaliação Heurística (Nielsen)",
+                desc: "Especialistas inspecionam a interface buscando violações de princípios clássicos de usabilidade (ex: visibilidade do status do sistema, prevenção de erros e consistência)."
+            },
+            percurso: {
+                tag: "Método de Inspeção (Sem Usuários)",
+                title: "Percurso Cognitivo (Cognitive Walkthrough)",
+                desc: "O avaliador simula passo a passo o raciocínio mental de um usuário iniciante tentando completar uma tarefa pela primeira vez, avaliando a facilidade de aprendizado."
+            },
+            padroes: {
+                tag: "Método de Inspeção (Sem Usuários)",
+                title: "Inspeção de Padrões e Guidelines",
+                desc: "Verificação sistemática para garantir que a interface respeita guias de estilo da plataforma (Material Design, Apple HIG) ou normas técnicas de acessibilidade (WCAG)."
+            },
+            usabilidade: {
+                tag: "Teste Empírico (Com Usuários Reais)",
+                title: "Teste de Usabilidade (Moderado ou Não Moderado)",
+                desc: "Participantes representativos do público-alvo executam cenários realistas enquanto o avaliador mede taxa de sucesso, tempo de conclusão e pontos de atrito."
+            },
+            thinkaloud: {
+                tag: "Teste Empírico (Com Usuários Reais)",
+                title: "Protocolo Pensar em Voz Alta (Think Aloud)",
+                desc: "Pede-se ao usuário que verbalize continuamente o que está pensando, olhando e esperando enquanto interage com o sistema, revelando seu modelo mental."
+            },
+            guerrilha: {
+                tag: "Teste Empírico (Com Usuários Reais)",
+                title: "Teste de Guerrilha",
+                desc: "Abordagem ágil e de baixo custo realizada em ambientes informais (como o pátio da faculdade ou cafés) com sessões curtas de 10 a 15 minutos."
+            },
+            cardsorting: {
+                tag: "Teste Empírico • Arquitetura da Informação",
+                title: "Card Sorting & Tree Testing",
+                desc: "No Card Sorting, usuários organizam tópicos em categorias para estruturar menus; no Tree Testing, validam se conseguem encontrar itens na árvore de navegação."
+            },
+            ab: {
+                tag: "Teste Empírico • Comparativo Quantitativo",
+                title: "Testes A/B",
+                desc: "Duas variantes de uma mesma interface (Versão A e Versão B) são apresentadas a grupos distintos de usuários para medir estatisticamente qual converte ou performa melhor."
+            },
+            eyetracking: {
+                tag: "Teste Empírico • Ergonomia e Inclusão",
+                title: "Rastreamento Ocular (Eye Tracking) & Acessibilidade Assistiva",
+                desc: "Sensores mapeiam mapas de calor (para onde o usuário olha primeiro), enquanto testes com leitores de tela garantem inclusão de pessoas com deficiência."
+            },
+            entrevistas: {
+                tag: "Método de Investigação (Percepção Subjetiva)",
+                title: "Entrevistas em Profundidade",
+                desc: "Conversas estruturadas ou semiestruturadas conduzidas antes ou depois do uso para compreender o contexto, as dores e as motivações por trás das ações do usuário."
+            },
+            questionarios: {
+                tag: "Método de Investigação (Percepção Subjetiva)",
+                title: "Questionários Padronizados (ex: Escala SUS)",
+                desc: "Instrumentos como o System Usability Scale (SUS) transformam a percepção subjetiva de satisfação e facilidade de uso em uma pontuação comparável de 0 a 100."
+            },
+            gruposfocais: {
+                tag: "Método de Investigação (Percepção Subjetiva)",
+                title: "Grupos Focais (Focus Groups)",
+                desc: "Sessão moderada com 6 a 9 usuários discutindo coletivamente suas impressões, expectativas e experiências com o sistema ou protótipo."
+            }
+        };
+
+        // Atualiza a visualização do slide ativo
+        function updateUI() {
+            // Atualiza seções
+            for (let i = 0; i < totalSteps; i++) {
+                const section = document.getElementById(`step-${i}`);
+                if (!section) continue;
+                if (i === currentStep) {
+                    section.classList.remove('slide-hidden');
+                    section.classList.add('slide-active');
+                } else {
+                    section.classList.remove('slide-active');
+                    section.classList.add('slide-hidden');
+                }
+            }
+
+            // Atualiza botões de navegação superior (Pills)
+            document.querySelectorAll('.nav-dot').forEach((btn) => {
+                const stepIdx = parseInt(btn.getAttribute('data-nav-step'), 10);
+                if (stepIdx === currentStep && !isViewAll) {
+                    btn.classList.add('bg-navy-900', 'text-white', 'shadow-sm');
+                    btn.classList.remove('text-slate-600', 'hover:text-navy-900');
+                } else {
+                    btn.classList.remove('bg-navy-900', 'text-white', 'shadow-sm');
+                    btn.classList.add('text-slate-600', 'hover:text-navy-900');
+                }
+            });
+
+            // Atualiza barra de progresso
+            const progressPercent = ((currentStep + 1) / totalSteps) * 100;
+            document.getElementById('progressBar').style.width = `${progressPercent}%`;
+
+            // Atualiza contador e estado dos botões inferiores
+            document.getElementById('stepCounter').textContent = stepTitles[currentStep];
+            document.getElementById('prevBtn').disabled = (currentStep === 0);
+            
+            const nextBtn = document.getElementById('nextBtn');
+            const nextBtnLabel = document.getElementById('nextBtnLabel');
+            if (currentStep === totalSteps - 1) {
+                nextBtn.disabled = true;
+                nextBtnLabel.textContent = "Concluído";
+            } else {
+                nextBtn.disabled = false;
+                nextBtnLabel.textContent = "Próximo";
+            }
+
+            // Rola suavemente para o topo ao trocar de slide
+            if (!isViewAll) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function goToStep(stepIndex) {
+            if (isViewAll) {
+                toggleViewMode();
+            }
+            if (stepIndex >= 0 && stepIndex < totalSteps) {
+                currentStep = stepIndex;
+                updateUI();
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps - 1) {
+                currentStep++;
+                updateUI();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                updateUI();
+            }
+        }
+
+        // Alterna entre apresentação slide-a-slide e página contínua
+        function toggleViewMode() {
+            isViewAll = !isViewAll;
+            const body = document.body;
+            const footer = document.getElementById('slideFooter');
+            const viewBtnText = document.getElementById('viewBtnText');
+
+            if (isViewAll) {
+                body.classList.add('view-all-mode');
+                footer.classList.add('hidden');
+                viewBtnText.textContent = "Modo Slides";
+                document.getElementById('progressBar').style.width = "100%";
+            } else {
+                body.classList.remove('view-all-mode');
+                footer.classList.remove('hidden');
+                viewBtnText.textContent = "Ver Tudo";
+                updateUI();
+            }
+        }
+
+        // Exibe a definição da técnica clicada no Passo 2
+        function showMethodDetail(key) {
+            const detail = methodDetails[key];
+            if (!detail) return;
+
+            document.getElementById('methodDetailTag').textContent = detail.tag;
+            document.getElementById('methodDetailTitle').textContent = detail.title;
+            document.getElementById('methodDetailDesc').textContent = detail.desc;
+
+            // Pequeno destaque visual de feedback
+            const box = document.getElementById('methodDetailBox');
+            box.classList.add('ring-2', 'ring-teal-400');
+            setTimeout(() => {
+                box.classList.remove('ring-2', 'ring-teal-400');
+            }, 400);
+        }
+
+        // Suporte a navegação por teclado (Setas Esquerda e Direita)
+        document.addEventListener('keydown', (e) => {
+            if (isViewAll) return;
+            if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+                nextStep();
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                prevStep();
+            }
+        });
+
+        // Inicializa ao carregar a página
+        window.onload = function () {
+            updateUI();
+        };
+    </script>
+</body>
+</html>
