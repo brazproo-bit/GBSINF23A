@@ -1,0 +1,2002 @@
+<!-- HTMLearning v2.17 — Campos não informados: número da aula, unidade, páginas, Lattes do professor, ORCID do professor, site da disciplina. Nenhum conteúdo pedagógico foi inventado. -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interface Humano Computador — Testes Empíricos e Oficina Prática</title>
+<style>
+  :root {
+    --accent: #0f766e;
+    --accent-dark: #115e59;
+    --accent-soft: #ccfbf1;
+    --accent-border: #14b8a6;
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --surface-alt: #f1f5f9;
+    --text: #0f172a;
+    --text-muted: #475569;
+    --border: #cbd5e1;
+    --warn-bg: #fef9c3;
+    --warn-border: #eab308;
+    --ok-bg: #dcfce7;
+    --ok-border: #16a34a;
+    --err-bg: #fee2e2;
+    --err-border: #dc2626;
+    --shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    --font-size: 18px;
+  }
+
+  body.dark-mode {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface-alt: #334155;
+    --text: #f8fafc;
+    --text-muted: #cbd5e1;
+    --border: #475569;
+    --accent-soft: #134e4a;
+    --warn-bg: #422006;
+    --warn-border: #ca8a04;
+    --ok-bg: #14532d;
+    --ok-border: #22c55e;
+    --err-bg: #450a0a;
+    --err-border: #ef4444;
+    --shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  }
+
+  body.presentation-mode {
+    --font-size: 22px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: var(--font-size);
+    line-height: 1.6;
+    background: var(--bg);
+    color: var(--text);
+    transition: background 0.2s, color 0.2s;
+  }
+
+  /* Top Controls Bar */
+  .top-bar {
+    background: var(--surface);
+    border-bottom: 3px solid var(--accent);
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .brand-area h1 {
+    margin: 0;
+    font-size: 1.25em;
+    color: var(--accent);
+  }
+
+  body.dark-mode .brand-area h1 {
+    color: #5eead4;
+  }
+
+  .brand-area p {
+    margin: 0.15rem 0 0;
+    font-size: 0.85em;
+    color: var(--text-muted);
+  }
+
+  .controls-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .hud-pill {
+    background: var(--accent-soft);
+    color: var(--text);
+    border: 2px solid var(--accent);
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.85em;
+  }
+
+  .btn-ctrl {
+    background: var(--surface-alt);
+    color: var(--text);
+    border: 2px solid var(--border);
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.85em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-ctrl:hover {
+    border-color: var(--accent);
+  }
+
+  .btn-ctrl.active-mode {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+  }
+
+  /* Sticky Folder Tabs */
+  .tabs-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--surface-alt);
+    border-bottom: 3px solid var(--accent);
+    padding: 0.5rem 1rem 0;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: thin;
+  }
+
+  .tablist {
+    display: inline-flex;
+    gap: 0.35rem;
+    min-width: 100%;
+  }
+
+  .tab-btn {
+    background: var(--surface-alt);
+    color: var(--text-muted);
+    border: 2px solid var(--border);
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    padding: 0.65rem 1rem;
+    font-size: 0.9em;
+    font-weight: 700;
+    cursor: pointer;
+    position: relative;
+    top: 3px;
+    transition: background 0.15s, color 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .tab-btn:hover {
+    color: var(--text);
+    background: var(--surface);
+  }
+
+  .tab-btn[aria-selected="true"] {
+    background: var(--bg);
+    color: var(--text);
+    border-color: var(--accent);
+    border-width: 3px 3px 0 3px;
+    padding-bottom: calc(0.65rem + 3px);
+  }
+
+  .badge-self {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #f59e0b;
+    font-size: 0.72em;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    font-weight: 800;
+  }
+
+  .badge-done {
+    color: #16a34a;
+    font-weight: 900;
+  }
+
+  /* Main Container */
+  main {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 3rem;
+  }
+
+  .tab-panel {
+    display: none;
+  }
+
+  .tab-panel.active {
+    display: block;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 3px solid var(--border);
+    border-radius: 14px;
+    padding: 1.25rem 1.4rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+
+  .card-accent {
+    border-color: var(--accent);
+  }
+
+  .section-tag {
+    display: inline-block;
+    background: var(--accent);
+    color: #ffffff;
+    font-size: 0.78em;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.2rem 0.65rem;
+    border-radius: 6px;
+    margin-bottom: 0.6rem;
+  }
+
+  h2 {
+    margin: 0.2rem 0 0.8rem;
+    font-size: 1.45em;
+    line-height: 1.25;
+  }
+
+  h3 {
+    margin: 0.2rem 0 0.7rem;
+    font-size: 1.18em;
+  }
+
+  /* Presenter Script (Hidden in Reading Mode, Shown in Presentation Mode) */
+  .presenter-box {
+    display: none;
+    background: #eef2ff;
+    color: #1e1b4b;
+    border: 3px solid #4f46e5;
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  body.presentation-mode .presenter-box {
+    display: block;
+  }
+
+  .presenter-box h4 {
+    margin: 0 0 0.5rem;
+    color: #3730a3;
+  }
+
+  /* Lists & Grid */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 0.8rem;
+  }
+
+  .mini-box {
+    background: var(--surface-alt);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+  }
+
+  /* Details / Collapsibles */
+  details {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 0.85rem 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  details.det-dict { background: #f0fdfa; border-color: #5eead4; }
+  details.det-conc { background: #f8fafc; border-color: #94a3b8; }
+  details.det-mito { background: #fffbeb; border-color: #fcd34d; }
+  details.det-deep { background: #eff6ff; border-color: #93c5fd; }
+
+  body.dark-mode details.det-dict,
+  body.dark-mode details.det-conc,
+  body.dark-mode details.det-mito,
+  body.dark-mode details.det-deep {
+    background: var(--surface);
+    border-color: var(--border);
+  }
+
+  summary {
+    font-weight: 800;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::after {
+    content: "▼";
+    font-size: 0.8em;
+    color: var(--accent);
+  }
+
+  details[open] summary::after {
+    content: "▲";
+  }
+
+  .details-body {
+    margin-top: 0.9rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Demo Box */
+  .demo-instructions {
+    background: var(--warn-bg);
+    border: 3px solid var(--warn-border);
+    border-radius: 10px;
+    padding: 0.95rem 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  .demo-stage {
+    background: var(--surface-alt);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 1.1rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: center;
+    margin-top: 0.8rem;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #ffffff;
+    border: 2px solid var(--accent-dark);
+    padding: 0.55rem 1rem;
+    border-radius: 8px;
+    font-size: 0.92em;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: var(--accent-dark);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .btn-reset {
+    background: var(--surface);
+    color: var(--text);
+    border: 2px solid var(--border);
+    padding: 0.5rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.88em;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .btn-reset:hover {
+    border-color: var(--accent);
+  }
+
+  .demo-choice-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: var(--surface);
+    color: var(--text);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.55rem;
+    font-size: 0.95em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .demo-choice-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+  }
+
+  .demo-choice-btn.is-wrong {
+    background: var(--err-bg);
+    border-color: var(--err-border);
+    color: var(--text);
+  }
+
+  .demo-choice-btn.is-right {
+    background: var(--ok-bg);
+    border-color: var(--ok-border);
+    color: var(--text);
+  }
+
+  .feedback-box {
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    margin-top: 0.75rem;
+    border: 2px solid var(--border);
+    background: var(--surface);
+  }
+
+  .feedback-box.fb-ok {
+    background: var(--ok-bg);
+    border-color: var(--ok-border);
+  }
+
+  .feedback-box.fb-err {
+    background: var(--err-bg);
+    border-color: var(--err-border);
+  }
+
+  .observe-box {
+    background: var(--accent-soft);
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    margin-top: 0.8rem;
+  }
+
+  /* Quiz */
+  .quiz-terms {
+    background: var(--surface-alt);
+    border-left: 5px solid var(--accent);
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.2rem;
+    font-size: 0.92em;
+  }
+
+  .quiz-q {
+    margin-bottom: 1.4rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 2px dashed var(--border);
+  }
+
+  .quiz-q:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .quiz-opt {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: var(--surface);
+    color: var(--text);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    margin-top: 0.5rem;
+    font-size: 0.95em;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .quiz-opt:hover:not(:disabled) {
+    border-color: var(--accent);
+  }
+
+  .quiz-opt.opt-wrong {
+    background: var(--err-bg);
+    border-color: var(--err-border);
+  }
+
+  .quiz-opt.opt-right {
+    background: var(--ok-bg);
+    border-color: var(--ok-border);
+  }
+
+  /* Rainbow Matrix Table */
+  .rainbow-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.6rem;
+    font-size: 0.88em;
+  }
+
+  .rainbow-table th, .rainbow-table td {
+    border: 2px solid var(--border);
+    padding: 0.5rem;
+    text-align: center;
+  }
+
+  .rainbow-table td.obs-cell {
+    text-align: left;
+    font-weight: 600;
+  }
+
+  .cell-toggle {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    font-weight: 800;
+  }
+
+  .cell-toggle.marked {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent-dark);
+  }
+
+  /* Revision Tab */
+  .cola-item {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cola-item:last-child {
+    border-bottom: none;
+  }
+
+  /* Footer */
+  footer {
+    max-width: 1040px;
+    margin: 2rem auto 0;
+    padding: 1.5rem 1rem 2.5rem;
+    border-top: 3px solid var(--border);
+    font-size: 0.82em;
+    color: var(--text-muted);
+  }
+
+  .footer-block {
+    margin-bottom: 1.2rem;
+  }
+
+  .footer-block h4 {
+    margin: 0 0 0.45rem;
+    color: var(--text);
+    font-size: 1.05em;
+  }
+
+  .footer-block p, .footer-block li {
+    margin: 0.25rem 0;
+  }
+
+  .footer-block ul {
+    padding-left: 1.2rem;
+    margin: 0.35rem 0;
+  }
+
+  footer a {
+    color: var(--accent);
+    word-break: break-all;
+  }
+
+  body.dark-mode footer a {
+    color: #5eead4;
+  }
+</style>
+</head>
+<body>
+
+<header class="top-bar">
+  <div class="brand-area">
+    <h1>Interface Humano Computador</h1>
+    <p>Fundamentos de Testes Empíricos e Oficina Prática (Hands-on)</p>
+  </div>
+  <div class="controls-group">
+    <span class="hud-pill" id="hud-xp">⭐ 0 XP</span>
+    <span class="hud-pill" id="hud-badges">🏅 0/6 selos</span>
+    <button type="button" class="btn-ctrl" id="btn-mode" aria-pressed="false">🎤 Modo Aula</button>
+    <button type="button" class="btn-ctrl" id="btn-dark" aria-pressed="false">🌙 Escuro</button>
+  </div>
+</header>
+
+<nav class="tabs-wrapper" aria-label="Abas da aula">
+  <div class="tablist" role="tablist" id="tablist"></div>
+</nav>
+
+<main id="main-content"></main>
+
+<script>
+const AULA_DADOS = {
+  abas: [
+    {
+      id: "aba-1",
+      titulo: "1. Escopo e Métricas",
+      estudoProprio: false,
+      narrativa: "Antes de chamar qualquer pessoa para testar uma tela, a equipe precisa responder a uma pergunta simples: o que exatamente queremos descobrir e como vamos medir se deu certo? Testar sem objetivo vira apenas uma conversa solta sem impacto no produto. Nesta etapa, conectamos as dúvidas da equipe (perguntas de pesquisa) e as suspeitas de onde o sistema confunde (hipóteses de falha de usabilidade) às metas reais da organização, escolhendo números (indicadores quantitativos) e observações humanas (indicadores qualitativos) para julgar o resultado.",
+      mundoReal: [
+        "No Nubank (banco digital brasileiro), antes de redesenhar a tela de transferência via Pix (sistema de pagamentos instantâneos do Banco Central), a equipe define hipóteses claras — como 'usuários confundem a chave aleatória com o código copia-e-cola' — e mede o tempo para concluir o envio e a taxa de erros antes de liberar o visual novo para milhões de clientes.",
+        "No Gov.br (portal único de serviços públicos do governo federal), equipes de experiência do usuário medem a taxa de sucesso na solicitação de documentos digitais e aplicam escalas rápidas de percepção de facilidade logo após cada tarefa para descobrir etapas burocráticas que travam o cidadão."
+      ],
+      ferramentas: [
+        "Planilha de Plano de Pesquisa (matriz simples em ferramentas como Google Planilhas ou LibreOffice Calc que cruza cada pergunta de pesquisa com sua hipótese e sua métrica).",
+        "Questionário pós-tarefa SEQ (do inglês Single Ease Question; em português, Pergunta Única de Facilidade: uma escala de 1 a 7 aplicada imediatamente após o usuário terminar uma atividade) e questionário SUS (do inglês System Usability Scale; em português, Escala de Usabilidade do Sistema: formulário padronizado de 10 perguntas que gera uma nota de 0 a 100)."
+      ],
+      dicionario: [
+        { termo: "Hipótese de falha de usabilidade", def: "Suposição testável sobre uma dificuldade específica que o usuário pode enfrentar ao tentar usar uma tela ou fluxo." },
+        { termo: "SEQ (Single Ease Question — Pergunta Única de Facilidade)", def: "Pergunta rápida feita logo após uma tarefa, na qual o participante dá nota de 1 (muito difícil) a 7 (muito fácil) para aquela atividade." },
+        { termo: "SUS (System Usability Scale — Escala de Usabilidade do Sistema)", def: "Questionário padrão com 10 afirmações alternadas (positivas e negativas) respondido ao final do teste para calcular um índice geral de 0 a 100." },
+        { termo: "Modelo mental do usuário", def: "A imagem interna de como a pessoa acha que o sistema funciona, construída a partir de suas experiências anteriores com outros aplicativos e objetos." }
+      ],
+      conceitos: [
+        {
+          titulo: "Alinhamento entre Pesquisa, Hipóteses e Metas de Negócio",
+          texto: "Toda avaliação empírica começa conectando três camadas: a meta do negócio (por exemplo, reduzir o abandono no carrinho de compras), a pergunta de pesquisa (por que as pessoas desistem na etapa de frete?) e a hipótese de falha (o campo de CEP exige traço e não avisa quando dá erro).",
+          analogia: "💡 É como um médico pedir um exame de sangue específico em vez de pedir 'todos os exames do laboratório': você só sabe interpretar o resultado se souber qual suspeita está investigando.",
+          exemploReal: "No Mercado Livre (plataforma de comércio eletrônico na América Latina), se a meta é reduzir chamadas no suporte sobre devoluções, a hipótese foca em verificar se o botão 'Devolver grátis' fica visível no histórico de pedidos sem exigir busca escondida."
+        },
+        {
+          titulo: "Métricas Quantitativas vs. Indicadores Qualitativos",
+          texto: "Indicadores quantitativos respondem 'quanto' e 'quantos': taxa de sucesso (percentual de pessoas que completam a tarefa), tempo por tarefa, taxa de erro e notas como SEQ e SUS. Já os indicadores qualitativos respondem 'por quê': expressões faciais de frustração, suspiros, hesitações e a explicação do modelo mental do usuário sobre o que esperava que acontecesse.",
+          analogia: "💡 Os números são o placar do jogo; as observações qualitativas são a gravação em câmera lenta mostrando exatamente onde o time falhou no passe.",
+          exemploReal: "No iFood (aplicativo brasileiro de entrega de comida), medir que 40% dos usuários demoram mais de 90 segundos para alterar o endereço (quantitativo) ganha sentido quando a observação mostra que eles tentam clicar no nome da rua no topo, mas o aplicativo exige abrir o menu de perfil (qualitativo)."
+        }
+      ],
+      roteiroDemo: {
+        passo0: "Antes de clicar, preveja: se a meta de negócio de um aplicativo bancário é reduzir chamadas no atendimento sobre boletos vencidos, qual indicador quantitativo e qual sinal qualitativo mostram se a tela resolve o problema?",
+        passos: [
+          { acao: "Clique no botão '1. Carregar Caso Bancário' para exibir o cenário de negócio.", ve: "O painel mostra a meta de reduzir dúvidas sobre atualização automática de boleto vencido.", significa: "Todo teste começa pela meta de negócio antes de escolher botões ou telas." },
+          { acao: "Selecione a hipótese de usabilidade correta entre as opções apresentadas.", ve: "O sistema valida a conexão entre a dúvida do cliente e o comportamento esperado na interface.", significa: "Sem hipótese clara, não sabemos o que observar durante a sessão." },
+          { acao: "Escolha o par de métricas (quantitativa + qualitativa) e veja o painel de diagnóstico.", ve: "Aparecem a taxa de sucesso, o tempo por tarefa, a nota SEQ e o registro do modelo mental.", significa: "Combinar números e observações evita decisões cegas." }
+        ]
+      },
+      demo: {
+        tipo: "cenario-escopo",
+        config: {}
+      },
+      quiz: [
+        {
+          pergunta: "Uma equipe quer avaliar o novo fluxo de agendamento de consultas de um aplicativo de saúde. Qual deve ser o ponto de partida antes de escrever o teste?",
+          alternativas: [
+            { texto: "Conectar as perguntas de pesquisa e hipóteses de falha às metas reais do sistema.", certa: true, fb: "Exato! Quando alinhamos perguntas e hipóteses às metas (como reduzir agendamentos abandonados), cada tarefa avaliada gera evidência útil para melhorar o produto." },
+            { texto: "Aplicar o questionário SUS (Escala de Usabilidade do Sistema) antes mesmo de ter uma tela.", certa: false, fb: "O SUS (System Usability Scale — Escala de Usabilidade do Sistema) avalia a percepção após o uso de uma interface; aplicá-lo sem um fluxo testado não revela onde estão as falhas." },
+            { texto: "Medir apenas o tempo total que o programador levou para construir a tela.", certa: false, fb: "O tempo de desenvolvimento mede esforço da equipe técnica, não a facilidade de uso nem o sucesso do paciente ao tentar marcar uma consulta." }
+          ]
+        },
+        {
+          pergunta: "Logo após um participante concluir a tarefa de encontrar o comprovante de pagamento, o moderador faz uma única pergunta de 1 a 7 sobre o quão fácil foi aquela atividade. Qual indicador é esse?",
+          alternativas: [
+            { texto: "SEQ (Pergunta Única de Facilidade), um indicador quantitativo por tarefa.", certa: true, fb: "Correto! A SEQ (Single Ease Question — Pergunta Única de Facilidade) captura imediatamente a dificuldade percebida em cada tarefa isolada numa escala de 1 a 7." },
+            { texto: "Modelo mental do usuário, que mede a velocidade da conexão de internet.", certa: false, fb: "O modelo mental representa como a pessoa imagina que o sistema funciona por dentro, e não uma nota numérica de 1 a 7 nem a velocidade da rede." },
+            { texto: "Taxa de erro, que conta quantas vezes o servidor ficou fora do ar.", certa: false, fb: "A taxa de erro conta cliques errados ou caminhos equivocados feitos pelo usuário na tarefa, não falhas de servidor nem a nota de 1 a 7." }
+          ]
+        },
+        {
+          pergunta: "Durante o teste de uma loja virtual, 8 de 10 pessoas concluem a compra, mas 6 delas franzem a testa e dizem 'achei que o cupom entrava antes do endereço'. O que esse relato representa?",
+          alternativas: [
+            { texto: "Um indicador qualitativo que revela o modelo mental e a frustração do usuário.", certa: true, fb: "Perfeito! Mesmo quando a taxa de sucesso quantitativa é alta (80%), a expressão de frustração e a expectativa sobre a ordem das etapas mostram onde a interface contraria o modelo mental." },
+            { texto: "Uma falha de hardware que invalida todos os números coletados na sessão.", certa: false, fb: "A reação do participante não é defeito de equipamento; é justamente o dado qualitativo mais valioso para explicar por que a tela causa estranhamento." },
+            { texto: "A nota final do questionário SUS (Escala de Usabilidade do Sistema).", certa: false, fb: "A nota do SUS vem de um formulário padronizado de 10 perguntas aplicado no encerramento, e não de uma frase espontânea durante a compra." }
+          ]
+        }
+      ],
+      aprofundar: [
+        { rotulo: "🔎 Busca no Google (português)", url: "https://www.google.com/search?hl=pt-BR&q=planejamento+teste+de+usabilidade+metricas+SEQ+SUS" },
+        { rotulo: "🎓 Pesquisa científica (Google Scholar, português)", url: "https://scholar.google.com/scholar?hl=pt-BR&q=metricas+avaliacao+usabilidade+escala+SUS+SEQ" },
+        { rotulo: "🎬 Vídeos-aula no YouTube (busca em português)", url: "https://www.youtube.com/results?search_query=metricas+teste+de+usabilidade+SUS+SEQ+aula" }
+      ],
+      mitoOuVerdade: {
+        afirmacao: "Se a taxa de sucesso de uma tarefa foi 100%, significa que a tela não tem nenhum problema de usabilidade.",
+        verdade: false,
+        explicacao: "Mito! Os participantes podem conseguir concluir a tarefa (100% de sucesso) mas levar o triplo do tempo esperado, cometer vários erros no caminho e demonstrar forte frustração qualitativa."
+      }
+    },
+    {
+      id: "aba-2",
+      titulo: "2. Moderação e Ética (LGPD)",
+      estudoProprio: false,
+      narrativa: "Observar alguém clicar em silêncio mostra onde o mouse foi, mas não revela o que a pessoa pensou naquele segundo. Para ouvir o raciocínio do participante sem atrapalhá-lo, usamos protocolos de verbalização chamados Think-Aloud (pensar em voz alta), escolhendo entre pedir que fale durante a ação ou apenas depois dela. Ao mesmo tempo, gravar tela, voz e rosto exige respeito rigoroso à ética e à LGPD (Lei Geral de Proteção de Dados: lei brasileira que protege dados pessoais e exige consentimento transparente), formalizado pelo TCLE (Termo de Consentimento Livre e Esclarecido).",
+      mundoReal: [
+        "Na PagBank (empresa brasileira de serviços financeiros e maquininhas), sessões de teste com lojistas usando o protocolo Think-Aloud (pensar em voz alta) revelam em segundos quando um comerciante hesita ao configurar taxas porque tem medo de cobrar o valor errado do cliente.",
+        "Em hospitais e universidades como a USP (Universidade de São Paulo), qualquer teste que envolva gravação de áudio e imagem de participantes exige a assinatura prévia do TCLE (Termo de Consentimento Livre e Esclarecido) explicando que o vídeo será usado apenas para pesquisa interna e apagado após o prazo informado."
+      ],
+      ferramentas: [
+        "Formulário digital de TCLE (Termo de Consentimento Livre e Esclarecido — documento assinado em papel ou plataforma eletrônica antes de iniciar qualquer gravação, garantindo o direito de desistir a qualquer momento).",
+        "Gravador de tela e áudio com controle de privacidade (ferramentas como OBS Studio — programa gratuito de gravação de tela — ou recursos de gravação local com mascaramento de senhas e dados bancários)."
+      ],
+      dicionario: [
+        { termo: "Protocolo Think-Aloud (pensar em voz alta)", def: "Técnica em que o participante verbaliza continuamente seus pensamentos, dúvidas e expectativas enquanto interage ou logo após interagir com a interface." },
+        { termo: "Think-Aloud Concorrente", def: "Modalidade em que o usuário fala o que está pensando ao mesmo tempo em que executa a tarefa na tela." },
+        { termo: "Think-Aloud Retrospectivo", def: "Modalidade em que o usuário executa a tarefa em silêncio natural e depois assiste à gravação da própria tela comentando o que pensou em cada etapa." },
+        { termo: "TCLE (Termo de Consentimento Livre e Esclarecido)", def: "Documento obrigatório que informa os objetivos do teste, os riscos, o uso das gravações e garante que a pessoa pode parar quando quiser sem prejuízo." },
+        { termo: "LGPD (Lei Geral de Proteção de Dados)", def: "Lei brasileira (Lei nº 13.709/2018) que regula a coleta, armazenamento e exclusão de dados pessoais, como voz, rosto, nome e registros de navegação." }
+      ],
+      conceitos: [
+        {
+          titulo: "Think-Aloud Concorrente vs. Retrospectivo",
+          texto: "No protocolo concorrente, o participante narra seus pensamentos em tempo real enquanto clica; isso captura reações imediatas, mas pode tornar a execução um pouco mais lenta. No protocolo retrospectivo, a pessoa realiza a tarefa em silêncio — preservando o tempo real de execução — e depois revê o vídeo da tela narrando suas decisões.",
+          analogia: "💡 O concorrente é como um piloto de rally narrando as curvas enquanto dirige; o retrospectivo é como o piloto assistir ao vídeo da corrida logo após cruzar a linha de chegada para explicar cada freada.",
+          exemploReal: "Ao testar um aplicativo de emergência médica ou um jogo rápido onde o tempo por tarefa precisa ser exato, usa-se o Think-Aloud retrospectivo para que falar não atrase os cliques do participante."
+        },
+        {
+          titulo: "Ética, Gravação e Conformidade com a LGPD",
+          texto: "Gravar a tela, a voz e a expressão facial de um participante coleta dados pessoais identificáveis. Pela LGPD (Lei Geral de Proteção de Dados), a equipe deve coletar apenas o estritamente necessário (minimização de dados), usar contas de teste fictícias para não expor senhas ou saldos reais, obter autorização explícita no TCLE (Termo de Consentimento Livre e Esclarecido) e definir prazo para apagar os arquivos.",
+          analogia: "💡 Pedir permissão antes de gravar é como avisar um convidado antes de ligar uma câmera na sala: ele precisa saber quem vai assistir, para que serve e ter liberdade total para dizer não.",
+          exemploReal: "No Itaú Unibanco (instituição financeira brasileira), os participantes de testes de usabilidade nunca acessam suas contas bancárias verdadeiras; eles recebem um ambiente de simulação com saldo fictício para proteger o sigilo financeiro exigido pela LGPD."
+        }
+      ],
+      roteiroDemo: {
+        passo0: "Antes de clicar, preveja: em uma sessão onde precisamos medir o tempo exato de resposta em segundos sem interferência da fala, qual protocolo de Think-Aloud devemos escolher e o que não pode faltar antes de apertar 'Gravar'?",
+        passos: [
+          { acao: "Analise os dois cenários de teste exibidos no simulador de decisão.", ve: "Cada cenário apresenta uma prioridade diferente (capturar reações espontâneas vs. medir tempo puro sem interrupção).", significa: "A escolha entre concorrente e retrospectivo depende da métrica principal do estudo." },
+          { acao: "Marque os itens obrigatórios do checklist ético e da LGPD antes de liberar o botão de gravação.", ve: "O botão 'Iniciar Gravação' só destrava quando o TCLE, o uso de dados fictícios e a autorização de imagem/áudio estão ativos.", significa: "Nenhuma sessão começa sem consentimento informado e proteção de dados reais." }
+        ]
+      },
+      demo: {
+        tipo: "protocolo-etica",
+        config: {}
+      },
+      quiz: [
+        {
+          pergunta: "Uma pesquisadora precisa medir com precisão quantos segundos um motorista leva para acionar o alerta de emergência na central multimídia de um carro, sem que falar atrapalhe a velocidade do toque. Qual protocolo ela deve usar?",
+          alternativas: [
+            { texto: "Think-Aloud retrospectivo: o motorista executa em silêncio e comenta o vídeo depois.", certa: true, fb: "Exato! No Think-Aloud (pensar em voz alta) retrospectivo, a execução ocorre em velocidade natural sem carga extra da fala, e a explicação vem logo depois ao rever a gravação." },
+            { texto: "Think-Aloud concorrente: o motorista explica cada detalhe enquanto tenta clicar rápido.", certa: false, fb: "Falar simultaneamente exige esforço mental extra e costuma aumentar o tempo de execução, distorcendo a medição de velocidade." },
+            { texto: "Nenhum protocolo nem observação, apenas adivinhar o tempo pela planta do painel.", certa: false, fb: "Sem observar o uso real e ouvir o participante após a ação, a equipe perde as evidências empíricas do comportamento humano." }
+          ]
+        },
+        {
+          pergunta: "Antes de iniciar a gravação da tela e do microfone de um voluntário em um teste de aplicativo de saúde, qual procedimento garante conformidade ética e legal com a LGPD?",
+          alternativas: [
+            { texto: "Apresentar o TCLE explicando a finalidade da gravação, coletar assinatura e usar dados fictícios.", certa: true, fb: "Perfeito! O TCLE (Termo de Consentimento Livre e Esclarecido) e a proteção de dados sensíveis atendem diretamente às exigências éticas e da LGPD (Lei Geral de Proteção de Dados)." },
+            { texto: "Gravar escondido para o participante agir de forma natural e pedir autorização só no final.", certa: false, fb: "Gravar sem consentimento prévio viola a ética em pesquisa e a LGPD, pois o participante tem o direito de saber e autorizar antes da coleta." },
+            { texto: "Pedir que o voluntário digite seu CPF e senha real do plano de saúde durante a gravação.", certa: false, fb: "Coletar senhas e dados reais desnecessários fere o princípio de minimização de dados da LGPD e expõe o participante a riscos." }
+          ]
+        },
+        {
+          pergunta: "Durante uma sessão com Think-Aloud concorrente, o participante fica 20 segundos em silêncio olhando fixamente para um formulário de cadastro. Como o moderador deve agir?",
+          alternativas: [
+            { texto: "Fazer um lembrete neutro, como 'O que está passando pela sua cabeça agora?'.", certa: true, fb: "Correto! Perguntas abertas e neutras reativam a verbalização sem sugerir onde clicar nem dizer se o usuário está errando." },
+            { texto: "Apontar com o dedo para o campo correto para a sessão terminar mais rápido.", certa: false, fb: "Apontar a resposta invalida o teste, pois esconde o problema de usabilidade que o formulário possui." },
+            { texto: "Desligar o microfone e cancelar o restante do teste imediatamente.", certa: false, fb: "O silêncio durante a leitura ou dúvida é normal; basta um estímulo neutro para o participante voltar a narrar seus pensamentos." }
+          ]
+        }
+      ],
+      aprofundar: [
+        { rotulo: "🔎 Busca no Google (português)", url: "https://www.google.com/search?hl=pt-BR&q=protocolo+pensar+em+voz+alta+concorrente+retrospectivo+TCLE+LGPD" },
+        { rotulo: "🎓 Pesquisa científica (Google Scholar, português)", url: "https://scholar.google.com/scholar?hl=pt-BR&q=protocolo+verbalizacao+think+aloud+usabilidade+etica+TCLE" },
+        { rotulo: "🎬 Vídeos-aula no YouTube (busca em português)", url: "https://www.youtube.com/results?search_query=think+aloud+teste+de+usabilidade+TCLE+aula" }
+      ],
+      mitoOuVerdade: {
+        afirmacao: "Se o participante assinou o TCLE no início da sessão, ele é obrigado a concluir todas as tarefas até o final.",
+        verdade: false,
+        explicacao: "Mito! Um pilar fundamental do TCLE (Termo de Consentimento Livre e Esclarecido) e da ética em pesquisa é o direito incondicional de desistir ou interromper a gravação a qualquer momento, sem qualquer penalidade."
+      }
+    },
+    {
+      id: "aba-3",
+      titulo: "3. Lab 1: Tarefas e Roteiro",
+      estudoProprio: false,
+      narrativa: "Chegamos ao primeiro laboratório prático (Hands-on — mão na massa)! Um erro clássico de iniciantes é escrever tarefas como 'Clique no menu Configurações e ative o modo escuro'. Isso não testa a interface: apenas testa se o participante sabe ler comandos. Neste laboratório, transformamos requisitos técnicos em cenários contextuais realistas, montamos o roteiro completo do moderador — com quebra-gelo (warm-up), perguntas neutras (nudges sem viés) e encerramento (debriefing) — e realizamos um teste piloto (dry-run) em duplas antes de receber usuários reais.",
+      mundoReal: [
+        "Na Magazine Luiza (rede varejista brasileira), em vez de pedir ao voluntário para 'usar o filtro de entrega rápida', o roteiro apresenta um cenário contextual: 'Você precisa comprar um liquidificador hoje para dar de presente amanhã no aniversário da sua tia. Encontre uma opção que chegue a tempo'.",
+        "Na QuintoAndar (plataforma digital de aluguel e compra de imóveis), a equipe realiza um teste piloto (dry-run) interno entre colegas antes de entrevistar inquilinos reais para garantir que o cronômetro da sessão caiba em 45 minutos e que nenhum link do protótipo esteja quebrado."
+      ],
+      ferramentas: [
+        "Roteiro Estruturado do Moderador (documento guia dividido em: abertura e quebra-gelo, leitura dos cenários, lista de perguntas neutras permitidas e encerramento).",
+        "Checklist de Teste Piloto / Dry-Run (ensaio cronometrado feito entre duplas para calibrar o tempo e caçar palavras que entregam o caminho)."
+      ],
+      dicionario: [
+        { termo: "Cenário contextual", def: "Pequena história realista que dá ao participante uma motivação e um objetivo claro, sem mencionar os nomes dos botões ou menus da tela." },
+        { termo: "Warm-up (quebra-gelo)", def: "Conversa inicial leve de 2 a 3 minutos para deixar o participante à vontade e lembrar que quem está sendo testado é o sistema, nunca a pessoa." },
+        { termo: "Nudge sem viés (sondagem neutra)", def: "Pergunta curta e imparcial feita pelo moderador (como 'O que você esperava que acontecesse aqui?') para entender a dúvida sem dar dicas." },
+        { termo: "Debriefing pós-teste", def: "Conversa final logo após as tarefas para ouvir impressões gerais, dúvidas acumuladas e aplicar questionários finais." },
+        { termo: "Teste piloto (Dry-Run)", def: "Ensaio completo da sessão com um colega antes dos participantes reais para ajustar o tempo, corrigir textos ambíguos e testar os equipamentos." }
+      ],
+      conceitos: [
+        {
+          titulo: "Decomposição de Funcionalidades em Cenários sem Pistas",
+          texto: "Para transformar um requisito técnico (ex.: 'cancelar assinatura recorrente') em tarefa válida, escondemos os rótulos exatos da interface e criamos um contexto de vida real. Se o botão na tela se chama 'Gerenciar Assinatura', o cenário nunca deve usar as palavras 'gerenciar' ou 'assinatura' como comando direto, para vermos se o rótulo faz sentido sozinho.",
+          analogia: "💡 Dar o nome do botão no enunciado é como fazer uma caça ao tesouro entregando o mapa com um 'X' gigante e uma seta piscando.",
+          exemploReal: "No Spotify (serviço de streaming de música), para testar se o usuário encontra a fila de reprodução, o cenário diz: 'Você está ouvindo uma playlist e quer ver quais músicas vão tocar em seguida e mudar a ordem delas', sem citar a palavra 'Fila'."
+        },
+        {
+          titulo: "Estrutura do Roteiro e Importância do Teste Piloto (Dry-Run)",
+          texto: "O roteiro do moderador mantém todas as sessões padronizadas: começa com o warm-up (quebra-gelo), passa pela leitura idêntica dos cenários, usa apenas sondagens neutras durante impasses e fecha com o debriefing. Antes do dia oficial, o dry-run (teste piloto) em duplas revela se 5 tarefas cabem no tempo previsto ou se alguma frase confunde o leitor.",
+          analogia: "💡 O teste piloto é o ensaio geral de uma peça de teatro antes da estreia: serve para descobrir se o cenário trava ou se a fala ficou longa demais antes da plateia chegar.",
+          exemploReal: "Em equipes de produto da RD Station (empresa brasileira de software de marketing), fazer um dry-run de 20 minutos entre dois designers costuma cortar pelo menos duas perguntas repetitivas e evitar estouro de horário nas entrevistas com clientes."
+        }
+      ],
+      roteiroDemo: {
+        passo0: "Antes de clicar, preveja: qual é o problema de pedir ao participante 'Clique em Minha Conta e altere a forma de pagamento para cartão de crédito' em vez de dar uma situação do dia a dia?",
+        passos: [
+          { acao: "Compare as três versões de tarefa apresentadas na oficina de reescrita.", ve: "A primeira versão entrega os nomes exatos dos menus; a segunda é vaga demais; a terceira traz motivação real sem dar o caminho.", significa: "Bons cenários dão o 'porquê' e o objetivo final, nunca o 'onde clicar'." },
+          { acao: "Selecione a melhor resposta de sondagem neutra (nudge sem viés) para quando o usuário travar.", ve: "O simulador mostra o impacto de perguntas indutoras versus perguntas neutras.", significa: "O moderador investiga o pensamento sem ensinar a usar a tela." },
+          { acao: "Rode o cronômetro do Teste Piloto (Dry-Run) para verificar o tempo total do roteiro.", ve: "O painel soma quebra-gelo, tarefas e debriefing e alerta se o tempo ultrapassar o limite da sessão.", significa: "O dry-run calibra o roteiro antes do contato com usuários reais." }
+        ]
+      },
+      demo: {
+        tipo: "oficina-tarefas",
+        config: {}
+      },
+      quiz: [
+        {
+          pergunta: "Você precisa testar se os usuários conseguem agendar uma transferência bancária para o próximo mês. Qual redação de cenário contextual está correta?",
+          alternativas: [
+            { texto: "Você recebeu uma conta de aluguel que vence dia 10 do mês que vem e quer deixar o pagamento programado hoje.", certa: true, fb: "Perfeito! O texto fornece uma motivação realista (aluguel vencendo dia 10) e um objetivo claro, sem entregar os nomes dos menus ou botões do aplicativo." },
+            { texto: "Abra o menu Pagamentos, toque em Agendamentos e preencha os dados do boleto do aluguel.", certa: false, fb: "Essa frase entrega o passo a passo exato da interface ('menu Pagamentos', 'Agendamentos'), testando apenas obediência ao texto e não a intuição do sistema." },
+            { texto: "Explore a área financeira do aplicativo para ver o que você acha das opções disponíveis.", certa: false, fb: "Um pedido vago ('explore a área') não define um objetivo concluível, tornando impossível medir taxa de sucesso ou tempo por tarefa." }
+          ]
+        },
+        {
+          pergunta: "Durante o teste, o participante clica três vezes em um ícone que não é clicável e pergunta ao moderador: 'É aqui que eu edito meu perfil?'. Qual é a resposta adequada segundo o roteiro?",
+          alternativas: [
+            { texto: "O que você esperava que acontecesse ao clicar aí? Como você faria se eu não estivesse aqui?", certa: true, fb: "Exato! Essa sondagem neutra (nudge sem viés) devolve a pergunta ao usuário, revelando o modelo mental dele sem confirmar nem negar o caminho." },
+            { texto: "Não, esse ícone é só decorativo; clique na sua foto no canto superior direito.", certa: false, fb: "Dar a resposta correta encerra o aprendizado daquele ponto e impede de descobrir onde o usuário tentaria clicar em seguida." },
+            { texto: "Sim, mas o programador ainda não terminou essa parte do sistema.", certa: false, fb: "Justificar ou defender o sistema quebra a postura neutra do moderador e faz o participante sentir que não deve criticar a tela." }
+          ]
+        },
+        {
+          pergunta: "Por que as duplas de alunos devem executar um teste piloto (dry-run) antes de aplicar o roteiro com participantes reais?",
+          alternativas: [
+            { texto: "Para calibrar o tempo da sessão, corrigir cenários ambíguos e validar se as ferramentas funcionam.", certa: true, fb: "Correto! O dry-run (teste piloto) funciona como ensaio técnico e pedagógico, evitando surpresas como sessões longas demais ou links quebrados diante do usuário." },
+            { texto: "Para substituir totalmente a necessidade de testar o sistema com usuários reais.", certa: false, fb: "O teste piloto entre colegas não substitui os usuários finais, pois quem projetou o sistema já conhece sua lógica interna." },
+            { texto: "Para treinar o participante real a decorar os botões antes da gravação oficial.", certa: false, fb: "O usuário real nunca deve ser treinado antes do teste, pois isso elimina a espontaneidade e esconde falhas de descoberta." }
+          ]
+        }
+      ],
+      aprofundar: [
+        { rotulo: "🔎 Busca no Google (português)", url: "https://www.google.com/search?hl=pt-BR&q=como+escrever+cenarios+tarefas+roteiro+moderador+teste+usabilidade" },
+        { rotulo: "🎓 Pesquisa científica (Google Scholar, português)", url: "https://scholar.google.com/scholar?hl=pt-BR&q=elaboracao+tarefas+cenarios+moderacao+teste+usabilidade" },
+        { rotulo: "🎬 Vídeos-aula no YouTube (busca em português)", url: "https://www.youtube.com/results?search_query=como+criar+roteiro+tarefas+teste+de+usabilidade+aula" }
+      ],
+      mitoOuVerdade: {
+        afirmacao: "Na etapa de quebra-gelo (warm-up), o moderador deve dizer ao participante: 'Estamos testando o aplicativo, não você; se algo for difícil, a falha é do sistema'.",
+        verdade: true,
+        explicacao: "Verdade! Essa frase reduz a ansiedade de desempenho do participante e o deixa seguro para apontar dificuldades reais sem medo de parecer 'desatento'."
+      }
+    },
+    {
+      id: "aba-4",
+      titulo: "4. Lab 2: Recrutamento e Triagem",
+      estudoProprio: false,
+      narrativa: "Mesmo o melhor roteiro do mundo falha se você testar um aplicativo de logística agrícola com estudantes que nunca pisaram em uma fazenda. No Laboratório 2, aprendemos a definir critérios claros de inclusão e exclusão alinhados às personas (perfis representativos dos usuários reais), fugindo do recrutamento por conveniência (chamar apenas amigos ou colegas da sala). Também construímos um questionário de triagem (screener) com perguntas filtro disfarçadas para barrar respostas enviesadas, e organizamos a logística com intervalos de segurança (buffers) e participantes reservas para faltas (no-shows).",
+      mundoReal: [
+        "Na TOTVS (empresa brasileira de software de gestão empresarial), ao testar um módulo fiscal para contadores, o questionário de triagem exige que o candidato emita notas fiscais semanalmente e exclui profissionais de tecnologia para evitar que conhecimentos técnicos mascarem falhas da interface.",
+        "Na Loft (empresa brasileira de tecnologia para compra e venda de imóveis), a agenda de testes presenciais ou remotos sempre deixa 15 minutos livres entre uma sessão e outra (buffer) e mantém 1 participante reserva remunerado para cobrir faltas de última hora (no-shows)."
+      ],
+      ferramentas: [
+        "Formulário de Triagem / Screener (questionário online curto, como no Google Forms ou Typeform, com lógica de encerramento automático para perfis fora do escopo).",
+        "Planilha de Logística e Agenda com Buffers (grade de horários com margem entre sessões, status de confirmação e contato de participantes reservas)."
+      ],
+      dicionario: [
+        { termo: "Recrutamento por conveniência", def: "Erro de escolher participantes apenas porque estão perto ou são conhecidos (amigos, parentes, colegas de turma), mesmo sem terem o perfil real de uso." },
+        { termo: "Questionário de triagem (Screener)", def: "Formulário aplicado antes do agendamento para filtrar candidatos que atendem aos critérios comportamentais e demográficos do estudo." },
+        { termo: "Distratores no screener", def: "Alternativas extras e plausíveis colocadas nas perguntas filtro para impedir que o candidato adivinhe qual resposta garante a vaga no teste." },
+        { termo: "Buffer (margem de segurança)", def: "Intervalo de 15 a 30 minutos reservado entre duas sessões seguidas para salvar gravações, anotar impressões e absorver pequenos atrasos." },
+        { termo: "No-show (não comparecimento)", def: "Falta de um participante agendado sem aviso prévio, mitigada com lembretes e participantes reservas." }
+      ],
+      conceitos: [
+        {
+          titulo: "Critérios de Inclusão/Exclusão e Perguntas Filtro Disfarçadas",
+          texto: "Critérios eficazes focam mais no comportamento real (ex.: 'faz compras online pelo celular pelo menos duas vezes por mês') do que apenas na idade. Para evitar que candidatos marquem 'sim' em tudo só para ganhar o brinde da pesquisa, nunca perguntamos 'Você usa aplicativo de entregas? (Sim/Não)'. Em vez disso, perguntamos 'Quais destes serviços você usou nos últimos 30 dias?' listando 6 opções diferentes (distratores).",
+          analogia: "💡 Perguntar 'Você sabe nadar?' diretamente convida qualquer um a dizer sim; pedir para escolher em uma lista quais esportes praticou no último mês revela a rotina verdadeira sem entregar a resposta.",
+          exemploReal: "Ao recrutar usuários para testar um aplicativo de investimentos como a XP Investimentos (corretora brasileira), o screener lista poupança, consórcio, títulos públicos, ações e criptomoedas misturados, aprovando apenas quem marcou os produtos relevantes para o teste."
+        },
+        {
+          titulo: "Gestão de Logística: Buffers e Plano para No-Shows",
+          texto: "Marcar sessões coladas umas nas outras (ex.: 14h00, 14h30, 15h00) causa efeito dominó: se um participante atrasa 5 minutos ou a gravação demora para salvar, todo o dia desanda. Reservar um buffer (margem de segurança) de 15 a 20 minutos entre sessões mantém a equipe descansada e organizada. Além disso, confirmar 24 horas antes e recrutar 1 ou 2 participantes reservas (overbooking planejado) impede que um no-show (falta) deixe o laboratório ocioso.",
+          analogia: "💡 É como um aeroporto planejar o intervalo entre pousos na mesma pista: sem margem entre um avião e outro, qualquer vento contrário atrasa todos os voos seguintes.",
+          exemploReal: "Em consultorias de experiência do usuário como a Mergo (escola e consultoria brasileira de UX), agendas de 5 testes no dia sempre incluem um sexto participante reserva no final da tarde para cobrir a taxa média de 15% a 20% de ausências."
+        }
+      ],
+      roteiroDemo: {
+        passo0: "Antes de clicar, preveja: por que uma pergunta de triagem do tipo 'Você costuma pedir comida por aplicativo? ( ) Sim ( ) Não' costuma aprovar pessoas que não usam o serviço de verdade?",
+        passos: [
+          { acao: "Inspecione as duas perguntas de triagem exibidas no construtor de Screener.", ve: "A primeira entrega o perfil desejado com Sim/Não; a segunda usa múltipla escolha com distratores.", significa: "Distratores escondem o critério de aprovação e evitam respostas enviesadas." },
+          { acao: "Simule a triagem de 3 candidatos com perfis diferentes.", ve: "O motor aprova quem tem o comportamento alvo e bloqueia colegas da área de TI (critério de exclusão).", significa: "Critérios de exclusão protegem o teste contra vieses técnicos." },
+          { acao: "Ajuste a agenda de sessões inserindo buffers e um participante reserva.", ve: "Quando ocorre um no-show simulado, o participante reserva assume a vaga sem estourar o horário.", significa: "Logística preventiva evita perda de tempo da equipe." }
+        ]
+      },
+      demo: {
+        tipo: "triagem-logistica",
+        config: {}
+      },
+      quiz: [
+        {
+          pergunta: "Uma equipe está desenvolvendo um aplicativo de controle financeiro para motoristas de aplicativo e decide testar a tela com cinco colegas da própria turma de faculdade que não dirigem. Qual erro foi cometido?",
+          alternativas: [
+            { texto: "Recrutamento por conveniência, escolhendo pessoas fora do perfil comportamental real do sistema.", certa: true, fb: "Exato! Recrutar amigos ou colegas que não vivem o contexto real (dirigir no trânsito e controlar corridas) gera resultados enganosos sobre a clareza do aplicativo." },
+            { texto: "Uso excessivo de distratores no questionário de triagem.", certa: false, fb: "O problema aqui foi justamente não aplicar critérios alinhados ao público real, e não o excesso de alternativas de filtro." },
+            { texto: "Aplicação prematura do protocolo Think-Aloud retrospectivo.", certa: false, fb: "O protocolo de verbalização diz respeito à condução da sessão, enquanto o erro descrito ocorreu antes, na escolha de quem participa." }
+          ]
+        },
+        {
+          pergunta: "Qual é a melhor forma de redigir uma pergunta no questionário de triagem (screener) para descobrir se o candidato usa transporte público diariamente sem entregar qual resposta o aprova?",
+          alternativas: [
+            { texto: "Perguntar 'Quais meios de transporte você utilizou nos últimos 7 dias?' com várias opções misturadas.", certa: true, fb: "Perfeito! Misturar carro, bicicleta, transporte público e caminhada (distratores) oculta o critério de seleção e reduz respostas falsas." },
+            { texto: "Perguntar 'Você anda de ônibus todos os dias? Responda Sim para participar do nosso teste'.", certa: false, fb: "Indicar qual resposta aprova o candidato invalida a triagem, pois estimula pessoas fora do perfil a mentirem." },
+            { texto: "Não fazer perguntas antes e descobrir durante a gravação se o candidato usa ônibus.", certa: false, fb: "Descobrir só durante a sessão desperdiça o tempo do moderador, da sala e da gravação com alguém que não representa o usuário." }
+          ]
+        },
+        {
+          pergunta: "Por que o planejamento logístico de testes recomenda incluir buffers entre sessões e convidar participantes reservas?",
+          alternativas: [
+            { texto: "Para absorver atrasos técnicos ou humanos e cobrir eventuais faltas (no-shows) sem perder o dia.", certa: true, fb: "Correto! O buffer (margem entre sessões) evita atrasos acumulados, e os participantes reservas garantem que a equipe colete dados mesmo se alguém faltar." },
+            { texto: "Para obrigar dois participantes diferentes a fazerem o teste juntos no mesmo computador.", certa: false, fb: "Os buffers são intervalos de tempo entre sessões individuais, e o reserva só entra caso o titular não compareça." },
+            { texto: "Para dispensar a necessidade de enviar lembretes por mensagem ou e-mail antes do teste.", certa: false, fb: "Os lembretes continuam essenciais; buffers e reservas atuam como rede de segurança caso imprevistos aconteçam mesmo após a confirmação." }
+          ]
+        }
+      ],
+      aprofundar: [
+        { rotulo: "🔎 Busca no Google (português)", url: "https://www.google.com/search?hl=pt-BR&q=recrutamento+participantes+questionario+triagem+screener+teste+usabilidade" },
+        { rotulo: "🎓 Pesquisa científica (Google Scholar, português)", url: "https://scholar.google.com/scholar?hl=pt-BR&q=recrutamento+selecao+participantes+avaliacao+usabilidade" },
+        { rotulo: "🎬 Vídeos-aula no YouTube (busca em português)", url: "https://www.youtube.com/results?search_query=recrutamento+triagem+screener+teste+de+usabilidade+aula" }
+      ],
+      mitoOuVerdade: {
+        afirmacao: "Para testar um sistema voltado ao público geral, recrutar colegas programadores da própria empresa é ótimo porque eles entendem rápido como a tela funciona.",
+        verdade: false,
+        explicacao: "Mito! Profissionais de tecnologia possuem um modelo mental técnico muito diferente do público comum e costumam contornar falhas que travariam usuários reais."
+      }
+    },
+    {
+      id: "aba-5",
+      titulo: "5. Lab 3: Setup, Role-Play e Achados",
+      estudoProprio: false,
+      narrativa: "Tudo planejado, roteiro ensaiado e participantes selecionados: agora é hora de montar o ambiente e rodar a sessão na prática! No Laboratório 3, preparamos tanto o ambiente remoto (videoconferência, compartilhamento de tela no celular ou computador e protótipo navegável) quanto o laboratório presencial (estação do usuário separada da sala de observação). Em sala, praticamos o Role-Play (simulação de papéis) em trios — Moderador, Observador e Usuário — e consolidamos imediatamente as falhas na Rainbow Spreadsheet (planilha arco-íris), uma matriz visual que revela padrões de erro em poucos minutos.",
+      mundoReal: [
+        "No Figma (ferramenta colaborativa online de design de interfaces), equipes compartilham apenas o link do modo 'Protótipo' com barras de ferramentas ocultas em chamadas pelo Google Meet ou Zoom para que o participante navegue como se estivesse no aplicativo real.",
+        "Na Globo (grupo brasileiro de comunicação e streaming com o Globoplay), sessões em laboratório presencial usam espelho unidirecional ou transmissão de vídeo ao vivo para uma sala vizinha, onde observadores preenchem a Rainbow Spreadsheet (planilha arco-íris) em tempo real para priorizar correções ainda no mesmo dia."
+      ],
+      ferramentas: [
+        "Protótipo Navegável ou Ambiente de Homologação (versão interativa criada no Figma ou servidor de testes isolado da base oficial de clientes).",
+        "Rainbow Spreadsheet (Planilha Arco-Íris — tabela colaborativa onde cada linha é uma dificuldade observada e cada coluna colorida representa um participante, mostrando visualmente quais falhas se repetem)."
+      ],
+      dicionario: [
+        { termo: "Ambiente de homologação", def: "Cópia segura do sistema usada apenas para testes antes do lançamento oficial, onde cliques e cadastros não afetam clientes reais." },
+        { termo: "Role-Play (simulação de papéis)", def: "Dinâmica prática em que cada integrante assume uma função real da sessão (Moderador, Observador/Anotador ou Usuário) para treinar a condução." },
+        { termo: "Timestamp (marcação de tempo)", def: "Registro exato do minuto e segundo da gravação (ex.: 04:18) em que ocorreu uma dúvida, erro ou comentário relevante." },
+        { termo: "Severidade do problema", def: "Classificação do impacto da falha na experiência do usuário (por exemplo: leve/cosmética, moderada ou crítica/impeditiva)." },
+        { termo: "Rainbow Spreadsheet (Planilha Arco-Íris)", def: "Matriz visual de síntese criada por Tomer Sharon em que cada participante ganha uma cor e as células pintadas mostram rapidamente os problemas mais frequentes." }
+      ],
+      conceitos: [
+        {
+          titulo: "Setup Remoto vs. Setup Presencial e Dinâmica de Role-Play",
+          texto: "No ambiente remoto, o maior risco é técnico: notificações pessoais aparecendo na tela compartilhada ou protótipo pedindo login. Por isso, pedimos para ativar o modo 'Não perturbe' e testamos o link do Figma antes. No laboratório presencial, o usuário fica em uma estação com captura de tela, microfone dedicado e câmera para expressões faciais, enquanto a equipe acompanha de outra sala. No Role-Play em trios: o Moderador conduz o roteiro, o Usuário pensa em voz alta e o Observador anota timestamps (marcas de tempo) e severidade sem interromper.",
+          analogia: "💡 A sessão funciona como uma equipe de cirurgia: o Moderador conduz o procedimento, o Usuário é o centro da atenção e o Observador registra cada sinal vital no prontuário sem atrapalhar a mesa.",
+          exemploReal: "Em avaliações do aplicativo Meu INSS (aplicativo oficial da Previdência Social no Brasil), anotar o timestamp exato (ex.: '07:42 — usuário clicou 4 vezes em Extrato sem resposta') permite que os desenvolvedores assistam apenas aos 15 segundos críticos do vídeo em vez de rever 1 hora inteira."
+        },
+        {
+          titulo: "Triagem Rápida com a Rainbow Spreadsheet (Planilha Arco-Íris)",
+          texto: "Em vez de escrever um relatório de 40 páginas que ninguém lê, a equipe preenche a Rainbow Spreadsheet logo após cada sessão. Cada coluna pertence a um participante (P1 azul, P2 verde, P3 laranja...) e cada linha descreve uma dificuldade observada. Quando uma linha fica pintada em várias colunas, a equipe enxerga na hora que aquele problema é um padrão sistêmico e não um caso isolado.",
+          analogia: "💡 É como um exame de raios-X colorido: onde as cores de vários participantes se alinham na mesma linha, está a fratura exata da interface que precisa de gesso urgente.",
+          exemploReal: "No Duolingo (aplicativo de ensino de idiomas), equipes ágeis usam matrizes visuais semelhantes logo após rodadas de 5 testes rápidos para decidir quais ajustes entram na atualização da semana seguinte."
+        }
+      ],
+      roteiroDemo: {
+        passo0: "Antes de clicar, preveja: em uma Rainbow Spreadsheet (Planilha Arco-Íris) com 4 participantes, se 3 colunas estão pintadas na linha 'Botão Confirmar oculto abaixo da dobra da tela', o que isso indica para a equipe?",
+        passos: [
+          { acao: "Clique nas células da Rainbow Spreadsheet interativa para registrar os achados de P1, P2, P3 e P4.", ve: "Cada participante pinta a célula com sua cor própria e o contador de recorrência atualiza automaticamente.", significa: "A visualização por cores destaca padrões sem precisar ler longos relatórios." },
+          { acao: "Observe a classificação automática de prioridade conforme mais participantes enfrentam a mesma falha.", ve: "Linhas com 3 ou 4 marcas sobem para prioridade alta, enquanto marcas isoladas ficam em monitoramento.", significa: "A matriz ajuda a priorizar correções baseadas em evidência." },
+          { acao: "Clique em '🔄 Reiniciar demo' se quiser testar diferentes combinações de falhas.", ve: "A planilha limpa as marcações e volta ao estado inicial.", significa: "Você pode simular diferentes cenários de triagem." }
+        ]
+      },
+      demo: {
+        tipo: "rainbow-matrix",
+        config: {}
+      },
+      quiz: [
+        {
+          pergunta: "Durante a simulação de sessão moderada (Role-Play) em trios, qual é a responsabilidade principal do aluno que atua como Observador/Anotador?",
+          alternativas: [
+            { texto: "Registrar o timestamp (minuto/segundo), o comportamento observado e a severidade do problema em silêncio.", certa: true, fb: "Exato! O observador documenta evidências precisas com marcação de tempo e gravidade sem interromper o usuário nem disputar a condução com o moderador." },
+            { texto: "Dar dicas ao usuário sempre que o moderador demorar para responder a uma pergunta.", certa: false, fb: "O observador nunca deve dar dicas nem falar durante as tarefas; apenas o moderador conduz a comunicação com o participante." },
+            { texto: "Alterar o código do protótipo ao vivo enquanto o usuário tenta clicar nos botões.", certa: false, fb: "Modificar a tela durante o teste quebra a padronização entre os participantes e pode travar o navegador." }
+          ]
+        },
+        {
+          pergunta: "Ao preparar o setup de um teste de usabilidade remoto usando um protótipo navegável no celular do participante, qual cuidado técnico evita falhas durante a sessão?",
+          alternativas: [
+            { texto: "Testar o link do protótipo antes, pedir para ativar o modo 'Não perturbe' e verificar o compartilhamento de tela.", certa: true, fb: "Perfeito! Isso evita que notificações privadas apareçam na gravação e garante que o link abra direto na tela inicial sem pedir cadastro na ferramenta." },
+            { texto: "Pedir que o participante instale cinco programas pesados de edição de vídeo durante a chamada.", certa: false, fb: "Instalar softwares pesados durante a sessão consome tempo, banda de internet e pode travar o aparelho do voluntário." },
+            { texto: "Gravar apenas o rosto do moderador e deixar a tela do aplicativo fora da gravação.", certa: false, fb: "Sem capturar a tela do dispositivo testado, a equipe não consegue ver onde o usuário tocou nem o que o sistema exibiu." }
+          ]
+        },
+        {
+          pergunta: "Na Rainbow Spreadsheet (Planilha Arco-Íris), como a equipe identifica rapidamente os problemas de usabilidade mais urgentes após testar 5 participantes?",
+          alternativas: [
+            { texto: "Observando quais linhas horizontais acumulam células coloridas em várias colunas de participantes.", certa: true, fb: "Correto! Quando diversas colunas (participantes) aparecem pintadas na mesma linha de dificuldade, fica visível que o problema afeta a maioria das pessoas." },
+            { texto: "Escolhendo apenas as linhas que não têm nenhuma célula colorida.", certa: false, fb: "Linhas sem marcação indicam que nenhum participante enfrentou aquela dificuldade na rodada." },
+            { texto: "Somando o número de cores diferentes usadas no logotipo da empresa.", certa: false, fb: "As cores na Rainbow Spreadsheet identificam cada participante da amostra para facilitar a leitura visual dos padrões de falha." }
+          ]
+        }
+      ],
+      aprofundar: [
+        { rotulo: "🔎 Busca no Google (português)", url: "https://www.google.com/search?hl=pt-BR&q=rainbow+spreadsheet+planilha+arco+iris+teste+de+usabilidade+setup+remoto" },
+        { rotulo: "🎓 Pesquisa científica (Google Scholar, português)", url: "https://scholar.google.com/scholar?hl=pt-BR&q=analise+resultados+teste+usabilidade+severidade+problemas" },
+        { rotulo: "🎬 Vídeos-aula no YouTube (busca em português)", url: "https://www.youtube.com/results?search_query=como+conduzir+teste+de+usabilidade+remoto+analise+achados+aula" }
+      ],
+      mitoOuVerdade: {
+        afirmacao: "Na Rainbow Spreadsheet (Planilha Arco-Íris), um problema encontrado por apenas 1 participante deve ser sempre ignorado.",
+        verdade: false,
+        explicacao: "Mito! Embora a frequência ajude a priorizar padrões, um único participante pode descobrir uma falha crítica de severidade máxima (como perda de dados ou bloqueio total de pagamento) que exige correção imediata."
+      }
+    },
+    {
+      id: "aba-6",
+      titulo: "6. Kit de Campo Completo",
+      estudoProprio: true,
+      narrativa: "Nesta aba complementar de estudo próprio, reunimos o fluxo ponta a ponta de um projeto real de teste empírico: desde o recebimento da demanda até a entrega das recomendações priorizadas. O objetivo é que você consiga conectar os 4 blocos da disciplina — Escopo/Métricas, Moderação/LGPD, Roteiro/Piloto e Recrutamento/Execução — e diagnosticar rapidamente onde um estudo real pode falhar antes mesmo de começar.",
+      mundoReal: [
+        "Na Embraer (fabricante brasileira de aeronaves), interfaces de painéis e sistemas de manutenção passam por ciclos rigorosos onde cada requisito operacional gera cenários simulados, protocolos de gravação auditáveis e matrizes de severidade antes de qualquer alteração chegar à cabine.",
+        "No Quero Educação (plataforma brasileira de bolsas de estudo e ensino superior), equipes de produto rodam sprints quinzenais de testes moderados remotos combinando recrutamento segmentado por perfil de estudante, protótipos no Figma e síntese imediata em planilha compartilhada."
+      ],
+      ferramentas: [
+        "Canvas de Planejamento de Teste Empírico (quadro resumo de 1 página contendo objetivo, perfil de participantes, tarefas, métricas e plano ético).",
+        "Escala de Severidade de Nielsen (classificação de 0 a 4 criada pelo pesquisador Jakob Nielsen para ordenar falhas desde 'sem problema' até 'catástrofe de usabilidade')."
+      ],
+      dicionario: [
+        { termo: "Viés de confirmação", def: "Tendência humana de prestar atenção apenas nas falas que confirmam o que a equipe já acreditava, ignorando críticas importantes." },
+        { termo: "Escala de Severidade de Nielsen", def: "Escala de 0 a 4 usada para classificar a gravidade de um problema combinando frequência, impacto para o usuário e persistência da falha." },
+        { termo: "Fidelidade do protótipo", def: "Grau de semelhança entre o modelo testado e o produto final (baixa fidelidade em papel/esboço ou alta fidelidade clicável e visualmente pronta)." },
+        { termo: "Saturação de achados", def: "Ponto em que testar mais participantes do mesmo perfil passa a repetir as mesmas falhas já descobertas, geralmente observado a partir de 5 usuários por perfil." }
+      ],
+      conceitos: [
+        {
+          titulo: "Integrando as Quatro Etapas sem Quebrar a Corrente",
+          texto: "Um teste empírico funciona como uma corrente de quatro elos: (1) escopo e métricas definem o alvo; (2) TCLE (Termo de Consentimento Livre e Esclarecido) e LGPD (Lei Geral de Proteção de Dados) garantem segurança jurídica e ética; (3) cenários sem pistas e dry-run (teste piloto) evitam induzir o usuário; (4) triagem com distratores e Rainbow Spreadsheet garantem dados limpos e ação rápida.",
+          analogia: "💡 Não adianta ter uma lente de câmera perfeita (roteiro) se a tampa estiver fechada (recrutamento errado) ou se o cartão de memória estiver sem espaço (setup sem teste piloto).",
+          exemploReal: "Quando uma prefeitura lança um aplicativo de agendamento de vacinas e testa apenas com funcionários internos usando roteiro que cita o nome dos botões, os quatro elos falham juntos e o cidadão trava no dia do lançamento."
+        },
+        {
+          titulo: "Priorização de Correções: Frequência vs. Severidade",
+          texto: "Após preencher a Rainbow Spreadsheet (Planilha Arco-Íris), a equipe cruza dois eixos: quantos participantes sofreram com a falha (frequência) e o quanto ela impede a tarefa (severidade). Um rótulo confuso que atrasa 4 pessoas em 5 segundos tem alta frequência e baixa severidade; já um botão quebrado que impede 1 pessoa de finalizar o pagamento tem baixa frequência e severidade crítica.",
+          analogia: "💡 É como triagem em pronto-socorro: um arranhão em cinco pessoas é atendido com curativo simples, mas uma fratura exposta em uma única pessoa vai direto para a sala de emergência.",
+          exemploReal: "No Banco Inter (banco digital brasileiro), falhas que bloqueiam a confirmação de transferência (severidade crítica) entram como correção emergencial mesmo que apareçam em um único teste."
+        }
+      ],
+      roteiroDemo: {
+        passo0: "Antes de clicar, preveja: diante de 3 falhas encontradas em um estudo de usabilidade, qual deve ser corrigida primeiro quando cruzamos quantos usuários erraram e se o erro bloqueou a tarefa?",
+        passos: [
+          { acao: "Analise os 3 achados reais registrados no painel de auditoria de estudo.", ve: "Cada achado mostra quantos participantes foram afetados e se houve bloqueio total ou apenas atraso leve.", significa: "Priorizar exige cruzar frequência e severidade." },
+          { acao: "Ordene os achados pela prioridade correta de correção.", ve: "O simulador valida a decisão e mostra o impacto prático na fila de desenvolvimento.", significa: "Falhas impeditivas não podem esperar apenas porque ocorreram poucas vezes." }
+        ]
+      },
+      demo: {
+        tipo: "auditoria-estudo",
+        config: {}
+      },
+      quiz: [
+        {
+          pergunta: "Em um teste com 5 participantes, 1 pessoa não conseguiu concluir a compra porque o botão 'Finalizar' sumiu em telas pequenas, enquanto 4 pessoas acharam a cor do rodapé pouco atraente. Qual problema tem maior severidade?",
+          alternativas: [
+            { texto: "O desaparecimento do botão 'Finalizar', pois impede completamente a conclusão da tarefa.", certa: true, fb: "Exato! Na Escala de Severidade de Nielsen, uma falha que bloqueia totalmente o objetivo do usuário é crítica (nível 4), superando preferências estéticas." },
+            { texto: "A cor do rodapé, porque foi mencionada por quatro pessoas em vez de uma.", certa: false, fb: "Embora tenha ocorrido com mais pessoas (maior frequência), a preferência de cor é um detalhe estético de baixíssimo impacto funcional." },
+            { texto: "Nenhum dos dois, pois testes com 5 pessoas não permitem classificar severidade.", certa: false, fb: "Testes com 5 participantes por perfil são padrão na área justamente para identificar e classificar rapidamente falhas críticas e recorrentes." }
+          ]
+        },
+        {
+          pergunta: "O que significa o fenômeno de 'saturação de achados' em testes qualitativos de usabilidade?",
+          alternativas: [
+            { texto: "A partir de cerca de 5 participantes do mesmo perfil, os problemas principais começam a se repetir.", certa: true, fb: "Correto! Ao testar cerca de 5 usuários representativos de um mesmo perfil, a maioria das falhas graves já aparece, permitindo corrigir a tela antes de gastar recursos em dezenas de sessões idênticas." },
+            { texto: "O computador do laboratório trava porque o arquivo de vídeo ficou pesado demais.", certa: false, fb: "Saturação de achados é um conceito metodológico sobre repetição de padrões de comportamento, não sobre espaço em disco." },
+            { texto: "O participante fica cansado de responder ao questionário SUS e fecha o navegador.", certa: false, fb: "Isso seria fadiga do participante; saturação ocorre quando novas entrevistas passam a confirmar os mesmos problemas já mapeados." }
+          ]
+        },
+        {
+          pergunta: "Durante a análise dos vídeos, um designer ignora 4 usuários que reclamaram da busca e destaca apenas 1 usuário que elogiou a tela. Qual armadilha cognitiva ocorreu?",
+          alternativas: [
+            { texto: "Viés de confirmação, que faz a pessoa valorizar apenas evidências que agradam sua opinião prévia.", certa: true, fb: "Perfeito! O viés de confirmação distorce a análise; por isso usamos planilhas estruturadas como a Rainbow Spreadsheet para dar peso igual a todas as sessões." },
+            { texto: "Conformidade rigorosa com a LGPD (Lei Geral de Proteção de Dados).", certa: false, fb: "A LGPD trata da proteção e privacidade dos dados pessoais, não da seleção tendenciosa de elogios." },
+            { texto: "Aplicação correta do protocolo Think-Aloud concorrente.", certa: false, fb: "O protocolo Think-Aloud é a forma de coleta durante o teste; ignorar falhas depois é um erro de análise por viés de confirmação." }
+          ]
+        }
+      ],
+      aprofundar: [
+        { rotulo: "🔎 Busca no Google (português)", url: "https://www.google.com/search?hl=pt-BR&q=escala+severidade+nielsen+teste+usabilidade+cinco+usuarios" },
+        { rotulo: "🎓 Pesquisa científica (Google Scholar, português)", url: "https://scholar.google.com/scholar?hl=pt-BR&q=severidade+problemas+usabilidade+nielsen+avaliacao+empirica" },
+        { rotulo: "🎬 Vídeos-aula no YouTube (busca em português)", url: "https://www.youtube.com/results?search_query=escala+de+severidade+nielsen+usabilidade+aula" }
+      ],
+      mitoOuVerdade: {
+        afirmacao: "Um único teste de usabilidade com 50 participantes antes do lançamento é melhor do que rodar 3 ciclos pequenos de 5 participantes com melhorias entre eles.",
+        verdade: false,
+        explicacao: "Mito! Rodar ciclos curtos (5 participantes, corrigir falhas, testar novamente) permite validar se as correções realmente funcionaram, em vez de descobrir 50 vezes o mesmo erro tarde demais."
+      }
+    }
+  ],
+  revisao: {
+    mapa: [
+      "1. Escopo e Métricas — alinhar perguntas de pesquisa e hipóteses às metas, combinando números (taxa de sucesso, tempo, erros, SEQ e SUS na cola rápida) e observações qualitativas.",
+      "2. Moderação e Ética (LGPD) — escolher entre Think-Aloud concorrente ou retrospectivo (na cola rápida) e garantir proteção legal com TCLE e dados fictícios.",
+      "3. Lab 1: Tarefas e Roteiro — transformar requisitos em cenários contextuais sem dar pistas, conduzir com quebra-gelo e sondagens neutras, e calibrar no teste piloto (dry-run).",
+      "4. Lab 2: Recrutamento e Triagem — fugir do recrutamento por conveniência usando screener com distratores (na cola rápida), buffers na agenda e participantes reservas.",
+      "5. Lab 3: Setup, Role-Play e Achados — preparar ambiente remoto ou presencial, treinar em trios (Moderador, Observador e Usuário) e consolidar falhas na Rainbow Spreadsheet.",
+      "6. Kit de Campo Completo (Estudo próprio) — cruzar frequência e severidade (Escala de Nielsen na cola rápida) para priorizar correções sem viés de confirmação."
+    ],
+    cola: [
+      { termo: "SEQ (Single Ease Question)", linha: "Pergunta Única de Facilidade: escala de 1 a 7 aplicada logo após cada tarefa para medir o quão fácil ou difícil ela pareceu." },
+      { termo: "SUS (System Usability Scale)", linha: "Escala de Usabilidade do Sistema: questionário padronizado de 10 perguntas aplicado no fim da sessão que gera uma nota geral de 0 a 100." },
+      { termo: "Modelo mental", linha: "Como o usuário imagina por dentro que o sistema funciona, baseado em suas experiências anteriores." },
+      { termo: "Think-Aloud (concorrente vs. retrospectivo)", linha: "Pensar em voz alta: no concorrente o usuário fala enquanto clica; no retrospectivo executa em silêncio e narra revendo o vídeo depois." },
+      { termo: "TCLE e LGPD", linha: "Termo de Consentimento Livre e Esclarecido (autorização ética assinada antes de gravar) e Lei Geral de Proteção de Dados (lei brasileira que exige minimizar dados e proteger privacidade)." },
+      { termo: "Cenário contextual", linha: "História realista com motivação e objetivo claro para o usuário, escrita sem citar os nomes dos botões ou menus da tela." },
+      { termo: "Warm-up, Nudge sem viés e Debriefing", linha: "Quebra-gelo inicial, pergunta neutra durante dúvidas (sem dar dicas) e conversa final de encerramento." },
+      { termo: "Teste piloto (Dry-Run)", linha: "Ensaio completo da sessão feito entre colegas antes dos participantes reais para ajustar o cronômetro e corrigir frases ambíguas." },
+      { termo: "Screener e Distratores", linha: "Questionário de triagem aplicado antes do teste com alternativas extras misturadas (distratores) para filtrar candidatos sem entregar a resposta certa." },
+      { termo: "Buffer e No-show", linha: "Margem de segurança de 15 a 30 minutos entre sessões (buffer) e plano com participantes reservas para cobrir faltas sem aviso (no-show)." },
+      { termo: "Role-Play e Timestamp", linha: "Simulação de papéis em trios (Moderador, Observador, Usuário) onde o observador anota o minuto/segundo exato (timestamp) de cada falha." },
+      { termo: "Rainbow Spreadsheet e Severidade", linha: "Planilha Arco-Íris (matriz onde cada participante pinta uma coluna colorida) cruzada com a gravidade do erro (Escala de Nielsen de 0 a 4) para priorizar correções." }
+    ],
+    desafio: "Desafio do Chefão — Auditoria de um Projeto Real: Uma fintech (empresa de tecnologia financeira) chamada PagFácil lançou uma função de 'Pix Parcelado' no aplicativo. Para testar antes de liberar ao público, o estagiário recrutou 5 amigos da faculdade de Computação, não aplicou TCLE (Termo de Consentimento Livre e Esclarecido — na cola rápida) pedindo que usassem suas próprias contas bancárias, deu a tarefa 'Clique em Pix, depois em Parcelar e escolha 3x' e aplicou Think-Aloud concorrente (na cola rápida) enquanto tentava medir o tempo recorde de execução em segundos. Identifique pelo menos 4 erros metodológicos ou éticos graves nesse plano e explique como corrigir cada um usando os conceitos da aula (cenário contextual, screener com distratores, LGPD e protocolo retrospectivo)."
+  }
+};
+
+/* =========================================================
+   ESTADO GLOBAL & PERSISTÊNCIA EM MEMÓRIA
+   ========================================================= */
+const state = {
+  activeTab: 0,
+  xp: 0,
+  completedTabs: new Set(),
+  quizAnswered: {}, // key: "abaIdx-qIdx" -> { solved: bool, wrongOpts: Set }
+  demoStates: {}
+};
+
+function addXP(points) {
+  state.xp += points;
+  updateHUD();
+}
+
+function updateHUD() {
+  document.getElementById("hud-xp").textContent = "⭐ " + state.xp + " XP";
+  document.getElementById("hud-badges").textContent = "🏅 " + state.completedTabs.size + "/" + AULA_DADOS.abas.length + " selos";
+  AULA_DADOS.abas.forEach((aba, idx) => {
+    const badgeEl = document.getElementById("tab-done-" + idx);
+    if (badgeEl) {
+      badgeEl.textContent = state.completedTabs.has(idx) ? " ✓" : "";
+    }
+  });
+}
+
+function checkTabCompletion(abaIdx) {
+  const aba = AULA_DADOS.abas[abaIdx];
+  if (!aba) return;
+  let allDone = true;
+  for (let q = 0; q < aba.quiz.length; q++) {
+    const st = state.quizAnswered[abaIdx + "-" + q];
+    if (!st || !st.solved) {
+      allDone = false;
+      break;
+    }
+  }
+  if (allDone && !state.completedTabs.has(abaIdx)) {
+    state.completedTabs.add(abaIdx);
+    updateHUD();
+  }
+}
+
+/* Fisher-Yates Shuffle */
+function shuffleArray(arr) {
+  const copy = arr.slice();
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = copy[i];
+    copy[i] = copy[j];
+    copy[j] = tmp;
+  }
+  return copy;
+}
+
+/* =========================================================
+   RENDERIZAÇÃO DAS ABAS E PAINÉIS
+   ========================================================= */
+function renderTabsAndPanels() {
+  const tablist = document.getElementById("tablist");
+  const main = document.getElementById("main-content");
+  tablist.innerHTML = "";
+  main.innerHTML = "";
+
+  const totalTabs = AULA_DADOS.abas.length + 1;
+
+  AULA_DADOS.abas.forEach((aba, idx) => {
+    // Botão da Aba
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "tab-btn";
+    btn.role = "tab";
+    btn.id = "tab-btn-" + idx;
+    btn.setAttribute("aria-controls", "panel-" + idx);
+    btn.setAttribute("aria-selected", idx === 0 ? "true" : "false");
+    btn.tabIndex = idx === 0 ? 0 : -1;
+
+    const titleSpan = document.createElement("span");
+    titleSpan.textContent = aba.titulo;
+    btn.appendChild(titleSpan);
+
+    if (aba.estudoProprio) {
+      const spBadge = document.createElement("span");
+      spBadge.className = "badge-self";
+      spBadge.textContent = "📖 Estudo próprio";
+      btn.appendChild(spBadge);
+    }
+
+    const doneSpan = document.createElement("span");
+    doneSpan.className = "badge-done";
+    doneSpan.id = "tab-done-" + idx;
+    btn.appendChild(doneSpan);
+
+    btn.addEventListener("click", () => activateTab(idx, true));
+    tablist.appendChild(btn);
+
+    // Painel da Aba
+    const panel = document.createElement("section");
+    panel.className = "tab-panel" + (idx === 0 ? " active" : "");
+    panel.id = "panel-" + idx;
+    panel.role = "tabpanel";
+    panel.setAttribute("aria-labelledby", "tab-btn-" + idx);
+
+    panel.innerHTML = buildContentPanelHTML(aba, idx);
+    main.appendChild(panel);
+  });
+
+  // Aba de Revisão
+  const revIdx = AULA_DADOS.abas.length;
+  const revBtn = document.createElement("button");
+  revBtn.type = "button";
+  revBtn.className = "tab-btn";
+  revBtn.role = "tab";
+  revBtn.id = "tab-btn-" + revIdx;
+  revBtn.setAttribute("aria-controls", "panel-" + revIdx);
+  revBtn.setAttribute("aria-selected", "false");
+  revBtn.tabIndex = -1;
+  revBtn.textContent = "🏆 Revisão e Chefão";
+  revBtn.addEventListener("click", () => activateTab(revIdx, true));
+  tablist.appendChild(revBtn);
+
+  const revPanel = document.createElement("section");
+  revPanel.className = "tab-panel";
+  revPanel.id = "panel-" + revIdx;
+  revPanel.role = "tabpanel";
+  revPanel.setAttribute("aria-labelledby", "tab-btn-" + revIdx);
+  revPanel.innerHTML = buildRevisaoHTML();
+  main.appendChild(revPanel);
+
+  // Inicializa Demos e Quizzes
+  AULA_DADOS.abas.forEach((aba, idx) => {
+    initDemo(aba, idx);
+    initQuiz(aba, idx);
+  });
+  initRevisaoChefao();
+}
+
+function buildContentPanelHTML(aba, idx) {
+  const roteiroPassosHTML = aba.roteiroDemo.passos.map((p, i) =>
+    `<li><strong>Passo ${i + 1}:</strong> ${p.acao} → <em>O que se vê:</em> ${p.ve} → <em>Significado:</em> ${p.significa}</li>`
+  ).join("");
+
+  const mundoRealHTML = aba.mundoReal.map(m => `<li>${m}</li>`).join("");
+  const ferramentasHTML = aba.ferramentas.map(f => `<li>${f}</li>`).join("");
+  const dicionarioHTML = aba.dicionario.map(d => `<p><strong>${d.termo}:</strong> ${d.def}</p>`).join("");
+  const conceitosHTML = aba.conceitos.map(c => `
+    <div class="mini-box" style="margin-bottom:0.8rem;">
+      <h4>${c.titulo}</h4>
+      <p>${c.texto}</p>
+      <p><strong>${c.analogia}</strong></p>
+      <p><em>Exemplo real:</em> ${c.exemploReal}</p>
+    </div>
+  `).join("");
+
+  const buscasHTML = aba.aprofundar.map(b =>
+    `<li><a href="${b.url}" target="_blank" rel="noopener">${b.rotulo}</a></li>`
+  ).join("");
+
+  const trilhaAviso = aba.estudoProprio
+    ? `<p style="font-size:0.88em; color:var(--text-muted);"><em>Nota: esta aba integra a trilha complementar de estudo próprio fora dos 30 minutos expositivos em sala, mas conta pontos e selos normalmente.</em></p>`
+    : "";
+
+  return `
+    <div class="presenter-box">
+      <h4>🎤 Roteiro do Apresentador — ${aba.titulo}</h4>
+      <p><strong>Previsão inicial:</strong> ${aba.roteiroDemo.passo0}</p>
+      <ul>${roteiroPassosHTML}</ul>
+    </div>
+
+    <article class="card card-accent">
+      <span class="section-tag">1. Missão da Etapa</span>
+      <h2>${aba.titulo}</h2>
+      ${trilhaAviso}
+      <p>${aba.narrativa}</p>
+      <div class="grid-2">
+        <div class="mini-box">
+          <h3>🌍 Onde isso aparece na prática</h3>
+          <ul>${mundoRealHTML}</ul>
+        </div>
+        <div class="mini-box">
+          <h3>🧰 Ferramentas e Artefatos</h3>
+          <ul>${ferramentasHTML}</ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <span class="section-tag">2. Demo Interativa</span>
+      <h3>Experimente na Prática</h3>
+      <div class="demo-instructions">
+        <strong>📋 INSTRUÇÕES PASSO A PASSO:</strong>
+        <p style="margin:0.4rem 0;"><strong>${aba.roteiroDemo.passo0}</strong></p>
+        <ol style="margin:0.4rem 0 0; padding-left:1.3rem;">
+          ${aba.roteiroDemo.passos.map(p => `<li>${p.acao}</li>`).join("")}
+        </ol>
+      </div>
+      <div class="demo-stage" id="demo-stage-${idx}"></div>
+      <div class="demo-controls">
+        <button type="button" class="btn-reset" id="demo-reset-${idx}">🔄 Reiniciar demo</button>
+      </div>
+    </article>
+
+    <article class="card">
+      <span class="section-tag">3. Quiz de Verificação</span>
+      <h3>Teste seu Entendimento (+10 XP de primeira / +5 XP no retry)</h3>
+      <div id="quiz-container-${idx}"></div>
+    </article>
+
+    <details class="det-dict">
+      <summary>📖 Mini-dicionário desta etapa (${aba.dicionario.length} termos)</summary>
+      <div class="details-body">${dicionarioHTML}</div>
+    </details>
+
+    <details class="det-conc">
+      <summary>🧠 Conceitos aprofundados, analogias e exemplos reais</summary>
+      <div class="details-body">${conceitosHTML}</div>
+    </details>
+
+    <details class="det-mito">
+      <summary>⚖️ Mito ou Verdade? Clique para testar seu senso crítico</summary>
+      <div class="details-body">
+        <p><strong>Afirmação:</strong> "${aba.mitoOuVerdade.afirmacao}"</p>
+        <div style="display:flex; gap:0.6rem; margin:0.6rem 0;">
+          <button type="button" class="btn-reset" onclick="responderMito(${idx}, true)">✅ Verdade</button>
+          <button type="button" class="btn-reset" onclick="responderMito(${idx}, false)">❌ Mito</button>
+        </div>
+        <div id="mito-fb-${idx}"></div>
+      </div>
+    </details>
+
+    <details class="det-deep">
+      <summary>🔎 Aprofundar em casa (3 buscas selecionadas em português)</summary>
+      <div class="details-body">
+        <ul>${buscasHTML}</ul>
+      </div>
+    </details>
+  `;
+}
+
+function responderMito(idx, escolhaUsuario) {
+  const item = AULA_DADOS.abas[idx].mitoOuVerdade;
+  const box = document.getElementById("mito-fb-" + idx);
+  const acertou = escolhaUsuario === item.verdade;
+  box.innerHTML = `<div class="feedback-box ${acertou ? "fb-ok" : "fb-err"}">
+    <strong>${acertou ? "✅ Você acertou!" : "❌ Atenção ao detalhe:"}</strong> ${item.explicacao}
+  </div>`;
+}
+
+function buildRevisaoHTML() {
+  const rev = AULA_DADOS.revisao;
+  const mapaHTML = rev.mapa.map(m => `<li>${m}</li>`).join("");
+  const colaHTML = rev.cola.map(c => `<div class="cola-item"><strong>${c.termo}:</strong> ${c.linha}</div>`).join("");
+
+  return `
+    <article class="card card-accent">
+      <span class="section-tag">Revisão Geral</span>
+      <h2>🗺️ Mapa Completo da Aula</h2>
+      <ul>${mapaHTML}</ul>
+    </article>
+
+    <article class="card">
+      <span class="section-tag">Glossário de Consulta</span>
+      <h2>⚡ Cola Rápida (Termos e Conceitos-Chave)</h2>
+      <div>${colaHTML}</div>
+    </article>
+
+    <article class="card">
+      <span class="section-tag">Desafio Final</span>
+      <h2>🐉 Chefão: Auditoria de Estudo Empírico</h2>
+      <p>${rev.desafio}</p>
+      <textarea id="chefao-input" rows="5" style="width:100%; padding:0.75rem; border:2px solid var(--border); border-radius:10px; font-family:inherit; font-size:0.95em; background:var(--surface); color:var(--text);" placeholder="Escreva aqui os erros encontrados e como você corrigiria cada um..."></textarea>
+      <div class="demo-controls">
+        <button type="button" class="btn-primary" id="chefao-check-btn">✅ Verificar minha análise (+25 XP)</button>
+      </div>
+      <div id="chefao-feedback"></div>
+    </article>
+  `;
+}
+
+function initRevisaoChefao() {
+  const btn = document.getElementById("chefao-check-btn");
+  if (!btn) return;
+  let awarded = false;
+  btn.addEventListener("click", () => {
+    const txt = (document.getElementById("chefao-input").value || "").trim();
+    const fb = document.getElementById("chefao-feedback");
+    if (txt.length < 30) {
+      fb.innerHTML = `<div class="feedback-box fb-err"><strong>❌ Resposta muito curta:</strong> Detalhe pelo menos 4 falhas do caso PagFácil (como recrutamento de amigos de Computação, ausência de TCLE/uso de conta real, tarefa entregando os botões e Think-Aloud concorrente atrapalhando a medição de tempo).</div>`;
+      return;
+    }
+    if (!awarded) {
+      awarded = true;
+      addXP(25);
+    }
+    fb.innerHTML = `<div class="feedback-box fb-ok">
+      <strong>✅ Análise registrada! Confira os 4 pontos essenciais de auditoria:</strong>
+      <ul style="margin:0.5rem 0 0;">
+        <li><strong>1. Recrutamento por conveniência:</strong> Chamar amigos da faculdade de Computação introduz viés técnico; o correto é usar um questionário de triagem (screener) com distratores alinhado aos clientes reais.</li>
+        <li><strong>2. Ética e LGPD:</strong> Faltou o TCLE (Termo de Consentimento Livre e Esclarecido) e o ambiente com dados fictícios; nunca se deve pedir que o voluntário acesse a própria conta bancária real.</li>
+        <li><strong>3. Tarefa indutora:</strong> Dizer 'Clique em Pix, depois em Parcelar' entrega a resposta; o certo é usar um cenário contextual sem citar os nomes dos botões.</li>
+        <li><strong>4. Protocolo de verbalização:</strong> Pedir Think-Aloud concorrente enquanto mede tempo recorde distorce a velocidade; para tempo puro, usa-se o Think-Aloud retrospectivo.</li>
+      </ul>
+    </div>`;
+  });
+}
+
+/* =========================================================
+   QUIZZES COM FISHER-YATES E RETRY SEM REVELAR GABARITO
+   ========================================================= */
+function getQuizTermsForTab(abaIdx) {
+  const termosPorAba = [
+    "🔑 Termos deste quiz: SUS = Escala de Usabilidade do Sistema (questionário de 10 itens, nota 0 a 100) · SEQ = Pergunta Única de Facilidade (nota de 1 a 7 após cada tarefa) · Modelo mental = como o usuário imagina que o sistema funciona · Taxa de sucesso = percentual de tarefas concluídas.",
+    "🔑 Termos deste quiz: Think-Aloud = protocolo de pensar em voz alta (concorrente: durante a tarefa; retrospectivo: comentando o vídeo depois) · TCLE = Termo de Consentimento Livre e Esclarecido · LGPD = Lei Geral de Proteção de Dados · Sondagem neutra = pergunta imparcial sem dicas.",
+    "🔑 Termos deste quiz: Cenário contextual = história realista sem citar nomes de botões · Nudge sem viés = pergunta neutra do moderador · Dry-run = teste piloto entre colegas antes dos usuários reais · Warm-up = quebra-gelo inicial.",
+    "🔑 Termos deste quiz: Recrutamento por conveniência = chamar conhecidos fora do público real · Screener = questionário de triagem · Distratores = alternativas extras para disfarçar o critério de seleção · Buffer = margem de tempo entre sessões · No-show = falta sem aviso.",
+    "🔑 Termos deste quiz: Role-Play = simulação de papéis (Moderador, Observador, Usuário) · Timestamp = marcação de minuto e segundo do vídeo · Rainbow Spreadsheet = Planilha Arco-Íris (cada participante pinta uma coluna colorida para mostrar padrões de erro).",
+    "🔑 Termos deste quiz: Escala de Severidade de Nielsen = nota de 0 a 4 para gravidade do erro · Saturação de achados = repetição dos principais problemas a partir de cerca de 5 usuários por perfil · Viés de confirmação = focar apenas no que confirma nossa opinião."
+  ];
+  return termosPorAba[abaIdx] || "";
+}
+
+function initQuiz(aba, abaIdx) {
+  const container = document.getElementById("quiz-container-" + abaIdx);
+  if (!container) return;
+
+  const termsBox = document.createElement("div");
+  termsBox.className = "quiz-terms";
+  termsBox.textContent = getQuizTermsForTab(abaIdx);
+  container.appendChild(termsBox);
+
+  aba.quiz.forEach((qObj, qIdx) => {
+    const qKey = abaIdx + "-" + qIdx;
+    state.quizAnswered[qKey] = { solved: false, wrongCount: 0 };
+
+    const qDiv = document.createElement("div");
+    qDiv.className = "quiz-q";
+
+    const qTitle = document.createElement("p");
+    qTitle.innerHTML = `<strong>Questão ${qIdx + 1}:</strong> ${qObj.pergunta}`;
+    qDiv.appendChild(qTitle);
+
+    const fbArea = document.createElement("div");
+    const shuffledOpts = shuffleArray(qObj.alternativas);
+
+    shuffledOpts.forEach((opt) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "quiz-opt";
+      btn.textContent = opt.texto;
+      btn.setAttribute("data-fb", opt.fb);
+
+      btn.addEventListener("click", () => {
+        const qState = state.quizAnswered[qKey];
+        if (qState.solved || btn.disabled) return;
+
+        if (opt.certa) {
+          qState.solved = true;
+          btn.classList.add("opt-right");
+          btn.textContent = "✓ " + opt.texto;
+          const allBtns = qDiv.querySelectorAll(".quiz-opt");
+          allBtns.forEach(b => { b.disabled = true; });
+          const pts = qState.wrongCount === 0 ? 10 : 5;
+          addXP(pts);
+          fbArea.innerHTML = `<div class="feedback-box fb-ok"><strong>✅ Por que esta está certa (+${pts} XP):</strong> ${opt.fb}</div>`;
+          checkTabCompletion(abaIdx);
+        } else {
+          qState.wrongCount += 1;
+          btn.disabled = true;
+          btn.classList.add("opt-wrong");
+          btn.textContent = "✗ " + opt.texto;
+          fbArea.innerHTML = `<div class="feedback-box fb-err"><strong>❌ Por que esta está errada:</strong> ${opt.fb} <em>(Tente outra alternativa!)</em></div>`;
+        }
+      });
+
+      qDiv.appendChild(btn);
+    });
+
+    qDiv.appendChild(fbArea);
+    container.appendChild(qDiv);
+  });
+}
+
+/* =========================================================
+   DEMOS INTERATIVAS (1 POR ABA — 3 SIMULAÇÕES LIVRES + 3 CENÁRIOS)
+   ========================================================= */
+function initDemo(aba, idx) {
+  const stage = document.getElementById("demo-stage-" + idx);
+  const resetBtn = document.getElementById("demo-reset-" + idx);
+  if (!stage || !resetBtn) return;
+
+  const renderers = [
+    renderDemo1Escopo,
+    renderDemo2ProtocoloEtica,
+    renderDemo3OficinaTarefas,
+    renderDemo4TriagemLogistica,
+    renderDemo5RainbowMatrix,
+    renderDemo6AuditoriaEstudo
+  ];
+
+  const renderFn = renderers[idx];
+  renderFn(stage);
+
+  resetBtn.addEventListener("click", () => {
+    if (state.demoStates[idx] && state.demoStates[idx].timer) {
+      clearInterval(state.demoStates[idx].timer);
+    }
+    state.demoStates[idx] = {};
+    renderFn(stage);
+  });
+}
+
+/* DEMO 1: Simulação Livre — Painel de Alinhamento de Escopo e Métricas */
+function renderDemo1Escopo(stage) {
+  stage.innerHTML = `
+    <p><strong>🏦 Caso Real: Aplicativo Bancário (Atualização de Boleto Vencido)</strong></p>
+    <p><em>Meta de negócio:</em> Reduzir em 30% as ligações ao suporte sobre boletos vencidos que não são pagos na hora.</p>
+    <div id="d1-step1">
+      <p><strong>Passo 1 — Escolha a hipótese de falha de usabilidade mais testável:</strong></p>
+      <button type="button" class="demo-choice-btn" data-ok="false">A) O aplicativo deveria ter cores mais modernas no menu principal.</button>
+      <button type="button" class="demo-choice-btn" data-ok="true">B) Ao colar o código de um boleto vencido, o usuário não percebe que o cálculo de juros é automático e desiste achando que o código falhou.</button>
+      <button type="button" class="demo-choice-btn" data-ok="false">C) Os servidores do banco usam linguagem Java no processamento noturno.</button>
+      <div id="d1-fb1"></div>
+    </div>
+    <div id="d1-step2" style="display:none; margin-top:1rem;">
+      <p><strong>Passo 2 — Agora combine uma métrica quantitativa e um foco qualitativo:</strong></p>
+      <label style="display:block; margin-bottom:0.5rem;">
+        Indicador Quantitativo:
+        <select id="d1-quant" style="padding:0.4rem; border-radius:6px; border:2px solid var(--border); font-size:0.95em;">
+          <option value="">-- Selecione --</option>
+          <option value="ok">Taxa de sucesso + Tempo por tarefa + Nota SEQ (1 a 7)</option>
+          <option value="bad">Quantidade de linhas de código do aplicativo</option>
+        </select>
+      </label>
+      <label style="display:block; margin-bottom:0.6rem;">
+        Indicador Qualitativo:
+        <select id="d1-qual" style="padding:0.4rem; border-radius:6px; border:2px solid var(--border); font-size:0.95em;">
+          <option value="">-- Selecione --</option>
+          <option value="ok">Expressões de hesitação e modelo mental ao ver a mensagem de recálculo</option>
+          <option value="bad">Velocidade da memória RAM do celular do moderador</option>
+        </select>
+      </label>
+      <button type="button" class="btn-primary" id="d1-run">📊 Gerar Plano de Medição</button>
+      <div id="d1-fb2"></div>
+    </div>
+  `;
+
+  stage.querySelectorAll("#d1-step1 .demo-choice-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const isOk = btn.getAttribute("data-ok") === "true";
+      const fb = stage.querySelector("#d1-fb1");
+      if (isOk) {
+        btn.classList.add("is-right");
+        stage.querySelectorAll("#d1-step1 .demo-choice-btn").forEach(b => b.disabled = true);
+        fb.innerHTML = `<div class="feedback-box fb-ok"><strong>✅ Hipótese alinhada!</strong> Ela liga uma dúvida visível na tela (aviso de recálculo automático) à meta de reduzir ligações no suporte, como ocorre em aplicativos como Nubank e Itaú.</div>`;
+        stage.querySelector("#d1-step2").style.display = "block";
+      } else {
+        btn.disabled = true;
+        btn.classList.add("is-wrong");
+        fb.innerHTML = `<div class="feedback-box fb-err"><strong>❌ Não conecta com a meta:</strong> Preferência estética vaga ou arquitetura interna de servidor não explicam por que o cliente trava ao pagar um boleto vencido. Tente outra opção!</div>`;
+      }
+    });
+  });
+
+  stage.querySelector("#d1-run").addEventListener("click", () => {
+    const q1 = stage.querySelector("#d1-quant").value;
+    const q2 = stage.querySelector("#d1-qual").value;
+    const fb2 = stage.querySelector("#d1-fb2");
+    if (q1 === "ok" && q2 === "ok") {
+      fb2.innerHTML = `<div class="feedback-box fb-ok"><strong>✅ Plano de Medição Completo!</strong> Você cruzou números objetivos (sucesso, tempo e SEQ) com a compreensão humana do aviso na tela — exatamente como equipes do Gov.br validam serviços públicos digitais.</div>`;
+    } else {
+      fb2.innerHTML = `<div class="feedback-box fb-err"><strong>❌ Ajuste as métricas:</strong> Selecione indicadores que meçam o desempenho e a percepção do usuário na tarefa, e não especificações técnicas de hardware ou código.</div>`;
+    }
+  });
+}
+
+/* DEMO 2: Simulação Livre — Checklist Ético LGPD + Seletor de Think-Aloud */
+function renderDemo2ProtocoloEtica(stage) {
+  stage.innerHTML = `
+    <p><strong>🎥 Estação de Preparação de Sessão (Aplicativo de Telemedicina)</strong></p>
+    <p>Objetivo do estudo: medir com precisão de segundos quanto tempo um paciente leva para acionar o botão de pronto-atendimento sem distrações.</p>
+    <p><strong>1. Escolha o protocolo de verbalização adequado:</strong></p>
+    <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.8rem;">
+      <button type="button" class="demo-choice-btn" style="width:auto;" data-proto="conc">Think-Aloud Concorrente (falar enquanto clica)</button>
+      <button type="button" class="demo-choice-btn" style="width:auto;" data-proto="retro">Think-Aloud Retrospectivo (executar em silêncio e comentar o vídeo depois)</button>
+    </div>
+    <div id="d2-proto-fb"></div>
+
+    <p style="margin-top:0.9rem;"><strong>2. Trava de Segurança Ética e LGPD (marque os 3 requisitos antes de gravar):</strong></p>
+    <label style="display:block; margin:0.3rem 0;"><input type="checkbox" class="d2-chk"> TCLE (Termo de Consentimento Livre e Esclarecido) assinado com direito de desistência.</label>
+    <label style="display:block; margin:0.3rem 0;"><input type="checkbox" class="d2-chk"> Ambiente de teste carregado com paciente e prontuário fictícios (minimização de dados LGPD).</label>
+    <label style="display:block; margin:0.3rem 0;"><input type="checkbox" class="d2-chk"> Autorização explícita para captura de tela e áudio com prazo definido de exclusão.</label>
+
+    <div style="margin-top:0.8rem;">
+      <button type="button" class="btn-primary" id="d2-rec-btn" disabled>🔴 Iniciar Gravação Segura</button>
+    </div>
+    <div id="d2-rec-fb"></div>
+  `;
+
+  let protoOk = false;
+  const recBtn = stage.querySelector("#d2-rec-btn");
+  const chks = stage.querySelectorAll(".d2-chk");
+
+  function checkUnlock() {
+    const allChecked = Array.from(chks).every(c => c.checked);
+    recBtn.disabled = !(protoOk && allChecked);
+  }
+
+  stage.querySelectorAll("[data-proto]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const p = btn.getAttribute("data-proto");
+      const fb = stage.querySelector("#d2-proto-fb");
+      if (p === "retro") {
+        protoOk = true;
+        btn.classList.add("is-right");
+        stage.querySelectorAll("[data-proto]").forEach(b => b.disabled = true);
+        fb.innerHTML = `<div class="feedback-box fb-ok"><strong>✅ Protocolo Retrospectivo selecionado!</strong> Como precisamos medir o tempo puro de reação em segundos, o participante age em silêncio e narra suas decisões revendo o vídeo logo depois.</div>`;
+        checkUnlock();
+      } else {
+        btn.disabled = true;
+        btn.classList.add("is-wrong");
+        fb.innerHTML = `<div class="feedback-box fb-err"><strong>❌ Atrapalha a cronometragem:</strong> Falar durante uma tarefa urgente adiciona carga mental e altera os segundos gastos. Tente o outro protocolo!</div>`;
+      }
+    });
+  });
+
+  chks.forEach(c => c.addEventListener("change", checkUnlock));
+
+  recBtn.addEventListener("click", () => {
+    stage.querySelector("#d2-rec-fb").innerHTML = `<div class="feedback-box fb-ok"><strong>✅ Sessão autorizada e em gravação!</strong> Assim como nos laboratórios da USP e do Itaú Unibanco, o consentimento informado e os dados fictícios protegem o participante sob a LGPD.</div>`;
+  });
+}
+
+/* DEMO 3: Oficina de Reescrita de Tarefa e Simulador de Cronômetro Dry-Run */
+function renderDemo3OficinaTarefas(stage) {
+  stage.innerHTML = `
+    <p><strong>✍️ Oficina de Engenharia de Tarefas (E-commerce de Livros)</strong></p>
+    <p>Requisito técnico do sistema: <em>"Permitir alterar o endereço de entrega no resumo do pedido antes do pagamento."</em></p>
+    <p><strong>Qual cenário contextual deve entrar no roteiro do moderador?</strong></p>
+    <button type="button" class="demo-choice-btn" data-ok="false">A) Clique em 'Alterar Endereço' na caixa superior direita e selecione o CEP novo.</button>
+    <button type="button" class="demo-choice-btn" data-ok="true">B) Você está fechando a compra de um livro, mas lembrou que vai passar a semana na casa da sua mãe. Garanta que o pacote seja entregue lá antes de concluir.</button>
+    <button type="button" class="demo-choice-btn" data-ok="false">C) Teste o módulo de logística do carrinho de compras.</button>
+    <div id="d3-fb1"></div>
+
+    <div style="margin-top:1rem; padding-top:0.8rem; border-top:1px solid var(--border);">
+      <p><strong>⏱️ Calibrador de Teste Piloto (Dry-Run):</strong> Ajuste os minutos de cada bloco para caber numa sessão padrão de 30 minutos:</p>
+      <div style="display:flex; flex-wrap:wrap; gap:0.8rem; align-items:center;">
+        <label>Quebra-gelo: <input type="number" id="d3-t1" value="5" min="1" max="20" style="width:65px; padding:0.3rem;"> min</label>
+        <label>3 Tarefas + Sondagens: <input type="number" id="d3-t2" value="25" min="5" max="45" style="width:65px; padding:0.3rem;"> min</label>
+        <label>Debriefing: <input type="number" id="d3-t3" value="10" min="1" max="20" style="width:65px; padding:0.3rem;"> min</label>
+        <button type="button" class="btn-primary" id="d3-calc">Verificar Tempo Total</button>
+      </div>
+      <div id="d3-fb2"></div>
+    </div>
+  `;
+
+  stage.querySelectorAll(".demo-choice-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const ok = btn.getAttribute("data-ok") === "true";
+      const fb = stage.querySelector("#d3-fb1");
+      if (ok) {
+        btn.classList.add("is-right");
+        stage.querySelectorAll(".demo-choice-btn").forEach(b => b.disabled = true);
+        fb.innerHTML = `<div class="feedback-box fb-ok"><strong>✅ Excelente cenário contextual!</strong> Dá uma situação cotidiana real (entrega na casa da mãe) sem entregar os nomes dos botões, como praticado na Magazine Luiza.</div>`;
+      } else {
+        btn.disabled = true;
+        btn.classList.add("is-wrong");
+        fb.innerHTML = `<div class="feedback-box fb-err"><strong>❌ Cenário inválido:</strong> Ou entrega o nome exato do botão ('Alterar Endereço') ou é técnico e vago demais ('módulo de logística'). Escolha a narrativa realista!</div>`;
+      }
+    });
+  });
+
+  stage.querySelector("#d3-calc").addEventListener("click", () => {
+    const total = Number(stage.querySelector("#d3-t1").value) + Number(stage.querySelector("#d3-t2").value) + Number(stage.querySelector("#d3-t3").value);
+    const fb2 = stage.querySelector("#d3-fb2");
+    if (total <= 30) {
+      fb2.innerHTML = `<div class="feedback-box fb-ok"><strong>✅ Total: ${total} minutos — Roteiro calibrado!</strong> O dry-run (teste piloto) confirmou que todas as etapas cabem dentro dos 30 minutos previstos sem atropelar o debriefing.</div>`;
+    } else {
+      fb2.innerHTML = `<div class="feedback-box fb-err"><strong>❌ Total: ${total} minutos — Estouro de tempo!</strong> No dry-run, você descobriu que o roteiro passa de 30 minutos. Reduza os blocos para caber no limite da sessão.</div>`;
+    }
+  });
+}
+
+/* DEMO 4: Simulação Livre — Triagem de Candidatos (Screener) e Gestão de No-Show */
+function renderDemo4TriagemLogistica(stage) {
+  const candidatos = [
+    { nome: "Carlos (28 anos, trabalha com TI/UX e nunca alugou imóvel online)", perfil: "TI/UX", aprovar: false, motivo: "Critério de exclusão: profissionais de UX/TI têm viés técnico e ele nunca usou o serviço." },
+    { nome: "Mariana (34 anos, professora, buscou apartamento em portais nos últimos 30 dias)", perfil: "Público-alvo", aprovar: true, motivo: "Critério de inclusão atendido: comportamento recente alinhado à persona da QuintoAndar." },
+    { nome: "Lucas (21 anos, colega da turma que topou participar só para ajudar)", perfil: "Conveniência", aprovar: false, motivo: "Recrutamento por conveniência sem aderência ao comportamento de busca real." }
+  ];
+
+  let aprovados = 0;
+
+  stage.innerHTML = `
+    <p><strong>🕵️ Simulador de Triagem (Screener) — Portal de Aluguel de Imóveis</strong></p>
+    <p>Avalie os candidatos abaixo aplicando os critérios de inclusão e exclusão:</p>
+    <div id="d4-list"></div>
+    <div id="d4-logistica" style="display:none; margin-top:1rem;">
+      <div class="feedback-box fb-ok">
+        <strong>✅ Candidata aprovada na triagem!</strong> Agora simule um imprevisto na agenda do dia:
+        <p style="margin:0.5rem 0;">📅 14:00 Mariana (Titular) · 14:45 <em>Buffer de 15 min</em> · 15:00 Reserva (Overbooking planejado)</p>
+        <button type="button" class="btn-primary" id="d4-noshow">⚠️ Simular No-Show (falta) às 14:00</button>
+        <div id="d4-noshow-fb"></div>
+      </div>
+    </div>
+  `;
+
+  const list = stage.querySelector("#d4-list");
+  candidatos.forEach((c) => {
+    const row = document.createElement("div");
+    row.className = "mini-box";
+    row.style.marginBottom = "0.6rem";
+    row.innerHTML = `
+      <p style="margin:0 0 0.4rem;"><strong>${c.nome}</strong></p>
+      <button type="button" class="btn-reset" data-act="in">✅ Aprovar</button>
+      <button type="button" class="btn-reset" data-act="out">🚫 Reprovar</button>
+      <div class="c-fb"></div>
+    `;
+
+    row.querySelectorAll("button").forEach(b => {
+      b.addEventListener("click", () => {
+        const escolheuAprovar = b.getAttribute("data-act") === "in";
+        const fb = row.querySelector(".c-fb");
+        if (escolheuAprovar === c.aprovar) {
+          row.querySelectorAll("button").forEach(btn => btn.disabled = true);
+          fb.innerHTML = `<div class="feedback-box fb-ok"><strong>✅ Decisão correta:</strong> ${c.motivo}</div>`;
+          if (c.aprovar) {
+            aprovados++;
+            if (aprovados >= 1) stage.querySelector("#d4-logistica").style.display = "block";
+          }
+        } else {
+          b.disabled = true;
+          fb.innerHTML = `<div class="feedback-box fb-err"><strong>❌ Avalie o perfil com cuidado:</strong> ${c.motivo} Tente a outra ação!</div>`;
+        }
+      });
+    });
+
+    list.appendChild(row);
+  });
+
+  stage.querySelector("#d4-noshow").addEventListener("click", () => {
+    stage.querySelector("#d4-noshow-fb").innerHTML = `<div class="feedback-box fb-ok" style="margin-top:0.5rem;"><strong>🛡️ Contingência acionada!</strong> Graças ao participante reserva e ao buffer de 15 minutos, a equipe não perdeu o turno de laboratório — prática padrão em consultorias como a Mergo.</div>`;
+  });
+}
+
+/* DEMO 5: Simulação Livre Interativa — Rainbow Spreadsheet (Planilha Arco-Íris) */
+function renderDemo5RainbowMatrix(stage) {
+  const achados = [
+    "Botão 'Confirmar Pagamento' ficou escondido abaixo da dobra da tela no celular",
+    "Rótulo 'Código de Barras' confundido com chave aleatória Pix",
+    "Ícone de ajuda no canto superior passou despercebido",
+    "Mensagem de erro do CEP não informa se precisa digitar o hífen"
+  ];
+  const cores = ["#0284c7", "#16a34a", "#d97706", "#9333ea"];
+  const matriz = [
+    [true, true, true, false],
+    [true, false, true, true],
+    [false, true, false, false],
+    [true, true, true, true]
+  ];
+
+  stage.innerHTML = `
+    <p><strong>🌈 Rainbow Spreadsheet Interativa (Consolidando Achados de 4 Participantes)</strong></p>
+    <p>Clique nas células da tabela para marcar quais participantes (P1 a P4) enfrentaram cada dificuldade observada:</p>
+    <div style="overflow-x:auto;">
+      <table class="rainbow-table">
+        <thead>
+          <tr>
+            <th>Dificuldade Observada na Sessão</th>
+            <th style="color:${cores[0]};">P1</th>
+            <th style="color:${cores[1]};">P2</th>
+            <th style="color:${cores[2]};">P3</th>
+            <th style="color:${cores[3]};">P4</th>
+            <th>Padrão</th>
+          </tr>
+        </thead>
+        <tbody id="d5-tbody"></tbody>
+      </table>
+    </div>
+    <div class="observe-box">
+      <strong>👀 O que observar:</strong> Experimente pintar 3 ou 4 colunas na mesma linha (por exemplo, na linha do CEP ou do botão oculto) e veja como as cores revelam instantaneamente os problemas sistêmicos, como usado em equipes ágeis do Globoplay e Duolingo.
+    </div>
+  `;
+
+  const tbody = stage.querySelector("#d5-tbody");
+
+  function renderRows() {
+    tbody.innerHTML = "";
+    achados.forEach((texto, rIdx) => {
+      const tr = document.createElement("tr");
+      const tdTexto = document.createElement("td");
+      tdTexto.className = "obs-cell";
+      tdTexto.textContent = texto;
+      tr.appendChild(tdTexto);
+
+      let count = 0;
+      for (let cIdx = 0; cIdx < 4; cIdx++) {
+        const td = document.createElement("td");
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "cell-toggle";
+        const ativo = matriz[rIdx][cIdx];
+        if (ativo) {
+          count++;
+          btn.style.background = cores[cIdx];
+          btn.style.color = "#ffffff";
+          btn.style.borderColor = cores[cIdx];
+          btn.textContent = "P" + (cIdx + 1);
+        } else {
+          btn.textContent = "—";
+        }
+        btn.addEventListener("click", () => {
+          matriz[rIdx][cIdx] = !matriz[rIdx][cIdx];
+          renderRows();
+        });
+        td.appendChild(btn);
+        tr.appendChild(td);
+      }
+
+      const tdStatus = document.createElement("td");
+      if (count >= 3) {
+        tdStatus.innerHTML = `<strong style="color:#dc2626;">🔥 Alta (${count}/4)</strong>`;
+      } else if (count === 2) {
+        tdStatus.innerHTML = `<strong style="color:#d97706;">⚠️ Média (2/4)</strong>`;
+      } else {
+        tdStatus.innerHTML = `<span>ℹ️ Isolada (${count}/4)</span>`;
+      }
+      tr.appendChild(tdStatus);
+      tbody.appendChild(tr);
+    });
+  }
+
+  renderRows();
+}
+
+/* DEMO 6: Auditoria de Severidade vs. Frequência */
+function renderDemo6AuditoriaEstudo(stage) {
+  stage.innerHTML = `
+    <p><strong>🩺 Triagem de Prioridades — Escala de Severidade de Nielsen (0 a 4)</strong></p>
+    <p>Após testar 5 usuários em um aplicativo de agendamento de exames, você obteve 3 achados. Qual deles deve ir primeiro para correção emergencial?</p>
+    <button type="button" class="demo-choice-btn" data-ok="false">A) 4 de 5 participantes comentaram que gostariam que o fundo da tela inicial fosse azul-claro em vez de branco (Frequência: 80%, Impacto: estético).</button>
+    <button type="button" class="demo-choice-btn" data-ok="true">B) 1 de 5 participantes não conseguiu concluir o agendamento porque o calendário trava ao selecionar datas de feriado (Frequência: 20%, Impacto: bloqueio total da tarefa).</button>
+    <button type="button" class="demo-choice-btn" data-ok="false">C) 3 de 5 participantes hesitaram 2 segundos antes de achar o botão 'Sair' no menu inferior (Frequência: 60%, Impacto: atraso leve).</button>
+    <div id="d6-fb"></div>
+  `;
+
+  stage.querySelectorAll(".demo-choice-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const ok = btn.getAttribute("data-ok") === "true";
+      const fb = stage.querySelector("#d6-fb");
+      if (ok) {
+        btn.classList.add("is-right");
+        stage.querySelectorAll(".demo-choice-btn").forEach(b => b.disabled = true);
+        fb.innerHTML = `<div class="feedback-box fb-ok"><strong>✅ Priorização correta (Severidade 4 — Catástrofe de Usabilidade)!</strong> Mesmo aparecendo para 1 participante, uma falha que impede totalmente o usuário de concluir a tarefa exige correção imediata antes de ajustes cosméticos, exatamente como priorizam bancos digitais como o Banco Inter.</div>`;
+      } else {
+        btn.disabled = true;
+        btn.classList.add("is-wrong");
+        fb.innerHTML = `<div class="feedback-box fb-err"><strong>❌ Avalie o impacto na tarefa:</strong> Preferência de cor ou hesitação de 2 segundos não impedem o paciente de agendar o exame. Procure a falha que bloqueia completamente o objetivo!</div>`;
+      }
+    });
+  });
+}
+
+/* =========================================================
+   NAVEGAÇÃO DE ABAS, HASH ROUTING E MODOS (AULA / DARK)
+   ========================================================= */
+function activateTab(index, updateHash) {
+  const total = AULA_DADOS.abas.length + 1;
+  if (index < 0 || index >= total) index = 0;
+  state.activeTab = index;
+
+  for (let i = 0; i < total; i++) {
+    const btn = document.getElementById("tab-btn-" + i);
+    const panel = document.getElementById("panel-" + i);
+    const isSelected = i === index;
+    if (btn) {
+      btn.setAttribute("aria-selected", isSelected ? "true" : "false");
+      btn.tabIndex = isSelected ? 0 : -1;
+    }
+    if (panel) {
+      if (isSelected) {
+        panel.classList.add("active");
+      } else {
+        panel.classList.remove("active");
+      }
+    }
+  }
+
+  if (updateHash) {
+    const targetHash = index < AULA_DADOS.abas.length ? "#aba-" + (index + 1) : "#revisao";
+    if (window.location.hash !== targetHash) {
+      window.location.hash = targetHash;
+    }
+  }
+}
+
+function parseHashToTabIndex() {
+  const h = window.location.hash;
+  if (h === "#revisao") {
+    return AULA_DADOS.abas.length;
+  }
+  const match = /^#aba-(\d+)$/.exec(h);
+  if (match) {
+    const num = parseInt(match[1], 10) - 1;
+    if (num >= 0 && num < AULA_DADOS.abas.length) {
+      return num;
+    }
+  }
+  return 0;
+}
+
+window.addEventListener("hashchange", () => {
+  const idx = parseHashToTabIndex();
+  activateTab(idx, false);
+});
+
+/* Navegação por setas sempre ativa nas abas */
+document.getElementById("tablist").addEventListener("keydown", (e) => {
+  const total = AULA_DADOS.abas.length + 1;
+  if (e.key === "ArrowRight") {
+    e.preventDefault();
+    const next = (state.activeTab + 1) % total;
+    activateTab(next, true);
+    document.getElementById("tab-btn-" + next).focus();
+  } else if (e.key === "ArrowLeft") {
+    e.preventDefault();
+    const prev = (state.activeTab - 1 + total) % total;
+    activateTab(prev, true);
+    document.getElementById("tab-btn-" + prev).focus();
+  }
+});
+
+/* Botão Modo Aula (Apresentação) vs Modo Leitura */
+const btnMode = document.getElementById("btn-mode");
+const btnDark = document.getElementById("btn-dark");
+
+btnMode.addEventListener("click", () => {
+  const isPres = document.body.classList.toggle("presentation-mode");
+  btnMode.setAttribute("aria-pressed", isPres ? "true" : "false");
+  btnMode.classList.toggle("active-mode", isPres);
+  btnMode.textContent = isPres ? "📖 Modo Leitura" : "🎤 Modo Aula";
+
+  if (isPres) {
+    document.body.classList.remove("dark-mode");
+    btnDark.setAttribute("aria-pressed", "false");
+    btnDark.classList.remove("active-mode");
+    btnDark.disabled = true;
+  } else {
+    btnDark.disabled = false;
+  }
+});
+
+/* Botão Dark Mode (disponível no Modo Leitura) */
+btnDark.addEventListener("click", () => {
+  if (document.body.classList.contains("presentation-mode")) return;
+  const isDark = document.body.classList.toggle("dark-mode");
+  btnDark.setAttribute("aria-pressed", isDark ? "true" : "false");
+  btnDark.classList.toggle("active-mode", isDark);
+  btnDark.textContent = isDark ? "☀️ Claro" : "🌙 Escuro";
+});
+
+/* Inicialização */
+renderTabsAndPanels();
+activateTab(parseHashToTabIndex(), false);
+updateHUD();
+</script>
+</body>
+</html>

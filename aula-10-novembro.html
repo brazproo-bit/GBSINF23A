@@ -1,0 +1,1153 @@
+<!-- HTMLearning v2.17 — Campos não informados: unidade, páginas. Nenhum conteúdo pedagógico foi inventado. -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interface Humano Computador — HTMLearning v2.17</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-light: #eef2ff;
+      --primary-dark: #3730a3;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --success: #16a34a;
+      --success-bg: #f0fdf4;
+      --error: #dc2626;
+      --error-bg: #fef2f2;
+      --warning-bg: #fffbeb;
+      --warning-border: #fef08a;
+      --base-font-size: 18px;
+    }
+
+    body.dark-mode {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --primary-light: #1e1b4b;
+    }
+
+    body.presentation-mode {
+      --base-font-size: 22px;
+      --bg: #ffffff;
+      --surface: #f8fafc;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: var(--base-font-size);
+      line-height: 1.6;
+      background-color: var(--bg);
+      color: var(--text);
+      padding-bottom: 60px;
+    }
+
+    .container { max-width: 1050px; margin: 0 auto; padding: 16px; }
+
+    /* Top Bar Header */
+    header {
+      background-color: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+    .header-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .badge { background: var(--primary-light); color: var(--primary-dark); padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 0.85em; }
+    .badge-estudo { background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 12px; font-size: 0.75em; font-weight: bold; }
+    .controls { display: flex; gap: 8px; }
+    .btn-ctrl { background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; cursor: pointer; color: var(--text); font-size: 0.85em; font-weight: bold; }
+    .btn-ctrl:hover { background: var(--primary-light); }
+
+    /* Score Bar */
+    .score-bar {
+      display: flex; gap: 16px; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 0.9em; flex-wrap: wrap;
+    }
+
+    /* Sticky Folder Navigation */
+    .nav-container {
+      position: sticky; top: 0; z-index: 100; background-color: var(--bg); padding-top: 8px; margin-bottom: -2px;
+    }
+    .tab-list {
+      display: flex; overflow-x: auto; gap: 4px; border-bottom: 2px solid var(--primary); padding-bottom: 0; list-style: none; scrollbar-width: thin;
+    }
+    .tab-item {
+      background: var(--surface); border: 2px solid var(--border); border-bottom: none; border-radius: 10px 10px 0 0; padding: 10px 16px; cursor: pointer; font-weight: bold; font-size: 0.9em; white-space: nowrap; color: var(--text-muted); transition: all 0.2s;
+    }
+    .tab-item:hover { color: var(--primary); }
+    .tab-item.active {
+      background: var(--surface); border-color: var(--primary); color: var(--primary); border-bottom: 3px solid var(--surface); margin-bottom: -2px; z-index: 2;
+    }
+
+    /* Content Panels */
+    .panel {
+      display: none; background: var(--surface); border: 2px solid var(--border); border-top: none; border-radius: 0 0 12px 12px; padding: 24px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+    }
+    .panel.active { display: block; }
+
+    /* Sections within Panels */
+    .section-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px; margin-bottom: 20px;
+    }
+    .section-title { font-size: 1.25em; font-weight: bold; color: var(--primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+
+    /* Collapsible details */
+    details { background: var(--primary-light); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 12px; }
+    summary { font-weight: bold; cursor: pointer; color: var(--primary-dark); }
+    details[open] summary { margin-bottom: 8px; }
+
+    /* Boxes */
+    .box-info { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px; margin-bottom: 16px; border-radius: 4px; font-size: 0.95em; }
+    .box-instructions { background: var(--warning-bg); border: 1px solid var(--warning-border); border-left: 4px solid #f59e0b; padding: 12px; margin-bottom: 16px; border-radius: 4px; font-size: 0.9em; }
+    .box-feedback { padding: 12px; border-radius: 6px; margin-top: 10px; font-weight: 500; }
+    .box-feedback.success { background: var(--success-bg); border: 1px solid #bbf7d0; color: #15803d; }
+    .box-feedback.error { background: var(--error-bg); border: 1px solid #fecaca; color: #b91c1c; }
+
+    /* Demo Sandbox */
+    .demo-container { background: var(--bg); border: 2px dashed var(--border); padding: 16px; border-radius: 8px; margin-bottom: 16px; }
+    .btn-action { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-right: 8px; margin-bottom: 8px; }
+    .btn-action:hover { background: var(--primary-dark); }
+    .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Quiz Styling */
+    .quiz-container { margin-top: 20px; }
+    .quiz-q { margin-bottom: 20px; background: var(--bg); padding: 16px; border-radius: 8px; border: 1px solid var(--border); }
+    .quiz-opt { display: block; width: 100%; text-align: left; padding: 10px 14px; margin: 6px 0; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 0.95em; color: var(--text); }
+    .quiz-opt:hover:not(:disabled) { background: var(--primary-light); }
+    .quiz-opt.correct { background: var(--success-bg); border-color: var(--success); color: var(--success); font-weight: bold; }
+    .quiz-opt.wrong { background: var(--error-bg); border-color: var(--error); color: var(--error); text-decoration: line-through; }
+
+    /* Presenter Script */
+    .presenter-script { display: none; background: #f0fdf4; border: 1px solid #86efac; padding: 10px; border-radius: 6px; margin-bottom: 12px; font-size: 0.85em; color: #166534; }
+    body.presentation-mode .presenter-script { display: block; }
+
+    /* Footer */
+    footer { margin-top: 40px; padding: 20px; border-top: 2px solid var(--border); font-size: 0.85em; color: var(--text-muted); }
+    footer hr { border: 0; border-top: 1px solid var(--border); margin: 16px 0; }
+    footer a { color: var(--primary); text-decoration: underline; }
+    .footer-block-title { font-weight: bold; color: var(--text); margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-top">
+        <div>
+          <span class="badge">Interface Humano Computador</span>
+          <h1 style="font-size: 1.5em; margin-top: 4px;">Métodos de Inspeção e Testes de Usabilidade</h1>
+        </div>
+        <div class="controls">
+          <button class="btn-ctrl" onclick="togglePresentationMode()" title="Alternar Modo Apresentação">🎤 Modo Aula</button>
+          <button class="btn-ctrl" onclick="toggleDarkMode()" title="Alternar Tema Escuro">🌙 Escuro</button>
+        </div>
+      </div>
+      <div class="score-bar">
+        <span>🏆 XP Geral: <strong id="xp-display">0</strong></span>
+        <span>🎖️ Selos: <strong id="badges-display">Nenhum</strong></span>
+        <span>📍 Progresso: <strong id="progress-display">0/6 abas</strong></span>
+      </div>
+    </header>
+
+    <div class="nav-container">
+      <ul class="tab-list" role="tablist" id="tab-headers">
+        <!-- Generated by JS -->
+      </ul>
+    </div>
+
+    <main id="tab-panels">
+      <!-- Generated by JS -->
+    </main>
+
+  </div>
+
+  <script>
+    // DATA STORE
+    const AULA_DADOS = [
+      {
+        id: "aba-1",
+        titulo: "1. Avaliação Formativa & Heurísticas",
+        estudoProprio: false,
+        narrativa: "Como identificar falhas em telas antes que elas cheguem às mãos do cliente final, utilizando regras consolidadas de Usabilidade (facilidade de uso).",
+        mundoReal: [
+          "O Nubank (banco digital brasileiro) testa telas constantemente durante o desenho para evitar que clientes cometam erros de transferência PIX.",
+          "O iFood (aplicativo de entrega de comida) usa mensagens de erro claras indicando exatamente por que o cartão foi recusado."
+        ],
+        ferramentas: [
+          "Figma (ferramenta de prototipagem de telas)",
+          "Miro (quadro virtual para mapear heurísticas de usabilidade)"
+        ],
+        dicionario: [
+          { termo: "IHC", def: "Interface Humano-Computador: a área do conhecimento que estuda como as pessoas interagem com sistemas digitais." },
+          { termo: "Usabilidade", def: "A facilidade com que um usuário consegue realizar suas tarefas em um sistema com eficiência e satisfação." },
+          { termo: "Heurística", def: "Uma diretriz ou regra prática consolidada pela experiência para avaliar a qualidade de uma interface." }
+        ],
+        conceitos: [
+          {
+            titulo: "Avaliação Formativa vs. Somativa",
+            texto: "Antes de lançar um software, precisamos saber se ele funciona bem. A avaliação formativa ocorre DURANTE o desenvolvimento para moldar a tela; a somativa ocorre ao FINAL para medir a nota de usabilidade do produto pronto.",
+            analogia: "💡 Pense em um chef provando a sopa enquanto cozinha (formativa) versus os clientes provando a sopa no restaurante (somativa).",
+            exemploReal: "Na Meta (empresa dona do WhatsApp), a equipe faz avaliações formativas semanais com protótipos de papel antes de programar uma nova função no aplicativo."
+          },
+          {
+            titulo: "As 10 Heurísticas de Nielsen",
+            texto: "Jakob Nielsen (especialista pioneiro em usabilidade) criou 10 regras universais de inspeção, como 'Visibilidade do Status do Sistema' (mostrar o que está acontecendo) e 'Prevenção de Erros'.",
+            analogia: "💡 É como o painel de um carro: uma luz de combustível acesa previne que você fique sem gasolina no meio da estrada.",
+            exemploReal: "No aplicativo do Mercado Livre, uma barra de progresso indica 'Seu pedido foi recebido → Em preparação → A caminho', aplicando a 1ª heurística de Nielsen."
+          }
+        ],
+        roteiroDemo: {
+          passo0: "Antes de clicar, preveja: O que acontece quando o sistema esconde o progresso do upload?",
+          passos: [
+            { acao: "Simular botão sem feedback visual", ve: "O usuário clica 5 vezes seguidas achando que travou.", significa: "Violação da Heurística 1 (Visibilidade do Status)." },
+            { acao: "Adicionar barra de progresso", ve: "O usuário aguarda tranquilamente a conclusão.", significa: "Usabilidade corrigida com transparência de status." }
+          ]
+        },
+        demo: {
+          tipo: "simulacao_status",
+          config: {}
+        },
+        quiz: [
+          {
+            pergunta: "Qual é a principal diferença entre Avaliação Formativa e Somativa em IHC?",
+            opcoes: [
+              { texto: "Formativa ocorre durante o processo de design; Somativa avalia o produto pronto.", fb: "Exato! A formativa ajuda a corrigir o rumo antes de codificar.", correta: true },
+              { texto: "Formativa é feita com formulários; Somativa é feita com observação visual.", fb: "Incorreto. O nome diz respeito ao MOMENTO do ciclo de desenvolvimento, não ao instrumento usado.", correta: false },
+              { texto: "Formativa avalia o código-fonte; Somativa avalia as cores da tela.", fb: "Incorreto. Ambas focam na experiência do usuário e usabilidade da interface.", correta: false }
+            ]
+          },
+          {
+            pergunta: "A barra de carregamento ao enviar uma foto no Instagram aplica qual Heurística de Nielsen?",
+            opcoes: [
+              { texto: "Flexibilidade e Eficiência de Uso.", fb: "Incorreto. Flexibilidade refere-se a atalhos para usuários avançados.", correta: false },
+              { texto: "Visibilidade do Status do Sistema.", fb: "Perfeito! O sistema informa em tempo real o que está acontecendo.", correta: true },
+              { texto: "Estética e Design Minimalista.", fb: "Incorreto. Trata-se de informar o estado atual da operação, não de estética visual.", correta: false }
+            ]
+          },
+          {
+            pergunta: "O que caracteriza uma falha de severidade máxima (catastrófica) na inspeção?",
+            opcoes: [
+              { texto: "Um tom de azul levemente desalinhado da paleta oficial.", fb: "Incorreto. Isso é um detalhe estético ou superficial.", correta: false },
+              { texto: "Impossibilidade total de concluir a compra ou tarefa crítica sem alternativa.", fb: "Exato! Impede o usuário de avançar na tarefa principal.", correta: true },
+              { texto: "Uma palavra com erro ortográfico no rodapé da página.", fb: "Incorreto. Erros de digitação secundários são de baixa severidade.", correta: false }
+            ]
+          }
+        ],
+        aprofundar: [
+          { rotulo: "🔎 Busca no Google (português)", url: "https://www.google.com/search?hl=pt-BR&q=avaliacao+heuristica+usabilidade+nielsen" },
+          { rotulo: "🎓 Pesquisa científica (Google Scholar, português)", url: "https://scholar.google.com/scholar?hl=pt-BR&q=metodos+de+inspecao+ihc+heuristica" },
+          { rotulo: "🎬 Vídeos-aula no YouTube (busca em português)", url: "https://www.youtube.com/results?search_query=heuristicas+de+nielsen+aula" }
+        ],
+        mitoOuVerdade: {
+          afirmacao: "Mito ou Verdade: A avaliação heurística substitui totalmente a necessidade de testar o sistema com usuários reais.",
+          verdade: false,
+          explicacao: "Mito! A inspeção heurística por especialistas encontra muitos problemas rapidamente, mas NÃO substitui a observação empírica de usuários reais interagindo no dia a dia."
+        }
+      },
+      {
+        id: "aba-2",
+        titulo: "2. Percurso Cognitivo (Walkthrough)",
+        estudoProprio: false,
+        narrativa: "Simular passo a passo o raciocínio de um usuário iniciante para descobrir se a interface é intuitiva sem precisar de testes com usuários reais.",
+        mundoReal: [
+          "A caixa eletrônico do Banco do Brasil exige uma sequência de passos lógicos onde a tela guia o cliente antes de liberar o dinheiro.",
+          "O fluxo de cadastro do Spotify (serviço de streaming de música) reduz os passos ao mínimo para evitar desistência."
+        ],
+        ferramentas: [
+          "Checklist de Percurso Cognitivo",
+          "Tabela de Simulação de Carga Cognitiva"
+        ],
+        dicionario: [
+          { termo: "Percurso Cognitivo", def: "Cognitive Walkthrough: método de inspeção onde avaliadores simulam a sequência de ações do usuário em uma tarefa." },
+          { termo: "Carga Cognitiva", def: "A quantidade de esforço mental necessária para processar informações e tomar uma decisão na tela." },
+          { termo: "Feedback de Interface", def: "A resposta imediata da tela confirmando que uma ação do usuário foi registrada." }
+        ],
+        conceitos: [
+          {
+            titulo: "As 4 Perguntas Fundamentais do Percurso Cognitivo",
+            texto: "Em cada clique da tarefa, o avaliador faz 4 perguntas: 1) O usuário tentará alcançar o efeito correto? 2) O botão correto está visível? 3) O usuário associará o botão ao efeito desejado? 4) O feedback após o clique indica progresso?",
+            analogia: "💡 É como caminhar por uma trilha desconhecida perguntando a cada curva: 'Existe uma placa indicando o caminho certo?'.",
+            exemploReal: "Ao tentar cancelar um contrato na Netflix, se o botão 'Cancelar Assinatura' estiver escondido em 5 sub-menus, a pergunta 2 falha gravemente."
+          },
+          {
+            titulo: "Checklist de Inspeção Rápida",
+            texto: "Uma lista estruturada de verificação rápida baseada em boas práticas de IHC para inspecionar telas sob pressão de tempo.",
+            analogia: "💡 É idêntico ao checklist que um piloto de avião faz no painel antes de decolar.",
+            exemploReal: "Formulários de e-commerce usam checklists para garantir que os campos obrigatórios estejam marcados com asterisco vermelho (*)."
+          }
+        ],
+        roteiroDemo: {
+          passo0: "Antes de clicar, preveja: O que acontece quando o botão de confirmação não tem rótulo claro?",
+          passos: [
+            { acao: "Testar botão genérico 'Avançar'", ve: "Dúvida do usuário se a cobrança será realizada agora.", significa: "Falha na pergunta 3 (Associação de significado)." },
+            { acao: "Trocar rótulo para 'Pagar R$ 50,00 Agora'", ve: "Certeza absoluta da ação a ser tomada.", significa: "Percurso cognitivo aprovado com sucesso." }
+          ]
+        },
+        demo: {
+          tipo: "simulacao_rotulo",
+          config: {}
+        },
+        quiz: [
+          {
+            pergunta: "Qual é a 1ª pergunta fundamental durante o Percurso Cognitivo?",
+            opcoes: [
+              { texto: "O usuário tentará alcançar o efeito correto para realizar a tarefa?", fb: "Exato! Avalia a intenção e motivação do usuário antes de agir.", correta: true },
+              { texto: "O sistema foi programado em Linguagem JavaScript?", fb: "Incorreto. Percurso cognitivo avalia experiência de uso, não tecnologia técnica.", correta: false },
+              { texto: "O servidor respondeu em menos de 100 milissegundos?", fb: "Incorreto. Isso é uma métrica de infraestrutura de rede/servidor.", correta: false }
+            ]
+          },
+          {
+            pergunta: "Se um botão existe na tela, mas o usuário não percebe que ele é clicável, qual pergunta falhou?",
+            opcoes: [
+              { texto: "Pergunta 4: O feedback indica progresso?", fb: "Incorreto. A pergunta 4 foca no pós-clique.", correta: false },
+              { texto: "Pergunta 3: O usuário associará a ação ao efeito correto?", fb: "Exato! Se o visual não parece um controle interativo, a associação falha.", correta: true },
+              { texto: "Pergunta 0: O sistema está conectado à internet?", fb: "Incorreto. Isso não faz parte da lista de validação cognitiva.", correta: false }
+            ]
+          },
+          {
+            pergunta: "Quem realiza a inspeção no Percurso Cognitivo?",
+            opcoes: [
+              { texto: "Especialistas/avaliadores simulando a mente do usuário iniciante.", fb: "Perfeito! Métodos de inspeção são executados por especialistas sem usuários reais.", correta: true },
+              { texto: "Uma amostra de 100 clientes convidados do sistema.", fb: "Incorreto. Se envolve usuários reais, passa a ser um teste empírico.", correta: false },
+              { texto: "Um robô de testes automatizados de unidade de código.", fb: "Incorreto. Robôs não possuem modelo mental de experiência humana.", correta: false }
+            ]
+          }
+        ],
+        aprofundar: [
+          { rotulo: "🔎 Busca no Google (português)", url: "https://www.google.com/search?hl=pt-BR&q=percurso+cognitivo+ihc+cognitive+walkthrough" },
+          { rotulo: "🎓 Pesquisa científica (Google Scholar, português)", url: "https://scholar.google.com/scholar?hl=pt-BR&q=cognitive+walkthrough+avaliacao+usabilidade" },
+          { rotulo: "🎬 Vídeos-aula no YouTube (busca em português)", url: "https://www.youtube.com/results?search_query=percurso+cognitivo+ihc+aula" }
+        ],
+        mitoOuVerdade: {
+          afirmacao: "Mito ou Verdade: O Percurso Cognitivo deve ser feito imaginando um usuário especialista que já conhece todos os atalhos.",
+          verdade: false,
+          explicacao: "Mito! O percurso cognitivo é focado no usuário INICIANTE ou ocasional, que precisa aprender a interface pela primeira vez."
+        }
+      },
+      {
+        id: "aba-3",
+        titulo: "3. Testes Empíricos & 5 Usuários",
+        estudoProprio: false,
+        narrativa: "Aprenda a planejar testes reais observando pessoas de carne e osso interagindo com seu sistema e a razão matemática por trás da regra dos 5 usuários.",
+        mundoReal: [
+          "A Uber (aplicativo de transporte por aplicativo) realiza testes empíricos com motoristas reais para validar a tela de aceitação de corridas.",
+          "O Gov.br (portal de serviços do governo federal brasileiro) faz testes de usabilidade com cidadãos de diferentes níveis de alfabetização digital."
+        ],
+        ferramentas: [
+          "Morae (software de gravação de tela e câmera para testes de usabilidade)",
+          "Planilha de Recrutamento de Personas"
+        ],
+        dicionario: [
+          { termo: "Método Empírico", def: "Abordagem baseada na observação direta e coleta de dados reais de uso humano na prática." },
+          { termo: "Persona", def: "Representação fictícia do usuário ideal baseada em dados reais de perfil e comportamento." },
+          { termo: "Curva de Nielsen", def: "Fórmula matemática que demonstra que 5 usuários encontram ~85% dos problemas de usabilidade." }
+        ],
+        conceitos: [
+          {
+            titulo: "O Teste Tradicional de Usabilidade",
+            texto: "Consiste em colocar um usuário representante do público-alvo diante da interface, solicitar que ele realize tarefas específicas e observar suas dificuldades em silêncio.",
+            analogia: "💡 É como assistir alguém tentando montar um móvel sem interferir, observando onde a pessoa confunde as peças.",
+            exemploReal: "No Nubank, os designers observam clientes tentando cadastrar uma chave Pix para ver se o fluxo gera dúvidas na confirmação de dados."
+          },
+          {
+            titulo: "A Regra dos 5 Usuários",
+            texto: "Jakob Nielsen provou que testar com mais de 5 usuários do mesmo perfil gera desperdício de recursos, pois os mesmos problemas começam a se repetir (retornos decrescentes).",
+            analogia: "💡 Se 5 pessoas caem no mesmo buraco da calçada, você já sabe onde está o buraco e precisa consertá-lo antes de chamar mais gente.",
+            exemploReal: "Em uma startup de saúde, 5 médicos em um teste detectaram 85% dos erros da receita digital no primeiro dia de testes."
+          }
+        ],
+        roteiroDemo: {
+          passo0: "Antes de clicar, preveja: Quantos problemas de usabilidade novos descobrimos ao passar de 5 para 15 usuários?",
+          passos: [
+            { acao: "Adicionar usuários de 1 a 5", ve: "Curva de descoberta sobe de 0% para 85% rapidamente.", significa: "Alto retorno de aprendizado com baixo custo." },
+            { acao: "Adicionar usuários de 6 a 15", ve: "Curva estabiliza perto de 100%, repetindo falhas antigas.", significa: "Confirmação da Curva de Nielsen: 5 usuários são ideais por ciclo." }
+          ]
+        },
+        demo: {
+          tipo: "simulacao_curva_nielsen",
+          config: {}
+        },
+        quiz: [
+          {
+            pergunta: "Por que 5 usuários costumam ser suficientes em um ciclo de teste de usabilidade segundo Nielsen?",
+            opcoes: [
+              { texto: "Porque 5 usuários descobrem aproximadamente 85% dos problemas de usabilidade.", fb: "Excelente! A partir do 5º usuário, a repetição de problemas é alta.", correta: true },
+              { texto: "Porque os laboratórios só possuem capacidade física para 5 cadeiras.", fb: "Incorreto. A limitação é fundamentada em estatística de descoberta, não em espaço.", correta: false },
+              { texto: "Porque a legislação proíbe testar com mais de 5 pessoas por dia.", fb: "Incorreto. É uma recomendação de eficiência econômica e metodológica.", correta: false }
+            ]
+          },
+          {
+            pergunta: "Qual é a postura correta do pesquisador ao conduzir um teste empírico?",
+            opcoes: [
+              { texto: "Explicar imediatamente onde clicar assim que o usuário hesitar.", fb: "Incorreto. Interferir invalida o resultado do teste empírico.", correta: false },
+              { texto: "Observar com neutralidade, sem induzir as respostas ou ajudar na tarefa.", fb: "Perfeito! A postura neutra garante a fidelidade do teste de usabilidade.", correta: true },
+              { texto: "Criticar o usuário quando ele cometer um erro de navegação.", fb: "Incorreto. Lembre-se do lema: 'testamos a interface, nunca o usuário'.", correta: false }
+            ]
+          },
+          {
+            pergunta: "O que é uma 'Persona' no contexto de planejamento de testes?",
+            opcoes: [
+              { texto: "Um ator contratado para fingir que não sabe usar tecnologia.", fb: "Incorreto. Não é um ator fingindo, mas um perfil estruturado.", correta: false },
+              { texto: "Um perfil fictício realista baseado nas características do público-alvo.", fb: "Exato! Ajuda a selecionar participantes que representem os usuários reais.", correta: true },
+              { texto: "O nome dado ao facilitador do teste de usabilidade.", fb: "Incorreto. O facilitador é quem conduz a sessão de testes.", correta: false }
+            ]
+          }
+        ],
+        aprofundar: [
+          { rotulo: "🔎 Busca no Google (português)", url: "https://www.google.com/search?hl=pt-BR&q=regra+dos+5+usuarios+usabilidade+nielsen" },
+          { rotulo: "🎓 Pesquisa científica (Google Scholar, português)", url: "https://scholar.google.com/scholar?hl=pt-BR&q=teste+empirico+usabilidade+amostra" },
+          { rotulo: "🎬 Vídeos-aula no YouTube (busca em português)", url: "https://www.youtube.com/results?search_query=teste+de+usabilidade+5+usuarios+aula" }
+        ],
+        mitoOuVerdade: {
+          afirmacao: "Mito ou Verdade: A regra dos 5 usuários significa que você nunca mais precisará testar o sistema com outras pessoas.",
+          verdade: false,
+          explicacao: "Mito! 5 usuários são por CICLO de design. Após corrigir os problemas encontrados, você faz outro ciclo com mais 5 novos usuários."
+        }
+      },
+      {
+        id: "aba-4",
+        titulo: "4. Cenários, Tarefas & Métricas",
+        estudoProprio: false,
+        narrativa: "Como redigir tarefas realistas para testes e mensurar a usabilidade com dados quantitativos (tempo, taxa de erro e o indicador SUS).",
+        mundoReal: [
+          "A Amazon (maior e-commerce do mundo) mede rigorosamente o tempo necessário para um cliente fazer a compra com '1-Clique'.",
+          "O Banco Itaú aplica questionários padronizados para medir o grau de satisfação após o uso do app do banco."
+        ],
+        ferramentas: [
+          "Questionário SUS (System Usability Scale - Escala de Usabilidade de Sistema)",
+          "Calculadora de Taxa de Conclusão de Tarefas"
+        ],
+        dicionario: [
+          { termo: "ISO 9241-11", def: "Norma internacional de ergonomia que define usabilidade em três pilares: Eficácia, Eficiência e Satisfação." },
+          { termo: "Eficácia", def: "Métrica que indica a porcentagem de conclusão com sucesso da tarefa pelo usuário." },
+          { termo: "SUS", def: "System Usability Scale: questionário padronizado de 10 perguntas com escala Likert (1 a 5) para medir satisfação." }
+        ],
+        conceitos: [
+          {
+            titulo: "Escrita de Tarefas Não Indutivas",
+            texto: "Ao pedir que o usuário realize uma ação, a tarefa não deve conter os nomes dos botões ou instruções exatas da tela.",
+            analogia: "💡 Em vez de dizer 'Clique no botão vermelho do topo', diga 'Como você faria para cancelar sua conta nesta tela?'.",
+            exemploReal: "No app do Magazine Luiza, em vez de 'Procure por TV na barra de pesquisa', pede-se: 'Encontre um televisor de 50 polegadas que caiba no seu orçamento'."
+          },
+          {
+            titulo: "As Métricas ISO 9241-11 & O Escor do SUS",
+            texto: "Medimos a usabilidade com 3 fatores: Eficácia (% de sucesso), Eficiência (tempo gasto e número de erros) e Satisfação (nota SUS de 0 a 100, onde acima de 68 é considerado bom).",
+            analogia: "💡 Eficácia é chegar ao destino; Eficiência é gastar pouca gasolina no caminho; Satisfação é curtir o trajeto.",
+            exemploReal: "Um app com score SUS 85 é considerado excelente na percepção dos usuários."
+          }
+        ],
+        roteiroDemo: {
+          passo0: "Antes de clicar, preveja: O que ocorre com a Eficiência quando o usuário comete 4 erros em uma tela de cadastro?",
+          passos: [
+            { acao: "Simular 4 erros de digitação", ve: "O tempo de conclusão sobe de 30s para 180s.", significa: "Queda brusca de Eficiência conforme a ISO 9241-11." },
+            { acao: "Limpar formulário e otimizar campos", ve: "O tempo reduz para 25s com 100% de sucesso.", significa: "Alta eficácia e eficiência comprovadas." }
+          ]
+        },
+        demo: {
+          tipo: "simulacao_metricas",
+          config: {}
+        },
+        quiz: [
+          {
+            pergunta: "Qual das seguintes frases é uma tarefa NÃO INDUTIVA para um teste de usabilidade?",
+            opcoes: [
+              { texto: "Você deseja encontrar uma camisa azul tamanho M. Como faria?", fb: "Excelente! Não dá pistas dos nomes de botões ou menus da tela.", correta: true },
+              { texto: "Clique no menu Produtos, depois em Roupas e busque por Camisa.", fb: "Incorreto. Esta tarefa é indutiva pois ensina o caminho exato.", correta: false },
+              { texto: "Pressione o botão verde escrito Comprar no centro da tela.", fb: "Incorreto. Revela a localização e o rótulo do botão.", correta: false }
+            ]
+          },
+          {
+            pergunta: "Quais são os 3 pilares da usabilidade segundo a norma internacional ISO 9241-11?",
+            opcoes: [
+              { texto: "Eficácia, Eficiência e Satisfação.", fb: "Perfeito! A tríade oficial que define a qualidade de usabilidade.", correta: true },
+              { texto: "Velocidade, Estética e Preço.", fb: "Incorreto. Preço e velocidade pura não cobrem a percepção de satisfação.", correta: false },
+              { texto: "Design, Código e Infraestrutura.", fb: "Incorreto. Trata-se de métricas técnicas de software, não de ergonomia.", correta: false }
+            ]
+          },
+          {
+            pergunta: "Qual é a pontuação média de referência no questionário SUS para considerar um sistema 'acima da média'?",
+            opcoes: [
+              { texto: "Pontuação 68 em 100.", fb: "Exato! 68 é a média histórica internacional de corte do escore SUS.", correta: true },
+              { texto: "Pontuação 10 em 100.", fb: "Incorreto. 10 representa um sistema com péssima usabilidade.", correta: false },
+              { texto: "Pontuação 500 em 1000.", fb: "Incorreto. A escala do SUS é normalizada até 100 pontos.", correta: false }
+            ]
+          }
+        ],
+        aprofundar: [
+          { rotulo: "🔎 Busca no Google (português)", url: "https://www.google.com/search?hl=pt-BR&q=metrica+usabilidade+iso+9241+11+sus" },
+          { rotulo: "🎓 Pesquisa científica (Google Scholar, português)", url: "https://scholar.google.com/scholar?hl=pt-BR&q=system+usability+scale+sus+portugues" },
+          { rotulo: "🎬 Vídeos-aula no YouTube (busca em português)", url: "https://www.youtube.com/results?search_query=metricas+de+usabilidade+sus+aula" }
+        ],
+        mitoOuVerdade: {
+          afirmacao: "Mito ou Verdade: O questionário SUS mede se o software possui erros de programação no código.",
+          verdade: false,
+          explicacao: "Mito! O SUS mede a PERCEPÇÃO SUBJETIVA de satisfação e facilidade de uso do usuário, não falhas técnicas de código."
+        }
+      },
+      {
+        id: "aba-5",
+        titulo: "5. Execução, Think Aloud & Ética",
+        estudoProprio: false,
+        narrativa: "A dinâmica da sessão de testes na prática: como o método de pensar em voz alta revela a mente do usuário e a importância da ética com o TCLE.",
+        mundoReal: [
+          "Pesquisadores do Google usam sessões de Think Aloud para entender a confusão dos usuários em novas telas do Gmail.",
+          "Empresas de saúde exigem TCLE assinado antes de testar aplicativos médicos com pacientes reais."
+        ],
+        ferramentas: [
+          "TCLE (Termo de Consentimento Livre e Esclarecido)",
+          "Roteiro do Facilitador de Testes"
+        ],
+        dicionario: [
+          { termo: "Think Aloud", def: "Pensar em voz alta: técnica onde o participante verbaliza seus pensamentos e dúvidas durante a tarefa." },
+          { termo: "Facilitador", def: "O pesquisador que conduz a sessão de testes mantendo ambiente acolhedor e neutro." },
+          { termo: "TCLE", def: "Documento ético e legal onde o participante autoriza o uso dos dados e gravações de teste." }
+        ],
+        conceitos: [
+          {
+            titulo: "Técnica de Think Aloud (Pensar em Voz Alta)",
+            texto: "Pedimos ao participante para ir narrando em tempo real tudo o que está procurando, pensando e sentindo na tela.",
+            analogia: "💡 É como ter uma janela aberta diretamente para os pensamentos da pessoa enquanto ela navega.",
+            exemploReal: "O participante diz em voz alta: 'Estou procurando o carrinho de compras no canto direito, mas só vejo um ícone de estrela...' revelando a falha visual."
+          },
+          {
+            titulo: "Princípio Ético Fundamental em IHC",
+            texto: "O lema fundamental é: 'Estamos testando o desempenho da interface, NUNCA a inteligência do usuário'. Se algo der errado, a culpa é sempre do projeto.",
+            analogia: "💡 Se alguém tropeça numa pedra no corredor, a culpa é da pedra no lugar errado, não de quem estava andando.",
+            exemploReal: "Se um participante pede desculpas ao errar um formulário no app bancário, o facilitador deve responder: 'A culpa não é sua, a tela é que está confusa'."
+          }
+        ],
+        roteiroDemo: {
+          passo0: "Antes de clicar, preveja: O que acontece se o facilitador disser 'Você errou o botão' ao participante?",
+          passos: [
+            { acao: "Simular fala de reprovação ao usuário", ve: "O participante fica constrangido e para de narrar seus pensamentos.", significa: "Violação ética do teste. O ambiente torna-se hostil." },
+            { acao: "Aplicar regra de apoio neutro: 'O sistema falhou em mostrar o botão'", ve: "O participante relaxa e continua verbalizando a carga cognitiva.", significa: "Sessão conduziada com sucesso e ética." }
+          ]
+        },
+        demo: {
+          tipo: "simulacao_postura_facilitador",
+          config: {}
+        },
+        quiz: [
+          {
+            pergunta: "O que o participante deve fazer durante uma sessão com a técnica Think Aloud?",
+            opcoes: [
+              { texto: "Ficar totalmente em silêncio para não atrapalhar a gravação do áudio.", fb: "Incorreto. O silêncio impede de saber o que ele está pensando.", correta: false },
+              { texto: "Verbalizar em voz alta seus pensamentos, intenções e dúvidas enquanto navega.", fb: "Excelente! Esta é a essência do Think Aloud para expor a carga cognitiva.", correta: true },
+              { texto: "Ler o código-fonte HTML da página em voz alta.", fb: "Incorreto. O foco é a navegação da interface e não o código técnico.", correta: false }
+            ]
+          },
+          {
+            pergunta: "Qual é o objetivo principal do TCLE (Termo de Consentimento Livre e Esclarecido)?",
+            opcoes: [
+              { texto: "Garantir a privacidade dos dados do participante e autorizar formalmente o teste.", fb: "Perfeito! Garante o respeito aos direitos éticos e legais do usuário.", correta: true },
+              { texto: "Cobrar uma taxa de inscrição do participante pelo teste de usabilidade.", fb: "Incorreto. Testes de usabilidade nunca cobram participantes.", correta: false },
+              { texto: "Obrigar o participante a comprar o software após o término da sessão.", fb: "Incorreto. Trata-se de uma pesquisa e não de um processo comercial.", correta: false }
+            ]
+          },
+          {
+            pergunta: "Se um participante não conseguir concluir a tarefa durante o teste, de quem é a responsabilidade?",
+            opcoes: [
+              { texto: "Da interface do sistema, que não ofereceu usabilidade adequada.", fb: "Exato! 'Testamos a interface, nunca o usuário'.", correta: true },
+              { texto: "Exclusivamente do usuário, que não leu o manual antes de usar.", fb: "Incorreto. Interfaces modernas devem ser intuitivas sem manuais.", correta: false },
+              { texto: "Do provedor de internet do laboratório de testes.", fb: "Incorreto. A falha de usabilidade reflete problemas no design.", correta: false }
+            ]
+          }
+        ],
+        aprofundar: [
+          { rotulo: "🔎 Busca no Google (português)", url: "https://www.google.com/search?hl=pt-BR&q=think+aloud+pensar+em+voz+alta+ihc" },
+          { rotulo: "🎓 Pesquisa científica (Google Scholar, português)", url: "https://scholar.google.com/scholar?hl=pt-BR&q=etica+pesquisa+com+usuarios+tcle+ihc" },
+          { rotulo: "🎬 Vídeos-aula no YouTube (busca em português)", url: "https://www.youtube.com/results?search_query=think+aloud+usabilidade+aula" }
+        ],
+        mitoOuVerdade: {
+          afirmacao: "Mito ou Verdade: O facilitador pode dar dicas sobre onde clicar se o usuário ficar mais de 30 segundos em silêncio.",
+          verdade: false,
+          explicacao: "Mito! O facilitador deve apenas incentivar o relato ('O que você está pensando agora?'), sem revelar a solução da tela."
+        }
+      },
+      {
+        id: "aba-6",
+        titulo: "6. Análise de Dados & Redesign",
+        estudoProprio: true,
+        narrativa: "Transformando o caos de dados brutos anotados nas sessões em recomendações executivas e propostas de redesign de interface.",
+        mundoReal: [
+          "Após analisar testes do aplicativo do Bradesco, a equipe reorganizou a barra inferior para priorizar o extrato bancário.",
+          "A equipe de UX do Twitter transformou relatos de erros recorrentes na simplificação do botão de compartilhamento."
+        ],
+        ferramentas: [
+          "Diagrama de Afinidades para UX",
+          "Matriz de Severidade vs. Esforço de Correção"
+        ],
+        dicionario: [
+          { termo: "Diagrama de Afinidades", def: "Método de agrupamento de notas de observação em categorias temáticas de problemas." },
+          { termo: "Redesign de IHC", def: "A reengenharia visual e funcional de uma tela baseada em evidências científicas de testes." },
+          { termo: "Severidade Catastrófica", def: "Problema crítico que impede o usuário de concluir a missão e exige correção imediata." }
+        ],
+        conceitos: [
+          {
+            titulo: "Priorização de Problemas por Severidade",
+            texto: "Nem todo problema tem a mesma prioridade. Classificamos em: Catastrófico (trava uso), Grande (gera muita frustração), Pequeno (atrapalha pouco) e Cosmético (estético).",
+            analogia: "💡 É como o atendimento de emergência de um hospital: casos graves passam na frente de um pequeno arranhão.",
+            exemploReal: "Um botão de pagamento que não responde é um erro Catastrófico; uma fonte pequena no contrato é um erro Pequeno."
+          },
+          {
+            titulo: "O Relatório Executivo de Usabilidade",
+            texto: "Um documento sintético entregue aos gerentes contendo o Sumário Executivo, a Metodologia, as Descobertas Críticas e as Sugestões de Redesign.",
+            analogia: "💡 É como o laudo final de um exame médico entregue ao paciente com os remédios recomendados.",
+            exemploReal: "Um relatório de usabilidade para o e-commerce das Lojas Americanas recomendando reduzir o formulário de checkout de 8 para 3 campos."
+          }
+        ],
+        roteiroDemo: {
+          passo0: "Antes de clicar, preveja: Qual problema deve ser corrigido primeiro na lista de tarefas da equipe?",
+          passos: [
+            { acao: "Mover item 'Erro no envio do formulário' para prioridade 1", ve: "Problema Catastrófico colocado na frente da fila de desenvolvimento.", significa: "Priorização correta de reengenharia de redesign." },
+            { acao: "Mover item 'Troca do tom de cinza do rodapé' para a fila", ve: "Problema Cosmético alocado para sprints futuras sem urgência.", significa: "Gestão eficiente de prioridades de usabilidade." }
+          ]
+        },
+        demo: {
+          tipo: "simulacao_priorizacao",
+          config: {}
+        },
+        quiz: [
+          {
+            pergunta: "Como deve ser classificado um problema de usabilidade que impede 100% dos usuários de concluir o pagamento?",
+            opcoes: [
+              { texto: "Problema Catastrófico (Severidade 4).", fb: "Exato! Impede a conclusão da tarefa principal e exige correção imediata.", correta: true },
+              { texto: "Problema Cosmético (Severidade 1).", fb: "Incorreto. Problemas cosméticos são meramente visuais e não travam a tarefa.", correta: false },
+              { texto: "Sugestão Opcional de Melhoria.", fb: "Incorreto. Falha catastrófica é prioridade zero de engenharia.", correta: false }
+            ]
+          },
+          {
+            pergunta: "O que é um Diagrama de Afinidades no processo de análise de dados de testes?",
+            opcoes: [
+              { texto: "Uma ferramenta para agrupar observações e erros recorrentes por temas similares.", fb: "Perfeito! Organiza dados brutos qualitativos em padrões visíveis.", correta: true },
+              { texto: "Um gráfico estatístico que mostra o preço das ações da empresa na bolsa.", fb: "Incorreto. Diagrama de afinidades foca no agrupamento de insights de UX.", correta: false },
+              { texto: "Um mapa de cabos de rede do laboratório de informática.", fb: "Incorreto. Trata-se de uma técnica de síntese de pesquisa humana.", correta: false }
+            ]
+          },
+          {
+            pergunta: "Qual é a estrutura básica recomendada para um Relatório Executivo de Usabilidade?",
+            opcoes: [
+              { texto: "Sumário Executivo, Metodologia, Descobertas Críticas e Recomendações de Redesign.", fb: "Excelente! Estrutura profissional recomendada para tomada de decisão.", correta: true },
+              { texto: "Apenas o código-fonte em linguagem C do aplicativo.", fb: "Incorreto. Relatórios de usabilidade são focados em diagnósticos de IHC.", correta: false },
+              { texto: "Uma lista aleatória de opiniões pessoais do pesquisador.", fb: "Incorreto. Relatórios devem ser fundamentados em fatos observados nos testes.", correta: false }
+            ]
+          }
+        ],
+        aprofundar: [
+          { rotulo: "🔎 Busca no Google (português)", url: "https://www.google.com/search?hl=pt-BR&q=relatorio+de+usabilidade+redesign+ihc" },
+          { rotulo: "🎓 Pesquisa científica (Google Scholar, português)", url: "https://scholar.google.com/scholar?hl=pt-BR&q=analise+de+dados+qualitativos+usabilidade" },
+          { rotulo: "🎬 Vídeos-aula no YouTube (busca em português)", url: "https://www.youtube.com/results?search_query=relatorio+de+usabilidade+ux+aula" }
+        ],
+        mitoOuVerdade: {
+          afirmacao: "Mito ou Verdade: A fase de redesign pode ser feita apenas trocando as cores dos botões sem alterar o fluxo da tela.",
+          verdade: false,
+          explicacao: "Mito! Trocar cores só resolve problemas cosméticos. O redesign verdadeiro altera a arquitetura de informação e a sequência das tarefas."
+        }
+      }
+    ];
+
+    const REVISAO_DADOS = {
+      mapa: [
+        "1. Avaliação Formativa vs. Somativa & 10 Heurísticas de Nielsen",
+        "2. Percurso Cognitivo (Cognitive Walkthrough - 4 Perguntas)",
+        "3. Testes Empíricos de Usabilidade & A Regra dos 5 Usuários",
+        "4. Cenários, Tarefas Não Indutivas & Métricas ISO 9241-11 / SUS",
+        "5. Condução da Sessão, Técnica Think Aloud & Ética com TCLE",
+        "6. 📖 Estudo Próprio: Análise de Dados Brutos, Severidade & Redesign"
+      ],
+      cola: [
+        { termo: "Formativa", linha: "Avaliação feita DURANTE o desenvolvimento para corrigir o rumo da tela." },
+        { termo: "Somativa", linha: "Avaliação feita no produto PRONTO para medir a nota final de usabilidade." },
+        { termo: "Heurística", linha: "Regra prática de usabilidade (ex.: Visibilidade do Status do Sistema)." },
+        { termo: "Percurso Cognitivo", linha: "Inspeção por especialistas respondendo a 4 perguntas passo a passo." },
+        { termo: "Regra dos 5 Usuários", linha: "5 participantes descobrem ~85% dos problemas de usabilidade no teste." },
+        { termo: "ISO 9241-11", linha: "Norma de usabilidade baseada em Eficácia (% sucesso), Eficiência (tempo) e Satisfação." },
+        { termo: "SUS", linha: "System Usability Scale: questionário padronizado de 0 a 100 (média = 68)." },
+        { termo: "Think Aloud", linha: "Pensar em voz alta: participante narra o que está pensando durante a tarefa." },
+        { termo: "TCLE", linha: "Termo de Consentimento Livre e Esclarecido: autorização ética e legal." },
+        { termo: "Severidade Catastrófica", linha: "Falha de usabilidade crítica que impede totalmente a conclusão da tarefa." }
+      ],
+      desafio: "Desafio do Chefão de IHC: Você foi contratado pela equipe do aplicativo do UNASP para inspecionar a tela de matriculas. Elabore um plano completo indicando: 1) Qual heurística de Nielsen você checaria primeiro; 2) Como recrutaria 5 usuários representativos; 3) Escreva uma tarefa NÃO INDUTIVA para os testes; 4) Como agiria se um participante ficasse constrangido ao errar um botão."
+    };
+
+    // STATE MANAGEMENT
+    let state = {
+      xp: 0,
+      completedTabs: new Set(),
+      quizState: {}
+    };
+
+    // INITIALIZATION
+    document.addEventListener("DOMContentLoaded", () => {
+      renderTabs();
+      renderPanels();
+      setupRouting();
+      updateScoreboard();
+    });
+
+    function setupRouting() {
+      window.addEventListener("hashchange", handleHashChange);
+      if (!window.location.hash) {
+        window.location.hash = "#aba-1";
+      } else {
+        handleHashChange();
+      }
+    }
+
+    function handleHashChange() {
+      const hash = window.location.hash || "#aba-1";
+      const targetId = hash.replace("#", "");
+      
+      const tabItems = document.querySelectorAll(".tab-item");
+      const panels = document.querySelectorAll(".panel");
+
+      let found = false;
+      tabItems.forEach(item => {
+        if (item.getAttribute("data-tab") === targetId) {
+          item.classList.add("active");
+          item.setAttribute("aria-selected", "true");
+          found = true;
+        } else {
+          item.classList.remove("active");
+          item.setAttribute("aria-selected", "false");
+        }
+      });
+
+      panels.forEach(panel => {
+        if (panel.id === targetId) {
+          panel.classList.add("active");
+        } else {
+          panel.classList.remove("active");
+        }
+      });
+
+      if (!found && tabItems.length > 0) {
+        tabItems[0].classList.add("active");
+        panels[0].classList.add("active");
+      }
+    }
+
+    function switchTab(tabId) {
+      window.location.hash = "#" + tabId;
+    }
+
+    function renderTabs() {
+      const headersContainer = document.getElementById("tab-headers");
+      headersContainer.innerHTML = "";
+
+      AULA_DADOS.forEach(aba => {
+        const li = document.createElement("li");
+        li.className = "tab-item";
+        li.setAttribute("data-tab", aba.id);
+        li.setAttribute("role", "tab");
+        li.onclick = () => switchTab(aba.id);
+
+        let badgeHtml = aba.estudoProprio ? ' <span class="badge-estudo">📖 Estudo próprio</span>' : '';
+        li.innerHTML = `${aba.titulo}${badgeHtml}`;
+        headersContainer.appendChild(li);
+      });
+
+      // Aba de Revisão
+      const liRev = document.createElement("li");
+      liRev.className = "tab-item";
+      liRev.setAttribute("data-tab", "aba-revisao");
+      liRev.setAttribute("role", "tab");
+      liRev.onclick = () => switchTab("aba-revisao");
+      liRev.innerHTML = "🎯 Revisão & Chefão";
+      headersContainer.appendChild(liRev);
+    }
+
+    function renderPanels() {
+      const panelsContainer = document.getElementById("tab-panels");
+      panelsContainer.innerHTML = "";
+
+      AULA_DADOS.forEach(aba => {
+        const panel = document.createElement("div");
+        panel.className = "panel";
+        panel.id = aba.id;
+        panel.setAttribute("role", "tabpanel");
+
+        let html = `
+          <div class="presenter-script">
+            <strong>🎤 Roteiro do Apresentador:</strong> Apresente a missão de usabilidade: "${aba.narrativa}". Destaque os exemplos do mundo real e incentive a previsão na simulação.
+          </div>
+
+          <div class="section-card">
+            <h2 class="section-title">🎯 Missão da Aula</h2>
+            <p>${aba.narrativa}</p>
+          </div>
+
+          <div class="section-card">
+            <h2 class="section-title">🌍 Casos do Mundo Real & Ferramentas</h2>
+            <ul>
+              ${aba.mundoReal.map(item => `<li><strong>Exemplo Real:</strong> ${item}</li>`).join('')}
+              ${aba.ferramentas.map(item => `<li><strong>Ferramenta:</strong> ${item}</li>`).join('')}
+            </ul>
+          </div>
+
+          <details>
+            <summary>📖 Mini-Dicionário de Usabilidade da Aba</summary>
+            <ul style="margin-top: 8px; padding-left: 20px;">
+              ${aba.dicionario.map(d => `<li><strong>${d.termo}:</strong> ${d.def}</li>`).join('')}
+            </ul>
+          </details>
+
+          <details>
+            <summary>💡 Conceitos Chave & Analogias</summary>
+            ${aba.conceitos.map(c => `
+              <div style="margin-top: 8px; margin-bottom: 12px;">
+                <h4>${c.titulo}</h4>
+                <p>${c.texto}</p>
+                <p style="color: var(--primary-dark); font-weight: bold;">${c.analogia}</p>
+                <p><em>Exemplo Prático: ${c.exemploReal}</em></p>
+              </div>
+            `).join('')}
+          </details>
+
+          <div class="section-card">
+            <h2 class="section-title">🎮 Demonstração Interativa com Previsão</h2>
+            <div class="box-instructions">
+              <strong>📋 INSTRUÇÕES PASSO A PASSO:</strong><br>
+              ${aba.roteiroDemo.passo0}<br>
+              <ul>
+                ${aba.roteiroDemo.passos.map((p, idx) => `<li><strong>Passo ${idx+1}:</strong> ${p.acao} → <em>Observar: ${p.ve}</em> (${p.significa})</li>`).join('')}
+              </ul>
+            </div>
+            
+            <div class="demo-container">
+              ${renderDemoBody(aba)}
+            </div>
+            <button class="btn-ctrl" onclick="resetDemo('${aba.id}')">🔄 Reiniciar demo</button>
+          </div>
+
+          <div class="section-card">
+            <h2 class="section-title">❓ Quiz com Tentativa e Erro Guiado</h2>
+            <div class="box-info">
+              🔑 <strong>Termos deste quiz:</strong> ${aba.dicionario.map(d => `${d.termo} = ${d.def}`).join(' · ')}
+            </div>
+            <div class="quiz-container">
+              ${renderQuiz(aba)}
+            </div>
+          </div>
+
+          <details>
+            <summary>🔍 Aprofundar (Buscas em Português)</summary>
+            <ul style="margin-top: 8px; padding-left: 20px;">
+              ${aba.aprofundar.map(a => `<li><a href="${a.url}" target="_blank">${a.rotulo}</a></li>`).join('')}
+            </ul>
+          </details>
+
+          <div class="box-info" style="margin-top: 16px;">
+            <strong>${aba.mitoOuVerdade.afirmacao}</strong><br>
+            <p>${aba.mitoOuVerdade.explicacao}</p>
+          </div>
+        `;
+
+        panel.innerHTML = html;
+        panelsContainer.appendChild(panel);
+      });
+
+      // Panel de Revisão
+      const revPanel = document.createElement("div");
+      revPanel.className = "panel";
+      revPanel.id = "aba-revisao";
+      revPanel.setAttribute("role", "tabpanel");
+
+      revPanel.innerHTML = `
+        <div class="section-card">
+          <h2 class="section-title">🗺️ Mapa Completo da Aula</h2>
+          <ul>
+            ${REVISAO_DADOS.mapa.map(item => `<li>${item}</li>`).join('')}
+          </ul>
+        </div>
+
+        <div class="section-card">
+          <h2 class="section-title">⚡ Cola Rápida (Glossário de Revisão)</h2>
+          <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead>
+              <tr style="border-bottom: 2px solid var(--border);">
+                <th style="padding: 8px;">Conceito / Termo</th>
+                <th style="padding: 8px;">Explicação Rápida em Linguagem Plana</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${REVISAO_DADOS.cola.map(c => `
+                <tr style="border-bottom: 1px solid var(--border);">
+                  <td style="padding: 8px; font-weight: bold; color: var(--primary);">${c.termo}</td>
+                  <td style="padding: 8px;">${c.linha}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section-card" style="background: var(--primary-light); border-color: var(--primary);">
+          <h2 class="section-title">🤠 O Desafio do Chefão de IHC</h2>
+          <p style="font-size: 1.05em; margin-bottom: 12px;">${REVISAO_DADOS.desafio}</p>
+          <textarea style="width: 100%; height: 120px; padding: 10px; border-radius: 6px; border: 1px solid var(--border); font-family: inherit;" placeholder="Escreva sua resposta estruturada aqui para consolidar seu aprendizado..."></textarea>
+          <button class="btn-action" style="margin-top: 8px;" onclick="alert('Excelente! Sua resposta foi salva localmente no seu progresso mental. Continue praticando IHC!')">Enviar Resposta do Chefão</button>
+        </div>
+      `;
+
+      panelsContainer.appendChild(revPanel);
+    }
+
+    function renderDemoBody(aba) {
+      if (aba.demo.tipo === "simulacao_status") {
+        return `
+          <p style="margin-bottom: 8px;"><strong>Simulador de Status de Envio de Formulário:</strong></p>
+          <button class="btn-action" id="btn-demo1-sem" onclick="execDemo1(false)">Enviar sem Feedback Visual</button>
+          <button class="btn-action" id="btn-demo1-com" onclick="execDemo1(true)">Enviar com Barra de Status</button>
+          <div id="demo1-out" class="box-feedback" style="display:none;"></div>
+        `;
+      } else if (aba.demo.tipo === "simulacao_rotulo") {
+        return `
+          <p style="margin-bottom: 8px;"><strong>Simulador de Rótulo de Botão de Ação:</strong></p>
+          <button class="btn-action" onclick="execDemo2(false)">Botão com Rótulo Genérico ('Avançar')</button>
+          <button class="btn-action" onclick="execDemo2(true)">Botão com Rótulo Claro ('Pagar R$ 50,00 Agora')</button>
+          <div id="demo2-out" class="box-feedback" style="display:none;"></div>
+        `;
+      } else if (aba.demo.tipo === "simulacao_curva_nielsen") {
+        return `
+          <p style="margin-bottom: 8px;"><strong>Simulador da Curva de Descoberta de Nielsen:</strong></p>
+          <label>Selecione a quantidade de usuários no teste: </label>
+          <input type="range" id="nielsen-range" min="1" max="15" value="1" oninput="execDemo3(this.value)" style="margin-right: 8px;">
+          <span id="nielsen-val" style="font-weight:bold;">1 usuário</span>
+          <div id="demo3-out" class="box-feedback success" style="margin-top:12px;">
+            Descoberta de Usabilidade: <strong>31% dos problemas encontrados</strong>.
+          </div>
+        `;
+      } else if (aba.demo.tipo === "simulacao_metricas") {
+        return `
+          <p style="margin-bottom: 8px;"><strong>Simulador de Eficiência ISO 9241-11:</strong></p>
+          <button class="btn-action" onclick="execDemo4(4)">Simular Tarefa com 4 Erros</button>
+          <button class="btn-action" onclick="execDemo4(0)">Simular Tarefa sem Erros</button>
+          <div id="demo4-out" class="box-feedback" style="display:none;"></div>
+        `;
+      } else if (aba.demo.tipo === "simulacao_postura_facilitador") {
+        return `
+          <p style="margin-bottom: 8px;"><strong>Simulador de Postura do Facilitador de Testes:</strong></p>
+          <button class="btn-action" onclick="execDemo5(false)">Postura Incorreta: Reprovar participante</button>
+          <button class="btn-action" onclick="execDemo5(true)">Postura Correta: Apoio Neutro com Foco no Sistema</button>
+          <div id="demo5-out" class="box-feedback" style="display:none;"></div>
+        `;
+      } else {
+        return `
+          <p style="margin-bottom: 8px;"><strong>Simulador de Priorização de Redesign:</strong></p>
+          <button class="btn-action" onclick="execDemo6(true)">Priorizar Correção Catastrófica (Erro de Formulário)</button>
+          <button class="btn-action" onclick="execDemo6(false)">Priorizar Correção Cosmética (Tom de Cinza)</button>
+          <div id="demo6-out" class="box-feedback" style="display:none;"></div>
+        `;
+      }
+    }
+
+    // DEMO IMPLEMENTATIONS
+    function execDemo1(comStatus) {
+      const out = document.getElementById("demo1-out");
+      out.style.display = "block";
+      if (!comStatus) {
+        out.className = "box-feedback error";
+        out.innerHTML = "❌ <strong>Violação Heurística 1:</strong> A tela não respondeu. O usuário clicou 5 vezes repetidas achando que travou, gerando duplicidade no banco de dados.";
+      } else {
+        out.className = "box-feedback success";
+        out.innerHTML = "✅ <strong>Heurística 1 Aplicada:</strong> Barra 'Carregando 45%...' exibida. O usuário aguardou com segurança sem clicar novamente.";
+      }
+    }
+
+    function execDemo2(claro) {
+      const out = document.getElementById("demo2-out");
+      out.style.display = "block";
+      if (!claro) {
+        out.className = "box-feedback error";
+        out.innerHTML = "❌ <strong>Falha na Pergunta 3 do Percurso Cognitivo:</strong> O rótulo 'Avançar' deixou o usuário inseguro sobre se seria cobrado imediatamente ou não.";
+      } else {
+        out.className = "box-feedback success";
+        out.innerHTML = "✅ <strong>Percurso Cognitivo Aprovado:</strong> O rótulo 'Pagar R$ 50,00 Agora' comunicou exatamente a consequência da ação.";
+      }
+    }
+
+    function execDemo3(val) {
+      document.getElementById("nielsen-val").innerText = val + (val == 1 ? " usuário" : " usuários");
+      const percent = Math.round(100 * (1 - Math.pow(1 - 0.31, val)));
+      const out = document.getElementById("demo3-out");
+      out.innerHTML = `Descoberta de Usabilidade: <strong>${percent}% dos problemas encontrados</strong> por ${val} usuário(s).`;
+      if (val >= 5) {
+        out.innerHTML += `<br>💡 <em>A partir do 5º usuário (${percent}%), a curva estabiliza. Testar com mais pessoas repetirá falhas já conhecidas.</em>`;
+      }
+    }
+
+    function execDemo4(erros) {
+      const out = document.getElementById("demo4-out");
+      out.style.display = "block";
+      if (erros > 0) {
+        out.className = "box-feedback error";
+        out.innerHTML = "❌ <strong>Baixa Eficiência (ISO 9241-11):</strong> Com 4 erros, o tempo subiu para 180 segundos. O usuário manifestou alta frustração.";
+      } else {
+        out.className = "box-feedback success";
+        out.innerHTML = "✅ <strong>Alta Eficiência (ISO 9241-11):</strong> Sem erros na interface, a tarefa foi concluída em apenas 25 segundos.";
+      }
+    }
+
+    function execDemo5(correta) {
+      const out = document.getElementById("demo5-out");
+      out.style.display = "block";
+      if (!correta) {
+        out.className = "box-feedback error";
+        out.innerHTML = "❌ <strong>Violação Ética:</strong> Dizer ao participante que ele 'errou' gera constrangimento e interrompe a narração espontânea no Think Aloud.";
+      } else {
+        out.className = "box-feedback success";
+        out.innerHTML = "✅ <strong>Postura Correta do Facilitador:</strong> Reafirmar 'Estamos testando a tela e não você' mantém o ambiente acolhedor e os dados válidos.";
+      }
+    }
+
+    function execDemo6(catastrofica) {
+      const out = document.getElementById("demo6-out");
+      out.style.display = "block";
+      if (!catastrofica) {
+        out.className = "box-feedback error";
+        out.innerHTML = "❌ <strong>Baixa Prioridade de Reengenharia:</strong> Ajustar o tom de cinza do rodapé não resolve o problema dos usuários que não conseguem enviar o formulário.";
+      } else {
+        out.className = "box-feedback success";
+        out.innerHTML = "✅ <strong>Prioridade de Redesign Correta:</strong> Corrigir falhas catastróficas destrava o uso do produto imediatamente para o cliente final.";
+      }
+    }
+
+    function resetDemo(abaId) {
+      const panel = document.getElementById(abaId);
+      const feedbacks = panel.querySelectorAll(".box-feedback");
+      feedbacks.forEach(f => {
+        if (f.id !== "demo3-out") f.style.display = "none";
+      });
+      const range = panel.querySelector("#nielsen-range");
+      if (range) {
+        range.value = 1;
+        execDemo3(1);
+      }
+    }
+
+    // QUIZ SYSTEM
+    function renderQuiz(aba) {
+      return aba.quiz.map((q, qIdx) => {
+        // Embaralhar opções com Fisher-Yates sem perder atributos
+        let opts = q.opcoes.map((opt, originalIdx) => ({ ...opt, originalIdx }));
+        opts = shuffleArray(opts);
+
+        return `
+          <div class="quiz-q" id="q-${aba.id}-${qIdx}">
+            <p style="font-weight: bold; margin-bottom: 8px;">${qIdx + 1}. ${q.pergunta}</p>
+            ${opts.map((opt) => `
+              <button class="quiz-opt" 
+                      data-correct="${opt.correta}" 
+                      data-fb="${opt.fb}" 
+                      onclick="checkAnswer(this, '${aba.id}', ${qIdx})">
+                ${opt.texto}
+              </button>
+            `).join('')}
+            <div class="quiz-fb box-feedback" style="display:none;"></div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function shuffleArray(arr) {
+      const array = [...arr];
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function checkAnswer(btn, abaId, qIdx) {
+      const container = document.getElementById(`q-${abaId}-${qIdx}`);
+      const isCorrect = btn.getAttribute("data-correct") === "true";
+      const fbText = btn.getAttribute("data-fb");
+      const fbBox = container.querySelector(".quiz-fb");
+
+      const key = `${abaId}-${qIdx}`;
+      if (!state.quizState[key]) {
+        state.quizState[key] = { attempts: 0, solved: false };
+      }
+
+      if (state.quizState[key].solved) return;
+
+      state.quizState[key].attempts++;
+
+      fbBox.style.display = "block";
+
+      if (isCorrect) {
+        btn.classList.add("correct");
+        btn.innerHTML = "✓ " + btn.innerHTML;
+        fbBox.className = "quiz-fb box-feedback success";
+        fbBox.innerHTML = `✅ <strong>Por que esta está certa:</strong> ${fbText}`;
+        state.quizState[key].solved = true;
+
+        // Disable all buttons in this question
+        container.querySelectorAll(".quiz-opt").forEach(b => b.disabled = true);
+
+        // Scoring: 10 XP first try, 5 XP retry
+        const points = state.quizState[key].attempts === 1 ? 10 : 5;
+        addXP(points);
+        checkTabCompletion(abaId);
+      } else {
+        btn.classList.add("wrong");
+        btn.disabled = true;
+        btn.innerHTML = "✗ " + btn.innerHTML;
+        fbBox.className = "quiz-fb box-feedback error";
+        fbBox.innerHTML = `❌ <strong>Por que esta está errada:</strong> ${fbText}`;
+      }
+    }
+
+    function addXP(points) {
+      state.xp += points;
+      updateScoreboard();
+    }
+
+    function checkTabCompletion(abaId) {
+      const aba = AULA_DADOS.find(a => a.id === abaId);
+      if (!aba) return;
+
+      let allSolved = true;
+      aba.quiz.forEach((_, qIdx) => {
+        const key = `${abaId}-${qIdx}`;
+        if (!state.quizState[key] || !state.quizState[key].solved) {
+          allSolved = false;
+        }
+      });
+
+      if (allSolved) {
+        state.completedTabs.add(abaId);
+        updateScoreboard();
+      }
+    }
+
+    function updateScoreboard() {
+      document.getElementById("xp-display").innerText = state.xp;
+      document.getElementById("progress-display").innerText = `${state.completedTabs.size}/6 abas`;
+
+      let selos = [];
+      if (state.xp >= 30) selos.push("🥉 Inspetor Jr.");
+      if (state.xp >= 80) selos.push("🥈 Avaliador Pleno");
+      if (state.xp >= 140) selos.push("🥇 Mestre de Usabilidade");
+
+      document.getElementById("badges-display").innerText = selos.length > 0 ? selos.join(" · ") : "Nenhum";
+    }
+
+    // MODES
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+    }
+
+    function togglePresentationMode() {
+      document.body.classList.toggle("presentation-mode");
+    }
+  </script>
+</body>
+</html>
